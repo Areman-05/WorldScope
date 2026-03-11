@@ -12,6 +12,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,14 +21,16 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CountryDetailScreen(
-    countryCode: String,
     onBackClick: () -> Unit,
+    viewModel: CountryDetailViewModel,
     modifier: Modifier = Modifier
 ) {
+    val state by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Detalle") },
+                title = { Text(state.country?.name ?: "Detalle") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
@@ -42,7 +46,12 @@ fun CountryDetailScreen(
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
-            Text("Pais: $countryCode")
+            when {
+                state.isLoading -> Text("Cargando...")
+                state.error != null -> Text(state.error!!)
+                state.country != null -> Text(state.country.name)
+                else -> Text("Sin datos")
+            }
         }
     }
 }

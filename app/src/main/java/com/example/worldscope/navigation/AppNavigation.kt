@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.worldscope.ui.countries.CountriesScreen
 import com.example.worldscope.ui.detail.CountryDetailScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun AppNavigation() {
@@ -28,10 +29,10 @@ fun AppNavigation() {
             route = "country/{code}",
             arguments = listOf(navArgument("code") { type = NavType.StringType })
         ) { backStackEntry ->
-            val code = backStackEntry.arguments?.getString("code") ?: return@composable
+            val viewModel: com.example.worldscope.ui.detail.CountryDetailViewModel = hiltViewModel(backStackEntry)
             CountryDetailScreen(
-                countryCode = code,
-                onBackClick = { navController.popBackStack() }
+                onBackClick = { navController.popBackStack() },
+                viewModel = viewModel
             )
         }
     }
