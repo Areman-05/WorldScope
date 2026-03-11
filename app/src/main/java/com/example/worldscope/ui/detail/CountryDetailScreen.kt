@@ -12,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -64,10 +65,16 @@ fun CountryDetailScreen(
                     )
                 }
                 state.error != null -> {
-                    Text(
-                        text = state.error!!,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
+                    Column(
+                        modifier = Modifier.align(Alignment.Center),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(text = state.error!!)
+                        Button(onClick = { viewModel.loadCountry() }) {
+                            Text(stringResource(R.string.retry))
+                        }
+                    }
                 }
                 state.country != null -> {
                     CountryDetailContent(
