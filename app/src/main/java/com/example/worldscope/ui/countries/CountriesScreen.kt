@@ -76,6 +76,12 @@ fun CountriesScreen(
                             }
                         }
                     }
+                    state.filteredCountries.isEmpty() -> {
+                        Text(
+                            text = stringResource(R.string.no_results),
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
                     else -> {
                         LazyColumn {
                             items(
