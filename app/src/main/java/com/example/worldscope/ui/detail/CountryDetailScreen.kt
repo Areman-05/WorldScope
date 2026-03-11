@@ -125,7 +125,7 @@ private fun CountryDetailContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.population), style = MaterialTheme.typography.titleMedium)
-            Text(country.population.toString(), style = MaterialTheme.typography.bodyLarge)
+            Text("%,d".format(country.population), style = MaterialTheme.typography.bodyLarge)
         }
         if (country.languages.isNotEmpty()) {
             Text("${stringResource(R.string.languages)}: ${country.languages.joinToString()}", style = MaterialTheme.typography.bodyMedium)
