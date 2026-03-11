@@ -20,6 +20,11 @@ class CountriesRepository @Inject constructor(
         }
     }
 
+    suspend fun getCountryByCode(code: String): Result<Country> = runCatching {
+        val dto = api.getCountryByCode(code)
+        dto.toDomain()
+    }
+
     private fun CountryDto.toDomain(): Country = Country(
         name = name?.common ?: "",
         capital = capital?.firstOrNull(),
@@ -33,4 +38,5 @@ class CountriesRepository @Inject constructor(
         alpha3Code = alpha3Code,
         latlng = latlng?.let { list -> if (list.size >= 2) Pair(list[0], list[1]) else null }
     )
+
 }
