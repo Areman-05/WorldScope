@@ -25,8 +25,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.worldscope.R
 import com.example.worldscope.domain.model.Country
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,10 +43,10 @@ fun CountryDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.country?.name ?: "Detalle") },
+                title = { Text(state.country?.name ?: stringResource(R.string.detail)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Volver")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
             )
@@ -75,7 +77,7 @@ fun CountryDetailScreen(
                 }
                 else -> {
                     Text(
-                        text = "Sin datos",
+                        text = stringResource(R.string.no_data),
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
@@ -108,28 +110,28 @@ private fun CountryDetailContent(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Capital:", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.capital), style = MaterialTheme.typography.titleMedium)
             Text(country.capital ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Region:", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.region), style = MaterialTheme.typography.titleMedium)
             Text(country.region ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Poblacion:", style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.population), style = MaterialTheme.typography.titleMedium)
             Text(country.population.toString(), style = MaterialTheme.typography.bodyLarge)
         }
         if (country.languages.isNotEmpty()) {
-            Text("Idiomas: ${country.languages.joinToString()}", style = MaterialTheme.typography.bodyMedium)
+            Text("${stringResource(R.string.languages)}: ${country.languages.joinToString()}", style = MaterialTheme.typography.bodyMedium)
         }
         if (country.currencies.isNotEmpty()) {
-            Text("Monedas: ${country.currencies.joinToString()}", style = MaterialTheme.typography.bodyMedium)
+            Text("${stringResource(R.string.currencies)}: ${country.currencies.joinToString()}", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }

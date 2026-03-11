@@ -44,7 +44,7 @@ fun CountriesScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                placeholder = { Text("Buscar pais") },
+                placeholder = { Text(stringResource(R.string.search_country)) },
                 singleLine = true
             )
             Box(
