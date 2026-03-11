@@ -30,9 +30,11 @@ class CountriesViewModel @Inject constructor(
             repository.getAllCountries().collect { result ->
                 result.fold(
                     onSuccess = { list ->
-                        _uiState.update {
-                            it.copy(
+                        _uiState.update { state ->
+                            val filtered = filterCountries(list, state.searchQuery)
+                            state.copy(
                                 countries = list,
+                                filteredCountries = filtered,
                                 isLoading = false,
                                 error = null
                             )
@@ -52,8 +54,17 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun updateSearchQuery(query: String) {
-        _uiState.update { it.copy(searchQuery = query) }
+        _uiState.update { state ->
+            state.copy(
+                searchQuery = query,
+                filteredCountries = filterCountries(state.countries, query)
+            )
+        }
     }
+
+    private fun filterCountries(list: List<Country>, query: String): List<Country> =
+        if (query.isBlank()) list
+        else list.filter { it.name.contains(query, ignoreCase = true) }
 }
 
 data class CountriesUiState(
