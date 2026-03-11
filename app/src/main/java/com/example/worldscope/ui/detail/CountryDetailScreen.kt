@@ -1,13 +1,22 @@
 package com.example.worldscope.ui.detail
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -17,6 +26,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.worldscope.domain.model.Country
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,15 +54,82 @@ fun CountryDetailScreen(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
         ) {
             when {
-                state.isLoading -> Text("Cargando...")
-                state.error != null -> Text(state.error!!)
-                state.country != null -> Text(state.country.name)
-                else -> Text("Sin datos")
+                state.isLoading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                state.error != null -> {
+                    Text(
+                        text = state.error!!,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                state.country != null -> {
+                    CountryDetailContent(
+                        country = state.country!!,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                else -> {
+                    Text(
+                        text = "Sin datos",
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
             }
+        }
+    }
+}
+
+@Composable
+private fun CountryDetailContent(
+    country: Country,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        AsyncImage(
+            model = country.flagUrl,
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxWidth()
+                .size(height = 200.dp, width = 300.dp)
+        )
+        Text(
+            text = country.name,
+            style = MaterialTheme.typography.headlineMedium
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Capital:", style = MaterialTheme.typography.titleMedium)
+            Text(country.capital ?: "-", style = MaterialTheme.typography.bodyLarge)
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Region:", style = MaterialTheme.typography.titleMedium)
+            Text(country.region ?: "-", style = MaterialTheme.typography.bodyLarge)
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text("Poblacion:", style = MaterialTheme.typography.titleMedium)
+            Text(country.population.toString(), style = MaterialTheme.typography.bodyLarge)
+        }
+        if (country.languages.isNotEmpty()) {
+            Text("Idiomas: ${country.languages.joinToString()}", style = MaterialTheme.typography.bodyMedium)
+        }
+        if (country.currencies.isNotEmpty()) {
+            Text("Monedas: ${country.currencies.joinToString()}", style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
