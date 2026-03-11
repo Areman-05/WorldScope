@@ -30,10 +30,11 @@ class CountriesViewModel @Inject constructor(
             repository.getAllCountries().collect { result ->
                 result.fold(
                     onSuccess = { list ->
+                        val sorted = list.sortedBy { it.name }
                         _uiState.update { state ->
-                            val filtered = filterCountries(list, state.searchQuery)
+                            val filtered = filterCountries(sorted, state.searchQuery)
                             state.copy(
-                                countries = list,
+                                countries = sorted,
                                 filteredCountries = filtered,
                                 isLoading = false,
                                 error = null
