@@ -12,6 +12,7 @@ import com.example.worldscope.navigation.AppNavigation
 import com.example.worldscope.ui.theme.WorldScopeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/** Main entry point for WorldScope. Hosts Compose navigation. */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
