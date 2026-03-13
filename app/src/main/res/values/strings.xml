@@ -12,4 +12,5 @@
     <string name="no_data">Sin datos</string>
     <string name="retry">Reintentar</string>
     <string name="no_results">Ningún país encontrado</string>
+    <string name="flag_description">Bandera de %s</string>
 </resources>
