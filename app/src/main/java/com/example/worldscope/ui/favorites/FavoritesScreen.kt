@@ -3,6 +3,8 @@ package com.example.worldscope.ui.favorites
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -12,9 +14,12 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -22,8 +27,11 @@ import com.example.worldscope.R
 fun FavoritesScreen(
     onCountryClick: (String) -> Unit = {},
     onBackClick: () -> Unit = {},
+    viewModel: FavoritesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
+    val state by viewModel.uiState.collectAsState()
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -36,13 +44,28 @@ fun FavoritesScreen(
             )
         }
     ) { paddingValues ->
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(stringResource(R.string.no_favorites))
+        if (state.favorites.isEmpty()) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(stringResource(R.string.no_favorites))
+            }
+        } else {
+            LazyColumn(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                items(state.favorites, key = { it.alpha2Code }) { favorite ->
+                    FavoriteItem(
+                        favorite = favorite,
+                        onClick = { onCountryClick(favorite.alpha2Code) }
+                    )
+                }
+            }
         }
     }
 }
