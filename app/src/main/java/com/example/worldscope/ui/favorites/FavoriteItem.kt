@@ -12,8 +12,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.example.worldscope.R
 import com.example.worldscope.data.local.entity.FavoriteCountryEntity
 
 @Composable
@@ -32,7 +34,7 @@ fun FavoriteItem(
     ) {
         AsyncImage(
             model = favorite.flagUrl,
-            contentDescription = null,
+            contentDescription = stringResource(R.string.flag_description, favorite.name),
             modifier = Modifier.size(48.dp, 36.dp)
         )
         Column(modifier = Modifier.weight(1f)) {
