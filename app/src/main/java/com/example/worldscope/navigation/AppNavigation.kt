@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.worldscope.ui.countries.CountriesScreen
 import com.example.worldscope.ui.detail.CountryDetailScreen
+import com.example.worldscope.ui.favorites.FavoritesScreen
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
@@ -33,6 +34,12 @@ fun AppNavigation() {
             CountryDetailScreen(
                 onBackClick = { navController.popBackStack() },
                 viewModel = viewModel
+            )
+        }
+        composable("favorites") {
+            FavoritesScreen(
+                onCountryClick = { code -> navController.navigate("country/$code") },
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
