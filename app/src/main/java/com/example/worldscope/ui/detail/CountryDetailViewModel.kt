@@ -28,15 +28,6 @@ class CountryDetailViewModel @Inject constructor(
 
     init {
         loadCountry()
-        loadFavoriteStatus()
-    }
-
-    fun loadFavoriteStatus() {
-        if (code.isBlank()) return
-        viewModelScope.launch {
-            val isFav = favoritesRepository.isFavorite(code)
-            _uiState.update { it.copy(isFavorite = isFav) }
-        }
     }
 
     fun toggleFavorite() {
