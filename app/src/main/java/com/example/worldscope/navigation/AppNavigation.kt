@@ -23,7 +23,8 @@ fun AppNavigation() {
             CountriesScreen(
                 onCountryClick = { code ->
                     navController.navigate("country/$code")
-                }
+                },
+                onFavoritesClick = { navController.navigate("favorites") }
             )
         }
         composable(

@@ -8,8 +8,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -27,6 +31,7 @@ import com.example.worldscope.R
 @Composable
 fun CountriesScreen(
     onCountryClick: (String) -> Unit = {},
+    onFavoritesClick: () -> Unit = {},
     viewModel: CountriesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -35,7 +40,12 @@ fun CountriesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) }
+                title = { Text(stringResource(R.string.app_name)) },
+                actions = {
+                    IconButton(onClick = onFavoritesClick) {
+                        Icon(Icons.Filled.Favorite, contentDescription = stringResource(R.string.favorites))
+                    }
+                }
             )
         }
     ) { paddingValues ->
