@@ -11,6 +11,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+/** Módulo Hilt que provee Room database y FavoriteDao. */
 @Module
 @InstallIn(SingletonComponent::class)
 object DatabaseModule {
