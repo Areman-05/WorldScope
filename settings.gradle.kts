@@ -1,3 +1,4 @@
+// Configuración de proyectos y repositorios Gradle.
 pluginManagement {
     repositories {
         google {
