@@ -1,5 +1,6 @@
 package com.example.worldscope.domain.model
 
+/** Modelo de dominio que representa un país. */
 data class Country(
     val name: String,
     val capital: String?,
