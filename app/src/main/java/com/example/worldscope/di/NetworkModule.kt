@@ -11,6 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+/** Módulo Hilt que provee Retrofit, OkHttp y CountriesApi. */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
