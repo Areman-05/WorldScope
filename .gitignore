@@ -16,3 +16,7 @@ local.properties
 
 # Logs
 *.log
+
+# Local env (API keys, etc.)
+.env
+.env.local
