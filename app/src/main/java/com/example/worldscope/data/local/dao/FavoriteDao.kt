@@ -7,6 +7,7 @@ import androidx.room.Query
 import com.example.worldscope.data.local.entity.FavoriteCountryEntity
 import kotlinx.coroutines.flow.Flow
 
+/** DAO para persistir y consultar países favoritos. */
 @Dao
 interface FavoriteDao {
 
