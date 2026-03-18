@@ -17,18 +17,18 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = "countries"
+        startDestination = Routes.COUNTRIES
     ) {
-        composable("countries") {
+        composable(Routes.COUNTRIES) {
             CountriesScreen(
                 onCountryClick = { code ->
-                    navController.navigate("country/$code")
+                    navController.navigate(Routes.countryDetail(code))
                 },
-                onFavoritesClick = { navController.navigate("favorites") }
+                onFavoritesClick = { navController.navigate(Routes.FAVORITES) }
             )
         }
         composable(
-            route = "country/{code}",
+            route = Routes.COUNTRY_DETAIL,
             arguments = listOf(navArgument("code") { type = NavType.StringType })
         ) { backStackEntry ->
             val viewModel: com.example.worldscope.ui.detail.CountryDetailViewModel = hiltViewModel(backStackEntry)
@@ -37,9 +37,9 @@ fun AppNavigation() {
                 viewModel = viewModel
             )
         }
-        composable("favorites") {
+        composable(Routes.FAVORITES) {
             FavoritesScreen(
-                onCountryClick = { code -> navController.navigate("country/$code") },
+                onCountryClick = { code -> navController.navigate(Routes.countryDetail(code)) },
                 onBackClick = { navController.popBackStack() }
             )
         }
