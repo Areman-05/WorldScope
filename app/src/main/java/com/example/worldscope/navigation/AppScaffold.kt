@@ -89,7 +89,7 @@ fun AppScaffold() {
             composable(Routes.FAVORITES) {
                 FavoritesScreen(
                     onCountryClick = { code -> navController.navigate(Routes.countryDetail(code)) },
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.navigate(Routes.COUNTRIES) }
                 )
             }
         }
