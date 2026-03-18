@@ -31,6 +31,12 @@ class FavoritesViewModel @Inject constructor(
             }
         }
     }
+
+    fun removeFavorite(alpha2Code: String) {
+        viewModelScope.launch {
+            favoritesRepository.removeFavorite(alpha2Code)
+        }
+    }
 }
 
 data class FavoritesUiState(
