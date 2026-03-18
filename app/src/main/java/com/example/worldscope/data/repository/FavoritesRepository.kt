@@ -24,10 +24,6 @@ class FavoritesRepository @Inject constructor(
         favoriteDao.removeFavorite(alpha2Code)
     }
 
-    suspend fun removeFavorite(entity: FavoriteCountryEntity) {
-        favoriteDao.removeFavorite(entity.alpha2Code)
-    }
-
     private fun Country.toFavoriteEntity(): FavoriteCountryEntity =
         FavoriteCountryEntity(
             alpha2Code = alpha2Code ?: "",
