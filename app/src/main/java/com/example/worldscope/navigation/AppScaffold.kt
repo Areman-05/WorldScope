@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -38,13 +39,25 @@ fun AppScaffold() {
                 NavigationBar {
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.route == Routes.COUNTRIES } == true,
-                        onClick = { navController.navigate(Routes.COUNTRIES) },
+                        onClick = {
+                            navController.navigate(Routes.COUNTRIES) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
                         icon = { Icon(Icons.Filled.Public, contentDescription = null) },
                         label = { Text(stringResource(R.string.countries)) }
                     )
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.route == Routes.FAVORITES } == true,
-                        onClick = { navController.navigate(Routes.FAVORITES) },
+                        onClick = {
+                            navController.navigate(Routes.FAVORITES) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
                         icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
                         label = { Text(stringResource(R.string.favorites)) }
                     )
