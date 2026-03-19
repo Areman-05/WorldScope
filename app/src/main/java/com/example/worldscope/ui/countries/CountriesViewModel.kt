@@ -30,11 +30,17 @@ class CountriesViewModel @Inject constructor(
             repository.getAllCountries().collect { result ->
                 result.fold(
                     onSuccess = { list ->
-                        val sorted = list.sortedBy { it.name }
+                        val availableRegions = getAvailableRegions(list)
                         _uiState.update { state ->
-                            val filtered = filterCountries(sorted, state.searchQuery)
+                            val filtered = applyFilters(
+                                list = list,
+                                searchQuery = state.searchQuery,
+                                regionFilter = state.regionFilter,
+                                sortMode = state.sortMode
+                            )
                             state.copy(
-                                countries = sorted,
+                                countries = list,
+                                availableRegions = availableRegions,
                                 filteredCountries = filtered,
                                 isLoading = false,
                                 error = null
@@ -58,19 +64,85 @@ class CountriesViewModel @Inject constructor(
         _uiState.update { state ->
             state.copy(
                 searchQuery = query,
-                filteredCountries = filterCountries(state.countries, query)
+                filteredCountries = applyFilters(
+                    list = state.countries,
+                    searchQuery = query,
+                    regionFilter = state.regionFilter,
+                    sortMode = state.sortMode
+                )
             )
         }
     }
 
-    private fun filterCountries(list: List<Country>, query: String): List<Country> =
-        if (query.isBlank()) list
-        else list.filter { it.name.contains(query, ignoreCase = true) }
+    fun updateRegionFilter(region: String?) {
+        _uiState.update { state ->
+            state.copy(
+                regionFilter = region,
+                filteredCountries = applyFilters(
+                    list = state.countries,
+                    searchQuery = state.searchQuery,
+                    regionFilter = region,
+                    sortMode = state.sortMode
+                )
+            )
+        }
+    }
+
+    fun updateSortMode(sortMode: SortMode) {
+        _uiState.update { state ->
+            state.copy(
+                sortMode = sortMode,
+                filteredCountries = applyFilters(
+                    list = state.countries,
+                    searchQuery = state.searchQuery,
+                    regionFilter = state.regionFilter,
+                    sortMode = sortMode
+                )
+            )
+        }
+    }
+
+    private fun getAvailableRegions(list: List<Country>): List<String> =
+        list.mapNotNull { it.region }.distinct().sorted()
+
+    private fun applyFilters(
+        list: List<Country>,
+        searchQuery: String,
+        regionFilter: String?,
+        sortMode: SortMode
+    ): List<Country> {
+        val byQuery = if (searchQuery.isBlank()) {
+            list
+        } else {
+            list.filter { it.name.contains(searchQuery, ignoreCase = true) }
+        }
+
+        val byRegion = if (regionFilter == null) {
+            byQuery
+        } else {
+            byQuery.filter { it.region?.equals(regionFilter, ignoreCase = true) == true }
+        }
+
+        return when (sortMode) {
+            SortMode.NAME -> byRegion.sortedBy { it.name }
+            SortMode.POPULATION -> byRegion.sortedWith(
+                compareByDescending<Country> { it.population }.thenBy { it.name }
+            )
+        }
+    }
+}
+
+enum class SortMode {
+    NAME,
+    POPULATION
 }
 
 data class CountriesUiState(
     val countries: List<Country> = emptyList(),
     val filteredCountries: List<Country> = emptyList(),
+    val availableRegions: List<String> = emptyList(),
+    val regionFilter: String? = null,
+    val sortMode: SortMode = SortMode.NAME,
     val isLoading: Boolean = false,
     val error: String? = null,
     val searchQuery: String = ""
