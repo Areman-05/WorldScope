@@ -95,7 +95,8 @@ fun CountriesScreen(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRegion)
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
                 ExposedDropdownMenu(
                     expanded = expandedRegion,
@@ -142,7 +143,8 @@ fun CountriesScreen(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSort)
                     },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true
                 )
                 ExposedDropdownMenu(
                     expanded = expandedSort,
