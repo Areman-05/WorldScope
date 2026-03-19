@@ -102,6 +102,25 @@ class CountriesViewModel @Inject constructor(
         }
     }
 
+    fun clearFilters() {
+        val clearedQuery = ""
+        val clearedRegion: String? = null
+        val clearedSort = SortMode.NAME
+        _uiState.update { state ->
+            state.copy(
+                searchQuery = clearedQuery,
+                regionFilter = clearedRegion,
+                sortMode = clearedSort,
+                filteredCountries = applyFilters(
+                    list = state.countries,
+                    searchQuery = clearedQuery,
+                    regionFilter = clearedRegion,
+                    sortMode = clearedSort
+                )
+            )
+        }
+    }
+
     private fun getAvailableRegions(list: List<Country>): List<String> =
         list.mapNotNull { it.region }.distinct().sorted()
 

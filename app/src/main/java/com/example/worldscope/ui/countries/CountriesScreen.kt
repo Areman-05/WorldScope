@@ -21,6 +21,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -153,6 +154,16 @@ fun CountriesScreen(
                             expandedSort = false
                         }
                     )
+                }
+            }
+            if (state.searchQuery.isNotBlank() || state.regionFilter != null || state.sortMode != SortMode.NAME) {
+                OutlinedButton(
+                    onClick = { viewModel.clearFilters() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp)
+                ) {
+                    Text(stringResource(R.string.clear_filters))
                 }
             }
             Box(
