@@ -190,8 +190,13 @@ fun CountriesScreen(
                         }
                     }
                     state.filteredCountries.isEmpty() -> {
+                        val msg = if (state.searchQuery.isNotBlank() || state.regionFilter != null) {
+                            stringResource(R.string.no_results_filters)
+                        } else {
+                            stringResource(R.string.no_results)
+                        }
                         Text(
-                            text = stringResource(R.string.no_results),
+                            text = msg,
                             modifier = Modifier.align(Alignment.Center)
                         )
                     }
