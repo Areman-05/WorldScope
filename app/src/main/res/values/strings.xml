@@ -5,8 +5,8 @@
     <string name="detail">Detalle</string>
     <string name="back">Volver</string>
     <string name="capital">Capital</string>
-<string name="region">Región</string>
-<string name="population">Población</string>
+    <string name="region">Region</string>
+    <string name="population">Poblacion</string>
     <string name="languages">Idiomas</string>
     <string name="currencies">Monedas</string>
     <string name="no_data">Sin datos</string>
@@ -18,4 +18,9 @@
     <string name="countries">Paises</string>
     <string name="favorites">Favoritos</string>
     <string name="no_favorites">No tienes favoritos</string>
+    <string name="all_regions">Todas</string>
+    <string name="sort_by">Ordenar por</string>
+    <string name="sort_name">Nombre</string>
+    <string name="sort_population">Poblacion</string>
+    <string name="clear_filters">Limpiar filtros</string>
 </resources>
