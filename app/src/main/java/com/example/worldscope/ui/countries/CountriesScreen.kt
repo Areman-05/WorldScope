@@ -173,9 +173,14 @@ fun CountriesScreen(
             ) {
                 when {
                     state.isLoading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.Center)
-                        )
+                        Column(
+                            modifier = Modifier.align(Alignment.Center),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            CircularProgressIndicator()
+                            Text(stringResource(R.string.loading))
+                        }
                     }
                     state.error != null -> {
                         Column(
