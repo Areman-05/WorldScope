@@ -61,8 +61,8 @@ fun CountriesScreen(
                 }
             )
         }
-    ) { paddingValues ->
-        androidx.compose.foundation.layout.Column(
+        ) { paddingValues ->
+        Column(
             modifier = modifier
                 .fillMaxSize()
                 .padding(paddingValues)
