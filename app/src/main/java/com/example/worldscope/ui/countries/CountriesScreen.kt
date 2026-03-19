@@ -47,6 +47,7 @@ fun CountriesScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     var expandedRegion by remember { mutableStateOf(false) }
+    var expandedSort by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -111,6 +112,47 @@ fun CountriesScreen(
                             }
                         )
                     }
+                }
+            }
+            Spacer(modifier = Modifier.height(4.dp))
+            ExposedDropdownMenuBox(
+                expanded = expandedSort,
+                onExpandedChange = { expandedSort = !expandedSort },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                val sortLabel = when (state.sortMode) {
+                    SortMode.NAME -> stringResource(R.string.sort_name)
+                    SortMode.POPULATION -> stringResource(R.string.sort_population)
+                }
+                OutlinedTextField(
+                    value = sortLabel,
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSort)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedSort,
+                    onDismissRequest = { expandedSort = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.sort_name)) },
+                        onClick = {
+                            viewModel.updateSortMode(SortMode.NAME)
+                            expandedSort = false
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.sort_population)) },
+                        onClick = {
+                            viewModel.updateSortMode(SortMode.POPULATION)
+                            expandedSort = false
+                        }
+                    )
                 }
             }
             Box(
