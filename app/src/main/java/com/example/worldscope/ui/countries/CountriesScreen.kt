@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +14,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExposedDropdownMenu
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -22,6 +28,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,6 +46,7 @@ fun CountriesScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
+    var expandedRegion by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
@@ -64,6 +74,45 @@ fun CountriesScreen(
                 placeholder = { Text(stringResource(R.string.search_country)) },
                 singleLine = true
             )
+            Spacer(modifier = Modifier.height(4.dp))
+            ExposedDropdownMenuBox(
+                expanded = expandedRegion,
+                onExpandedChange = { expandedRegion = !expandedRegion },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp)
+            ) {
+                OutlinedTextField(
+                    value = state.regionFilter ?: stringResource(R.string.all_regions),
+                    onValueChange = {},
+                    readOnly = true,
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRegion)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedRegion,
+                    onDismissRequest = { expandedRegion = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.all_regions)) },
+                        onClick = {
+                            viewModel.updateRegionFilter(null)
+                            expandedRegion = false
+                        }
+                    )
+                    state.availableRegions.forEach { region ->
+                        DropdownMenuItem(
+                            text = { Text(region) },
+                            onClick = {
+                                viewModel.updateRegionFilter(region)
+                                expandedRegion = false
+                            }
+                        )
+                    }
+                }
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
