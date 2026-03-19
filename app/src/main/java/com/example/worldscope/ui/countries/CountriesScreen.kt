@@ -76,6 +76,10 @@ fun CountriesScreen(
                 placeholder = { Text(stringResource(R.string.search_country)) },
                 singleLine = true
             )
+            Text(
+                text = stringResource(R.string.region),
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
             Spacer(modifier = Modifier.height(4.dp))
             ExposedDropdownMenuBox(
                 expanded = expandedRegion,
@@ -115,6 +119,10 @@ fun CountriesScreen(
                     }
                 }
             }
+            Text(
+                text = stringResource(R.string.sort_by),
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
             Spacer(modifier = Modifier.height(4.dp))
             ExposedDropdownMenuBox(
                 expanded = expandedSort,
