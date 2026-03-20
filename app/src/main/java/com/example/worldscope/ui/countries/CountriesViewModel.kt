@@ -26,7 +26,7 @@ class CountriesViewModel @Inject constructor(
 
     fun loadCountries() {
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update { it.copy(isLoading = true, error = null, hasLoaded = false) }
             repository.getAllCountries().collect { result ->
                 result.fold(
                     onSuccess = { list ->
@@ -43,7 +43,8 @@ class CountriesViewModel @Inject constructor(
                                 availableRegions = availableRegions,
                                 filteredCountries = filtered,
                                 isLoading = false,
-                                error = null
+                                error = null,
+                                hasLoaded = true
                             )
                         }
                     },
@@ -51,7 +52,8 @@ class CountriesViewModel @Inject constructor(
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                error = e.message
+                                error = e.message,
+                                hasLoaded = true
                             )
                         }
                     }
@@ -164,5 +166,6 @@ data class CountriesUiState(
     val sortMode: SortMode = SortMode.NAME,
     val isLoading: Boolean = false,
     val error: String? = null,
+    val hasLoaded: Boolean = false,
     val searchQuery: String = ""
 )
