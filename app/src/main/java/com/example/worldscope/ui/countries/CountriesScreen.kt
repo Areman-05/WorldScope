@@ -205,15 +205,26 @@ fun CountriesScreen(
                         }
                     }
                     state.filteredCountries.isEmpty() -> {
-                        val msg = if (state.searchQuery.isNotBlank() || state.regionFilter != null) {
-                            stringResource(R.string.no_results_filters)
+                        if (!state.hasLoaded) {
+                            Column(
+                                modifier = Modifier.align(Alignment.Center),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                CircularProgressIndicator()
+                                Text(stringResource(R.string.loading))
+                            }
                         } else {
-                            stringResource(R.string.no_results)
+                            val msg = if (state.searchQuery.isNotBlank() || state.regionFilter != null) {
+                                stringResource(R.string.no_results_filters)
+                            } else {
+                                stringResource(R.string.no_results)
+                            }
+                            Text(
+                                text = msg,
+                                modifier = Modifier.align(Alignment.Center)
+                            )
                         }
-                        Text(
-                            text = msg,
-                            modifier = Modifier.align(Alignment.Center)
-                        )
                     }
                     else -> {
                         LazyColumn {
