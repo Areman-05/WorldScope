@@ -32,6 +32,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
 
@@ -64,7 +66,8 @@ fun CountriesScreen(
                     .fillMaxWidth()
                     .padding(8.dp),
                 placeholder = { Text(stringResource(R.string.search_country)) },
-                singleLine = true
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
             )
             Text(
                 text = stringResource(R.string.region),
