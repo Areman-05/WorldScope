@@ -167,7 +167,7 @@ fun CountriesScreen(
                     )
                 }
             }
-            if (state.searchQuery.isNotBlank() || state.regionFilter != null || state.sortMode != SortMode.NAME) {
+            if (state.hasLoaded && (state.searchQuery.isNotBlank() || state.regionFilter != null || state.sortMode != SortMode.NAME)) {
                 OutlinedButton(
                     onClick = { viewModel.clearFilters() },
                     modifier = Modifier
