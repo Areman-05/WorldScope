@@ -42,7 +42,6 @@ import com.example.worldscope.R
 @Composable
 fun CountriesScreen(
     onCountryClick: (String) -> Unit = {},
-    onFavoritesClick: () -> Unit = {},
     viewModel: CountriesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -53,12 +52,7 @@ fun CountriesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
-                actions = {
-                    IconButton(onClick = onFavoritesClick) {
-                        Icon(Icons.Filled.Favorite, contentDescription = stringResource(R.string.favorites))
-                    }
-                }
+                title = { Text(stringResource(R.string.app_name)) }
             )
         }
         ) { paddingValues ->

@@ -72,8 +72,7 @@ fun AppScaffold() {
         ) {
             composable(Routes.COUNTRIES) {
                 CountriesScreen(
-                    onCountryClick = { code -> navController.navigate(Routes.countryDetail(code)) },
-                    onFavoritesClick = { navController.navigate(Routes.FAVORITES) }
+                    onCountryClick = { code -> navController.navigate(Routes.countryDetail(code)) }
                 )
             }
             composable(
