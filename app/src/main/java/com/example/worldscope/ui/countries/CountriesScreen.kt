@@ -216,10 +216,10 @@ fun CountriesScreen(
                                 Text(stringResource(R.string.loading))
                             }
                         } else {
-                            val msg = if (state.searchQuery.isNotBlank() || state.regionFilter != null) {
-                                stringResource(R.string.no_results_filters)
-                            } else {
-                                stringResource(R.string.no_results)
+                            val msg = when {
+                                state.countries.isEmpty() -> stringResource(R.string.no_data)
+                                state.searchQuery.isNotBlank() || state.regionFilter != null -> stringResource(R.string.no_results_filters)
+                                else -> stringResource(R.string.no_results)
                             }
                             Text(
                                 text = msg,
