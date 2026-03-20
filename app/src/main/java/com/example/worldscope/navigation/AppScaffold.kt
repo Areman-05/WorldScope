@@ -31,7 +31,7 @@ fun AppScaffold() {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
 
-    val showBottomBar = currentDestination?.route != Routes.COUNTRY_DETAIL
+    val showBottomBar = currentDestination?.route?.startsWith("country") != true
 
     Scaffold(
         bottomBar = {
