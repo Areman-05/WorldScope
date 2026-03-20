@@ -32,25 +32,32 @@ fun FavoriteItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        AsyncImage(
-            model = favorite.flagUrl,
-            contentDescription = stringResource(R.string.flag_description, favorite.name),
-            modifier = Modifier.size(48.dp, 36.dp)
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = favorite.name,
-                style = MaterialTheme.typography.titleMedium
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .clickable(onClick = onClick),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            AsyncImage(
+                model = favorite.flagUrl,
+                contentDescription = stringResource(R.string.flag_description, favorite.name),
+                modifier = Modifier.size(48.dp, 36.dp)
             )
-            Text(
-                text = "%,d".format(favorite.population),
-                style = MaterialTheme.typography.bodySmall
-            )
+            Column {
+                Text(
+                    text = favorite.name,
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "%,d".format(favorite.population),
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
         }
         IconButton(onClick = onRemoveClick) {
             Icon(
