@@ -102,14 +102,22 @@ fun CountriesScreen(
                             expandedRegion = false
                         }
                     )
-                    state.availableRegions.forEach { region ->
+                    if (state.availableRegions.isEmpty()) {
                         DropdownMenuItem(
-                            text = { Text(region) },
-                            onClick = {
-                                viewModel.updateRegionFilter(region)
-                                expandedRegion = false
-                            }
+                            text = { Text(stringResource(R.string.no_regions)) },
+                            onClick = { },
+                            enabled = false
                         )
+                    } else {
+                        state.availableRegions.forEach { region ->
+                            DropdownMenuItem(
+                                text = { Text(region) },
+                                onClick = {
+                                    viewModel.updateRegionFilter(region)
+                                    expandedRegion = false
+                                }
+                            )
+                        }
                     }
                 }
             }

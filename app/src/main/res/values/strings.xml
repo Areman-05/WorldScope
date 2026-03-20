@@ -13,6 +13,7 @@
     <string name="retry">Reintentar</string>
     <string name="no_results">Ningún país encontrado</string>
     <string name="no_results_filters">Ningun pais con esos filtros</string>
+    <string name="no_regions">No hay regiones</string>
     <string name="flag_description">Bandera de %s</string>
     <string name="add_favorite">Añadir a favoritos</string>
     <string name="remove_favorite">Quitar de favoritos</string>
