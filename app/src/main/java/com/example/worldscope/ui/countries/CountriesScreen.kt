@@ -172,7 +172,11 @@ fun CountriesScreen(
             }
             if (state.hasLoaded && (state.searchQuery.isNotBlank() || state.regionFilter != null || state.sortMode != SortMode.NAME)) {
                 OutlinedButton(
-                    onClick = { viewModel.clearFilters() },
+                    onClick = {
+                        viewModel.clearFilters()
+                        expandedRegion = false
+                        expandedSort = false
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
