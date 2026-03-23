@@ -28,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -54,7 +55,10 @@ fun CountryDetailScreen(
                 },
                 actions = {
                     if (state.country != null) {
-                        IconButton(onClick = { viewModel.toggleFavorite() }) {
+                        IconButton(
+                            onClick = { viewModel.toggleFavorite() },
+                            modifier = Modifier.testTag("country_detail_favorite_toggle")
+                        ) {
                             Icon(
                                 imageVector = if (state.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                                 contentDescription = stringResource(if (state.isFavorite) R.string.remove_favorite else R.string.add_favorite)
@@ -73,7 +77,9 @@ fun CountryDetailScreen(
             when {
                 state.isLoading -> {
                     Column(
-                        modifier = Modifier.align(Alignment.Center),
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .testTag("country_detail_loading"),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
