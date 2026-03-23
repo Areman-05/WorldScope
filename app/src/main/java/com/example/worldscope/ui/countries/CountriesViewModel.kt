@@ -51,6 +51,9 @@ class CountriesViewModel @Inject constructor(
                     onFailure = { e ->
                         _uiState.update {
                             it.copy(
+                                countries = emptyList(),
+                                filteredCountries = emptyList(),
+                                availableRegions = emptyList(),
                                 isLoading = false,
                                 error = e.message,
                                 hasLoaded = true
