@@ -88,7 +88,13 @@ fun AppScaffold() {
             composable(Routes.FAVORITES) {
                 FavoritesScreen(
                     onCountryClick = { code -> navController.navigate(Routes.countryDetail(code)) },
-                    onBackClick = { navController.navigate(Routes.COUNTRIES) }
+                    onBackClick = {
+                        navController.navigate(Routes.COUNTRIES) {
+                            popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
                 )
             }
         }
