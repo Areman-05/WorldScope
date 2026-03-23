@@ -77,7 +77,10 @@ fun FavoritesScreen(
                 items(state.favorites, key = { it.alpha2Code }) { favorite ->
                     FavoriteItem(
                         favorite = favorite,
-                        onClick = { onCountryClick(favorite.alpha2Code) },
+                        onClick = {
+                            val code = favorite.alpha2Code
+                            if (code.isNotBlank()) onCountryClick(code)
+                        },
                         onRemoveClick = { viewModel.removeFavorite(favorite.alpha2Code) }
                     )
                     HorizontalDivider()
