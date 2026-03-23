@@ -76,7 +76,10 @@ fun CountriesScreen(
             Spacer(modifier = Modifier.height(4.dp))
             ExposedDropdownMenuBox(
                 expanded = expandedRegion,
-                onExpandedChange = { expandedRegion = !expandedRegion },
+                onExpandedChange = {
+                    if (state.availableRegions.isNotEmpty()) expandedRegion = !expandedRegion
+                    else expandedRegion = false
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp)
