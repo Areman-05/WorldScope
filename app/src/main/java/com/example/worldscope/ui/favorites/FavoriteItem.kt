@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.worldscope.R
@@ -59,7 +60,10 @@ fun FavoriteItem(
                 )
             }
         }
-        IconButton(onClick = onRemoveClick) {
+        IconButton(
+            onClick = onRemoveClick,
+            modifier = Modifier.testTag("favorite_remove")
+        ) {
             Icon(
                 imageVector = Icons.Filled.Close,
                 contentDescription = stringResource(R.string.remove_favorite)
