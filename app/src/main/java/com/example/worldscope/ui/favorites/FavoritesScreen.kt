@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,7 +60,10 @@ fun FavoritesScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(stringResource(R.string.no_favorites))
+                    Text(
+                        stringResource(R.string.no_favorites),
+                        modifier = Modifier.testTag("favorites_empty")
+                    )
                     OutlinedButton(
                         onClick = onBackClick,
                         modifier = Modifier.padding(top = 12.dp)
@@ -73,6 +77,7 @@ fun FavoritesScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(paddingValues)
+                    .testTag("favorites_list")
             ) {
                 items(state.favorites, key = { it.alpha2Code }) { favorite ->
                     FavoriteItem(
