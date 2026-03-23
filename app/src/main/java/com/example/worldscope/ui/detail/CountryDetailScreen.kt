@@ -122,7 +122,9 @@ private fun CountryDetailContent(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.verticalScroll(rememberScrollState()),
+        modifier = modifier
+            .verticalScroll(rememberScrollState())
+            .testTag("country_detail_content"),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         AsyncImage(
