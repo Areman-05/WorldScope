@@ -49,7 +49,9 @@ fun FavoriteItem(
             AsyncImage(
                 model = favorite.flagUrl,
                 contentDescription = stringResource(R.string.flag_description, favorite.name),
-                modifier = Modifier.size(48.dp, 36.dp)
+                modifier = Modifier
+                    .size(48.dp, 36.dp)
+                    .testTag("favorite_item_flag")
             )
             Column {
                 Text(
