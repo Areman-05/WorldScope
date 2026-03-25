@@ -41,7 +41,8 @@ fun FavoriteItem(
         Row(
             modifier = Modifier
                 .weight(1f)
-                .clickable(onClick = onClick),
+                .clickable(onClick = onClick)
+                .testTag("favorite_item_click"),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
