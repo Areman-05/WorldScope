@@ -190,7 +190,7 @@ private fun CountryDetailContent(
             ) {
                 Text(stringResource(R.string.coordinates), style = MaterialTheme.typography.titleMedium)
                 Text(
-                    "${country.latlng.first}, ${country.latlng.second}",
+                    "%.4f, %.4f".format(country.latlng.first, country.latlng.second),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }
