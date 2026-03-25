@@ -114,7 +114,9 @@ fun CountryDetailScreen(
                 else -> {
                     Text(
                         text = stringResource(R.string.no_data),
-                        modifier = Modifier.align(Alignment.Center)
+                        modifier = Modifier
+                            .align(Alignment.Center)
+                            .testTag("country_detail_no_data")
                     )
                 }
             }
