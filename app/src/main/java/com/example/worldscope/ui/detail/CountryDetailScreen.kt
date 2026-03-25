@@ -97,7 +97,10 @@ fun CountryDetailScreen(
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         Text(text = state.error!!)
-                        Button(onClick = { viewModel.loadCountry() }) {
+                        Button(
+                            onClick = { viewModel.loadCountry() },
+                            modifier = Modifier.testTag("country_detail_retry")
+                        ) {
                             Text(stringResource(R.string.retry))
                         }
                     }
