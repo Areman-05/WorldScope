@@ -6,6 +6,7 @@
     <string name="back">Volver</string>
     <string name="capital">Capital</string>
     <string name="region">Region</string>
+    <string name="subregion">Subregion</string>
     <string name="population">Poblacion</string>
     <string name="languages">Idiomas</string>
     <string name="currencies">Monedas</string>
