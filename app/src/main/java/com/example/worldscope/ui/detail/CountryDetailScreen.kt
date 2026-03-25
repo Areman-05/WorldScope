@@ -166,6 +166,13 @@ private fun CountryDetailContent(
             Text(stringResource(R.string.population), style = MaterialTheme.typography.titleMedium)
             Text("%,d".format(country.population), style = MaterialTheme.typography.bodyLarge)
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(stringResource(R.string.country_code), style = MaterialTheme.typography.titleMedium)
+            Text(country.alpha2Code ?: "-", style = MaterialTheme.typography.bodyLarge)
+        }
         if (country.languages.isNotEmpty()) {
             Text("${stringResource(R.string.languages)}: ${country.languages.joinToString()}", style = MaterialTheme.typography.bodyMedium)
         }
