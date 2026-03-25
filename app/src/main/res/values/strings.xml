@@ -9,6 +9,7 @@
     <string name="subregion">Subregion</string>
     <string name="population">Poblacion</string>
     <string name="country_code">Codigo</string>
+    <string name="coordinates">Coordenadas</string>
     <string name="languages">Idiomas</string>
     <string name="currencies">Monedas</string>
     <string name="no_data">Sin datos</string>

@@ -173,6 +173,18 @@ private fun CountryDetailContent(
             Text(stringResource(R.string.country_code), style = MaterialTheme.typography.titleMedium)
             Text(country.alpha2Code ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
+        if (country.latlng != null) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(stringResource(R.string.coordinates), style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "${country.latlng.first}, ${country.latlng.second}",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
         if (country.languages.isNotEmpty()) {
             Text("${stringResource(R.string.languages)}: ${country.languages.joinToString()}", style = MaterialTheme.typography.bodyMedium)
         }
