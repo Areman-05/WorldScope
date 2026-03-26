@@ -208,7 +208,9 @@ fun CountriesScreen(
                     }
                     state.error != null -> {
                         Column(
-                            modifier = Modifier.align(Alignment.Center),
+                            modifier = Modifier
+                                .align(Alignment.Center)
+                                .testTag("countries_error"),
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
