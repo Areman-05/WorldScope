@@ -183,6 +183,13 @@ private fun CountryDetailContent(
             Text(stringResource(R.string.country_code), style = MaterialTheme.typography.titleMedium)
             Text(country.alpha2Code ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(stringResource(R.string.country_code3), style = MaterialTheme.typography.titleMedium)
+            Text(country.alpha3Code ?: "-", style = MaterialTheme.typography.bodyLarge)
+        }
         if (country.latlng != null) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
