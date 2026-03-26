@@ -51,7 +51,8 @@ fun CountryItem(
             )
             Text(
                 text = "%,d".format(country.population),
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.testTag("country_item_population")
             )
         }
     }
