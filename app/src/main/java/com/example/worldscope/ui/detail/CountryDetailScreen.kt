@@ -190,17 +190,16 @@ private fun CountryDetailContent(
             Text(stringResource(R.string.country_code3), style = MaterialTheme.typography.titleMedium)
             Text(country.alpha3Code ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
-        if (country.latlng != null) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(stringResource(R.string.coordinates), style = MaterialTheme.typography.titleMedium)
-                Text(
-                    "%.4f, %.4f".format(country.latlng.first, country.latlng.second),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-            }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(stringResource(R.string.coordinates), style = MaterialTheme.typography.titleMedium)
+            Text(
+                country.latlng?.let { "%.4f, %.4f".format(it.first, it.second) }
+                    ?: stringResource(R.string.coordinates_unknown),
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
         if (country.languages.isNotEmpty()) {
             Text("${stringResource(R.string.languages)}: ${country.languages.joinToString()}", style = MaterialTheme.typography.bodyMedium)

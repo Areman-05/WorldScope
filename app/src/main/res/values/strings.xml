@@ -11,6 +11,7 @@
     <string name="country_code">Codigo</string>
     <string name="country_code3">Codigo 3</string>
     <string name="coordinates">Coordenadas</string>
+    <string name="coordinates_unknown">Sin coordenadas</string>
     <string name="languages">Idiomas</string>
     <string name="currencies">Monedas</string>
     <string name="no_data">Sin datos</string>
