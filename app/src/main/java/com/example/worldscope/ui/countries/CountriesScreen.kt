@@ -240,7 +240,9 @@ fun CountriesScreen(
                             }
                             Text(
                                 text = msg,
-                                modifier = Modifier.align(Alignment.Center)
+                                modifier = Modifier
+                                    .align(Alignment.Center)
+                                    .testTag("countries_no_results")
                             )
                         }
                     }
