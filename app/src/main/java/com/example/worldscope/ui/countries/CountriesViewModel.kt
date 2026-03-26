@@ -95,6 +95,7 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun updateSortMode(sortMode: SortMode) {
+        if (_uiState.value.sortMode == sortMode) return
         _uiState.update { state ->
             state.copy(
                 sortMode = sortMode,
