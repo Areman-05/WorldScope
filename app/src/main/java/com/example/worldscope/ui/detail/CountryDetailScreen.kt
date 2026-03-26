@@ -49,6 +49,7 @@ fun CountryDetailScreen(
         topBar = {
             TopAppBar(
                 title = { Text(state.country?.name ?: stringResource(R.string.detail)) },
+                modifier = Modifier.testTag("country_detail_topbar"),
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
