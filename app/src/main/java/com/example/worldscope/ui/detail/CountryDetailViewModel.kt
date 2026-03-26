@@ -45,7 +45,7 @@ class CountryDetailViewModel @Inject constructor(
     }
 
     fun loadCountry() {
-        if (code.isBlank()) return
+        if (code.isBlank() || _uiState.value.isLoading) return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null) }
             repository.getCountryByCode(code)
