@@ -151,7 +151,9 @@ private fun CountryDetailContent(
             overflow = TextOverflow.Ellipsis
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("country_detail_coordinates"),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.capital), style = MaterialTheme.typography.titleMedium)
