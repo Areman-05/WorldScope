@@ -38,7 +38,9 @@ fun CountryItem(
         AsyncImage(
             model = country.flagUrl,
             contentDescription = stringResource(R.string.flag_description, country.name),
-            modifier = Modifier.size(48.dp, 36.dp)
+            modifier = Modifier
+                .size(48.dp, 36.dp)
+                .testTag("country_item_flag")
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
