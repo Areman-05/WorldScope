@@ -142,6 +142,7 @@ private fun CountryDetailContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .size(height = 200.dp, width = 300.dp)
+                .testTag("country_detail_flag")
         )
         Text(
             text = country.name,
