@@ -62,7 +62,8 @@ fun FavoriteItem(
                 )
                 Text(
                     text = "%,d".format(favorite.population),
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.testTag("favorite_item_population")
                 )
             }
         }
