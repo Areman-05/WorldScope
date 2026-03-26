@@ -33,6 +33,7 @@ class FavoritesViewModel @Inject constructor(
     }
 
     fun removeFavorite(alpha2Code: String) {
+        if (alpha2Code.isBlank()) return
         viewModelScope.launch {
             favoritesRepository.removeFavorite(alpha2Code)
         }
