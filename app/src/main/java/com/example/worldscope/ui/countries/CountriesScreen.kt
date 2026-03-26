@@ -241,7 +241,9 @@ fun CountriesScreen(
                         }
                     }
                     else -> {
-                        LazyColumn {
+                        LazyColumn(
+                            modifier = Modifier.testTag("countries_list")
+                        ) {
                             items(
                                 state.filteredCountries,
                                 key = { it.alpha2Code ?: it.name }
