@@ -196,7 +196,9 @@ private fun CountryDetailContent(
             Text(country.alpha2Code ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("country_detail_code3"),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.country_code3), style = MaterialTheme.typography.titleMedium)
