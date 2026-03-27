@@ -218,7 +218,11 @@ private fun CountryDetailContent(
             )
         }
         if (country.languages.isNotEmpty()) {
-            Text("${stringResource(R.string.languages)}: ${country.languages.joinToString()}", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                "${stringResource(R.string.languages)}: ${country.languages.joinToString()}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.testTag("country_detail_languages")
+            )
         }
         if (country.currencies.isNotEmpty()) {
             Text("${stringResource(R.string.currencies)}: ${country.currencies.joinToString()}", style = MaterialTheme.typography.bodyMedium)
