@@ -153,7 +153,7 @@ private fun CountryDetailContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .testTag("country_detail_coordinates"),
+                .testTag("country_detail_capital"),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.capital), style = MaterialTheme.typography.titleMedium)
@@ -195,7 +195,9 @@ private fun CountryDetailContent(
             Text(country.alpha3Code ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("country_detail_coordinates"),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.coordinates), style = MaterialTheme.typography.titleMedium)
