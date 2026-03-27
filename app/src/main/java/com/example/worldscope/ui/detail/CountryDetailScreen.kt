@@ -169,7 +169,9 @@ private fun CountryDetailContent(
             Text(country.region ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("country_detail_subregion"),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.subregion), style = MaterialTheme.typography.titleMedium)
