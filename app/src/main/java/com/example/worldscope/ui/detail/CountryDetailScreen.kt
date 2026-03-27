@@ -225,7 +225,11 @@ private fun CountryDetailContent(
             )
         }
         if (country.currencies.isNotEmpty()) {
-            Text("${stringResource(R.string.currencies)}: ${country.currencies.joinToString()}", style = MaterialTheme.typography.bodyMedium)
+            Text(
+                "${stringResource(R.string.currencies)}: ${country.currencies.joinToString()}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.testTag("country_detail_currencies")
+            )
         }
     }
 }
