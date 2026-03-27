@@ -160,7 +160,9 @@ private fun CountryDetailContent(
             Text(country.capital ?: "-", style = MaterialTheme.typography.bodyLarge)
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("country_detail_region"),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.region), style = MaterialTheme.typography.titleMedium)
