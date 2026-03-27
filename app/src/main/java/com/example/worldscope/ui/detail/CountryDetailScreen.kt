@@ -187,7 +187,9 @@ private fun CountryDetailContent(
             Text("%,d".format(country.population), style = MaterialTheme.typography.bodyLarge)
         }
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .testTag("country_detail_code2"),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.country_code), style = MaterialTheme.typography.titleMedium)
