@@ -116,7 +116,8 @@ fun CountriesScreen(
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.no_regions)) },
                             onClick = { },
-                            enabled = false
+                            enabled = false,
+                            modifier = Modifier.testTag("countries_region_empty")
                         )
                     } else {
                         state.availableRegions.forEach { region ->
