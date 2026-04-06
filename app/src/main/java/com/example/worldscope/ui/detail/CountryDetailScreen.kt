@@ -230,7 +230,8 @@ private fun CountryDetailContent(
             Text(
                 country.latlng?.let { "%.4f, %.4f".format(it.first, it.second) }
                     ?: stringResource(R.string.coordinates_unknown),
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.testTag("country_detail_coordinates_value")
             )
         }
         if (country.languages.isNotEmpty()) {
