@@ -51,7 +51,8 @@ fun CountriesScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) }
+                title = { Text(stringResource(R.string.app_name)) },
+                modifier = Modifier.testTag("countries_topbar")
             )
         }
         ) { paddingValues ->
