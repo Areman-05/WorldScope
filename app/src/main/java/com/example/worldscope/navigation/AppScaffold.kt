@@ -72,7 +72,9 @@ fun AppScaffold() {
         NavHost(
             navController = navController,
             startDestination = Routes.COUNTRIES,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier
+                .padding(paddingValues)
+                .testTag("app_nav_host")
         ) {
             composable(Routes.COUNTRIES) {
                 CountriesScreen(
