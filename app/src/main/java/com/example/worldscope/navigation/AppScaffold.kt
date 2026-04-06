@@ -10,6 +10,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -36,7 +38,7 @@ fun AppScaffold() {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar {
+                NavigationBar(modifier = Modifier.testTag("app_bottom_bar")) {
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.route == Routes.COUNTRIES } == true,
                         onClick = {
@@ -47,7 +49,8 @@ fun AppScaffold() {
                             }
                         },
                         icon = { Icon(Icons.Filled.Public, contentDescription = null) },
-                        label = { Text(stringResource(R.string.countries)) }
+                        label = { Text(stringResource(R.string.countries)) },
+                        modifier = Modifier.testTag("nav_countries")
                     )
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.route == Routes.FAVORITES } == true,
@@ -59,7 +62,8 @@ fun AppScaffold() {
                             }
                         },
                         icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
-                        label = { Text(stringResource(R.string.favorites)) }
+                        label = { Text(stringResource(R.string.favorites)) },
+                        modifier = Modifier.testTag("nav_favorites")
                     )
                 }
             }
@@ -68,7 +72,7 @@ fun AppScaffold() {
         NavHost(
             navController = navController,
             startDestination = Routes.COUNTRIES,
-            modifier = androidx.compose.ui.Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues)
         ) {
             composable(Routes.COUNTRIES) {
                 CountriesScreen(
