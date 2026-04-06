@@ -133,7 +133,9 @@ fun CountriesScreen(
             }
             Text(
                 text = stringResource(R.string.sort_by),
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .testTag("countries_sort_label")
             )
             Spacer(modifier = Modifier.height(4.dp))
             ExposedDropdownMenuBox(
