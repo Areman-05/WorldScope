@@ -179,7 +179,8 @@ fun CountriesScreen(
                         onClick = {
                             viewModel.updateSortMode(SortMode.POPULATION)
                             expandedSort = false
-                        }
+                        },
+                        modifier = Modifier.testTag("countries_sort_population")
                     )
                 }
             }
