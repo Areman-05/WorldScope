@@ -171,7 +171,8 @@ fun CountriesScreen(
                         onClick = {
                             viewModel.updateSortMode(SortMode.NAME)
                             expandedSort = false
-                        }
+                        },
+                        modifier = Modifier.testTag("countries_sort_name")
                     )
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.sort_population)) },
