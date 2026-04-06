@@ -44,7 +44,10 @@ fun FavoritesScreen(
                 title = { Text(stringResource(R.string.favorites)) },
                 modifier = Modifier.testTag("favorites_topbar"),
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(
+                        onClick = onBackClick,
+                        modifier = Modifier.testTag("favorites_back")
+                    ) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                     }
                 }
