@@ -42,6 +42,11 @@ class CountriesViewModel @Inject constructor(
                                 countries = list,
                                 availableRegions = availableRegions,
                                 filteredCountries = filtered,
+                                hasActiveFilters = hasActiveFilters(
+                                    state.searchQuery,
+                                    state.regionFilter,
+                                    state.sortMode
+                                ),
                                 isLoading = false,
                                 error = null,
                                 hasLoaded = true
@@ -130,6 +135,12 @@ class CountriesViewModel @Inject constructor(
 
     private fun getAvailableRegions(list: List<Country>): List<String> =
         list.mapNotNull { it.region }.distinct().sorted()
+
+    private fun hasActiveFilters(
+        searchQuery: String,
+        regionFilter: String?,
+        sortMode: SortMode
+    ): Boolean = searchQuery.isNotBlank() || regionFilter != null || sortMode != SortMode.NAME
 
     private fun applyFilters(
         list: List<Country>,
