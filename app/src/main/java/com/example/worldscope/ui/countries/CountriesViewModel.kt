@@ -169,6 +169,7 @@ data class CountriesUiState(
     val availableRegions: List<String> = emptyList(),
     val regionFilter: String? = null,
     val sortMode: SortMode = SortMode.NAME,
+    val hasActiveFilters: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,
     val hasLoaded: Boolean = false,
