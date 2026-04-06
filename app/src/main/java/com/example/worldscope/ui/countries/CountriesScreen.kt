@@ -218,7 +218,10 @@ fun CountriesScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             Text(text = state.error!!)
-                            Button(onClick = { viewModel.loadCountries() }) {
+                            Button(
+                                onClick = { viewModel.loadCountries() },
+                                modifier = Modifier.testTag("countries_retry")
+                            ) {
                                 Text(stringResource(R.string.retry))
                             }
                         }
