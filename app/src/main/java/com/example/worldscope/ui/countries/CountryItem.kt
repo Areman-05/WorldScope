@@ -47,7 +47,8 @@ fun CountryItem(
                 text = country.name,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.testTag("country_item_name")
             )
             Text(
                 text = "%,d".format(country.population),
