@@ -187,6 +187,7 @@ fun CountriesScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 8.dp)
+                        .testTag("countries_clear_filters")
                 ) {
                     Text(stringResource(R.string.clear_filters))
                 }
