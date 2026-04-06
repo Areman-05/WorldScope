@@ -74,7 +74,9 @@ fun CountriesScreen(
             )
             Text(
                 text = stringResource(R.string.region),
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .testTag("countries_region_label")
             )
             Spacer(modifier = Modifier.height(4.dp))
             ExposedDropdownMenuBox(
