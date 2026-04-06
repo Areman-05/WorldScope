@@ -126,6 +126,7 @@ class CountriesViewModel @Inject constructor(
                 searchQuery = clearedQuery,
                 regionFilter = clearedRegion,
                 sortMode = clearedSort,
+                hasActiveFilters = false,
                 filteredCountries = applyFilters(
                     list = state.countries,
                     searchQuery = clearedQuery,
