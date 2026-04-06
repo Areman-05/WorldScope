@@ -201,7 +201,11 @@ private fun CountryDetailContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.country_code), style = MaterialTheme.typography.titleMedium)
-            Text(country.alpha2Code ?: "-", style = MaterialTheme.typography.bodyLarge)
+            Text(
+                country.alpha2Code ?: "-",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.testTag("country_detail_code2_value")
+            )
         }
         Row(
             modifier = Modifier
