@@ -70,7 +70,9 @@ fun FavoritesScreen(
                     )
                     OutlinedButton(
                         onClick = onBackClick,
-                        modifier = Modifier.padding(top = 12.dp)
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .testTag("favorites_go_countries")
                     ) {
                         Text(stringResource(R.string.countries))
                     }
