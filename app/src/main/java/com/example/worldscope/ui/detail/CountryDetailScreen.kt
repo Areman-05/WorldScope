@@ -71,7 +71,10 @@ fun CountryDetailScreen(
                         ) {
                             Icon(
                                 imageVector = if (state.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
-                                contentDescription = stringResource(if (state.isFavorite) R.string.remove_favorite else R.string.add_favorite)
+                                contentDescription = stringResource(if (state.isFavorite) R.string.remove_favorite else R.string.add_favorite),
+                                modifier = Modifier.testTag(
+                                    if (state.isFavorite) "country_detail_favorite_on" else "country_detail_favorite_off"
+                                )
                             )
                         }
                     }
