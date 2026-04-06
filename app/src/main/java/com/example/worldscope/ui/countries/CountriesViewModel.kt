@@ -75,6 +75,7 @@ class CountriesViewModel @Inject constructor(
         _uiState.update { state ->
             state.copy(
                 searchQuery = normalizedQuery,
+                hasActiveFilters = hasActiveFilters(normalizedQuery, state.regionFilter, state.sortMode),
                 filteredCountries = applyFilters(
                     list = state.countries,
                     searchQuery = normalizedQuery,
