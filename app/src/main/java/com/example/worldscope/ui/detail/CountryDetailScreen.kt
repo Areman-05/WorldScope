@@ -48,7 +48,12 @@ fun CountryDetailScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.country?.name ?: stringResource(R.string.detail)) },
+                title = {
+                    Text(
+                        state.country?.name ?: stringResource(R.string.detail),
+                        modifier = Modifier.testTag("country_detail_title")
+                    )
+                },
                 modifier = Modifier.testTag("country_detail_topbar"),
                 navigationIcon = {
                     IconButton(
