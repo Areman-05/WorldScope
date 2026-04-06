@@ -30,6 +30,7 @@ fun CountryItem(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
+            .testTag("country_item_click_area")
             .testTag("country_item")
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
