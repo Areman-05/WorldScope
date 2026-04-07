@@ -27,7 +27,7 @@ class FavoritesViewModel @Inject constructor(
     fun loadFavorites() {
         viewModelScope.launch {
             favoritesRepository.getAllFavorites().collect { list ->
-                _uiState.update { it.copy(favorites = list) }
+                _uiState.update { it.copy(favorites = list, hasLoaded = true) }
             }
         }
     }
