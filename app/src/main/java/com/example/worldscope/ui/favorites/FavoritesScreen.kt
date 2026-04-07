@@ -76,7 +76,10 @@ fun FavoritesScreen(
                             .padding(top = 12.dp)
                             .testTag("favorites_go_countries")
                     ) {
-                        Text(stringResource(R.string.countries))
+                        Text(
+                            stringResource(R.string.countries),
+                            modifier = Modifier.testTag("favorites_go_countries_text")
+                        )
                     }
                 }
             }
