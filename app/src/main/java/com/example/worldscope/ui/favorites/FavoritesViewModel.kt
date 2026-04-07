@@ -41,5 +41,6 @@ class FavoritesViewModel @Inject constructor(
 }
 
 data class FavoritesUiState(
-    val favorites: List<FavoriteCountryEntity> = emptyList()
+    val favorites: List<FavoriteCountryEntity> = emptyList(),
+    val hasLoaded: Boolean = false
 )
