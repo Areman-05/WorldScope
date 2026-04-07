@@ -68,5 +68,6 @@ data class CountryDetailUiState(
     val country: Country? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val hasLoaded: Boolean = false
 )
