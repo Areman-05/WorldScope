@@ -47,12 +47,12 @@ class CountryDetailViewModel @Inject constructor(
     fun loadCountry() {
         if (code.isBlank() || _uiState.value.isLoading) return
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null) }
+            _uiState.update { it.copy(isLoading = true, error = null, hasLoaded = false) }
             repository.getCountryByCode(code)
                 .onSuccess { country ->
                     val isFav = favoritesRepository.isFavorite(country.alpha2Code ?: "")
                     _uiState.update {
-                        it.copy(country = country, isLoading = false, error = null, isFavorite = isFav)
+                        it.copy(country = country, isLoading = false, error = null, isFavorite = isFav, hasLoaded = true)
                     }
                 }
                 .onFailure { e ->
