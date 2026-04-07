@@ -116,7 +116,10 @@ fun CountryDetailScreen(
                             onClick = { viewModel.loadCountry() },
                             modifier = Modifier.testTag("country_detail_retry")
                         ) {
-                            Text(stringResource(R.string.retry))
+                            Text(
+                                stringResource(R.string.retry),
+                                modifier = Modifier.testTag("country_detail_retry_text")
+                            )
                         }
                     }
                 }
