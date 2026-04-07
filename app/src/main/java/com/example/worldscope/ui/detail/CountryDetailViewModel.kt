@@ -31,6 +31,7 @@ class CountryDetailViewModel @Inject constructor(
     }
 
     fun toggleFavorite() {
+        if (_uiState.value.isLoading) return
         viewModelScope.launch {
             val country = _uiState.value.country ?: return@launch
             val alpha2 = country.alpha2Code ?: return@launch
