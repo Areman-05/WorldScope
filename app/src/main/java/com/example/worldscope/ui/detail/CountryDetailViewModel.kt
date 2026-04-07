@@ -57,7 +57,7 @@ class CountryDetailViewModel @Inject constructor(
                 }
                 .onFailure { e ->
                     _uiState.update {
-                        it.copy(isLoading = false, error = e.message)
+                        it.copy(isLoading = false, error = e.message, hasLoaded = true)
                     }
                 }
         }
