@@ -63,6 +63,7 @@ fun FavoritesScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Column(
+                    modifier = Modifier.testTag("favorites_empty_content"),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
