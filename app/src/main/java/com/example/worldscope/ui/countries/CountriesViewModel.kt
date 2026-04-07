@@ -73,6 +73,7 @@ class CountriesViewModel @Inject constructor(
 
     fun updateSearchQuery(query: String) {
         val normalizedQuery = query.trimStart()
+        if (_uiState.value.searchQuery == normalizedQuery) return
         _uiState.update { state ->
             state.copy(
                 searchQuery = normalizedQuery,
