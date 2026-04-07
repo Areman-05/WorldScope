@@ -58,7 +58,8 @@ fun FavoritesScreen(
             Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(paddingValues)
+                    .testTag("favorites_empty_container"),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
