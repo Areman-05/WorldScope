@@ -99,7 +99,7 @@ fun FavoritesScreen(
                         },
                         onRemoveClick = { viewModel.removeFavorite(favorite.alpha2Code) }
                     )
-                    HorizontalDivider()
+                    HorizontalDivider(modifier = Modifier.testTag("favorites_divider"))
                 }
             }
         }
