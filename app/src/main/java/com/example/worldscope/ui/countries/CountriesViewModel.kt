@@ -121,6 +121,7 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun clearFilters() {
+        if (!_uiState.value.hasActiveFilters) return
         val clearedQuery = ""
         val clearedRegion: String? = null
         val clearedSort = SortMode.NAME
