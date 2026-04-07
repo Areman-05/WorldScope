@@ -264,6 +264,7 @@ fun CountriesScreen(
                                 modifier = Modifier
                                     .align(Alignment.Center)
                                     .testTag("countries_no_results")
+                                    .testTag("countries_no_results_text")
                             )
                         }
                     }
