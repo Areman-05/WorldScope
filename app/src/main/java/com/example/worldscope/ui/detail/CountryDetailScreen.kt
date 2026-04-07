@@ -168,7 +168,11 @@ private fun CountryDetailContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.capital), style = MaterialTheme.typography.titleMedium)
-            Text(country.capital ?: "-", style = MaterialTheme.typography.bodyLarge)
+            Text(
+                country.capital ?: "-",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.testTag("country_detail_capital_value")
+            )
         }
         Row(
             modifier = Modifier
