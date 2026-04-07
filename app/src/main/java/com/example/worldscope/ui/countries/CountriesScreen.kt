@@ -214,7 +214,10 @@ fun CountriesScreen(
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             CircularProgressIndicator()
-                            Text(stringResource(R.string.loading))
+                            Text(
+                                stringResource(R.string.loading),
+                                modifier = Modifier.testTag("countries_loading_text")
+                            )
                         }
                     }
                     state.error != null -> {
