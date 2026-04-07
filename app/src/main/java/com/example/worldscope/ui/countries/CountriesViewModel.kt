@@ -59,6 +59,7 @@ class CountriesViewModel @Inject constructor(
                                 countries = emptyList(),
                                 filteredCountries = emptyList(),
                                 availableRegions = emptyList(),
+                                hasActiveFilters = false,
                                 isLoading = false,
                                 error = e.message,
                                 hasLoaded = true
