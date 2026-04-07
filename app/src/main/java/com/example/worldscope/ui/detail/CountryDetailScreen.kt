@@ -207,7 +207,11 @@ private fun CountryDetailContent(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(stringResource(R.string.population), style = MaterialTheme.typography.titleMedium)
-            Text("%,d".format(country.population), style = MaterialTheme.typography.bodyLarge)
+            Text(
+                "%,d".format(country.population),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.testTag("country_detail_population_value")
+            )
         }
         Row(
             modifier = Modifier
