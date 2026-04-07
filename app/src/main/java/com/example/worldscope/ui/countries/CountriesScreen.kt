@@ -228,7 +228,10 @@ fun CountriesScreen(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
-                            Text(text = state.error!!)
+                            Text(
+                                text = state.error!!,
+                                modifier = Modifier.testTag("countries_error_text")
+                            )
                             Button(
                                 onClick = { viewModel.loadCountries() },
                                 modifier = Modifier.testTag("countries_retry")
