@@ -54,7 +54,17 @@ fun FavoritesScreen(
             )
         }
     ) { paddingValues ->
-        if (state.favorites.isEmpty()) {
+        if (!state.hasLoaded) {
+            Box(
+                modifier = modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .testTag("favorites_loading"),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(stringResource(R.string.loading))
+            }
+        } else if (state.favorites.isEmpty()) {
             Box(
                 modifier = modifier
                     .fillMaxSize()
