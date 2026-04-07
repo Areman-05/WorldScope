@@ -88,6 +88,7 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun updateRegionFilter(region: String?) {
+        if (_uiState.value.regionFilter == region) return
         _uiState.update { state ->
             state.copy(
                 regionFilter = region,
