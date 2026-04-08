@@ -114,7 +114,12 @@ class CountryDetailViewModel @Inject constructor(
     }
 
     private fun extractCurrencyCode(country: Country): String? =
-        country.currencies.firstOrNull()?.take(3)?.uppercase()
+        country.currencies.firstOrNull()
+            ?.trim()
+            ?.take(3)
+            ?.uppercase()
+            ?.takeIf { it.length == 3 && it.all(Char::isLetter) }
+            ?: "USD"
 }
 
 data class CountryDetailUiState(
