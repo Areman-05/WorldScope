@@ -3,9 +3,13 @@ package com.example.worldscope.ui.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.worldscope.domain.model.ExchangeInfo
 import com.example.worldscope.domain.model.Country
+import com.example.worldscope.domain.model.WeatherInfo
 import com.example.worldscope.data.repository.CountriesRepository
+import com.example.worldscope.data.repository.ExchangeRateRepository
 import com.example.worldscope.data.repository.FavoritesRepository
+import com.example.worldscope.data.repository.WeatherRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +22,8 @@ import javax.inject.Inject
 class CountryDetailViewModel @Inject constructor(
     private val repository: CountriesRepository,
     private val favoritesRepository: FavoritesRepository,
+    private val weatherRepository: WeatherRepository,
+    private val exchangeRateRepository: ExchangeRateRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -74,5 +80,9 @@ data class CountryDetailUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val isFavorite: Boolean = false,
-    val hasLoaded: Boolean = false
+    val hasLoaded: Boolean = false,
+    val weatherInfo: WeatherInfo? = null,
+    val exchangeInfo: ExchangeInfo? = null,
+    val isLoadingWeather: Boolean = false,
+    val isLoadingExchange: Boolean = false
 )
