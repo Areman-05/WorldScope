@@ -10,13 +10,14 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 
 /** Módulo Hilt que provee Retrofit, OkHttp y CountriesApi. */
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    private const val BASE_URL = "https://restcountries.com/"
+    private const val COUNTRIES_BASE_URL = "https://restcountries.com/"
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
@@ -26,13 +27,14 @@ object NetworkModule {
         .build()
 
     @Provides
-    fun provideRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+    @Named("countries")
+    fun provideCountriesRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(COUNTRIES_BASE_URL)
         .client(client)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
     @Provides
-    fun provideCountriesApi(retrofit: Retrofit): CountriesApi =
+    fun provideCountriesApi(@Named("countries") retrofit: Retrofit): CountriesApi =
         retrofit.create(CountriesApi::class.java)
 }
