@@ -285,27 +285,47 @@ private fun CountryDetailContent(
         }
         Text(
             text = stringResource(R.string.weather),
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.testTag("country_detail_weather_title")
         )
         if (isLoadingWeather) {
             Text(stringResource(R.string.loading))
         } else if (weatherInfo != null) {
-            Text("${stringResource(R.string.temperature)}: ${weatherInfo.temperatureCelsius ?: "-"}")
-            Text("${stringResource(R.string.feels_like)}: ${weatherInfo.feelsLikeCelsius ?: "-"}")
-            Text("${stringResource(R.string.humidity)}: ${weatherInfo.humidity ?: "-"}")
-            Text(weatherInfo.description ?: weatherInfo.condition ?: "-")
+            Text(
+                "${stringResource(R.string.temperature)}: ${weatherInfo.temperatureCelsius ?: "-"}",
+                modifier = Modifier.testTag("country_detail_weather_temp")
+            )
+            Text(
+                "${stringResource(R.string.feels_like)}: ${weatherInfo.feelsLikeCelsius ?: "-"}",
+                modifier = Modifier.testTag("country_detail_weather_feels_like")
+            )
+            Text(
+                "${stringResource(R.string.humidity)}: ${weatherInfo.humidity ?: "-"}",
+                modifier = Modifier.testTag("country_detail_weather_humidity")
+            )
+            Text(
+                weatherInfo.description ?: weatherInfo.condition ?: "-",
+                modifier = Modifier.testTag("country_detail_weather_description")
+            )
         } else {
             Text(stringResource(R.string.no_data))
         }
         Text(
             text = stringResource(R.string.exchange_rate),
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.testTag("country_detail_exchange_title")
         )
         if (isLoadingExchange) {
             Text(stringResource(R.string.loading))
         } else if (exchangeInfo != null) {
-            Text(stringResource(R.string.from_to_format, exchangeInfo.baseCode, exchangeInfo.targetCode))
-            Text(exchangeInfo.rate?.toString() ?: stringResource(R.string.unknown_rate))
+            Text(
+                stringResource(R.string.from_to_format, exchangeInfo.baseCode, exchangeInfo.targetCode),
+                modifier = Modifier.testTag("country_detail_exchange_pair")
+            )
+            Text(
+                exchangeInfo.rate?.toString() ?: stringResource(R.string.unknown_rate),
+                modifier = Modifier.testTag("country_detail_exchange_rate")
+            )
         } else {
             Text(stringResource(R.string.no_data))
         }
