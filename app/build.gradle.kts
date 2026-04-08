@@ -18,6 +18,7 @@ android {
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "OPEN_WEATHER_API_KEY", "\"\"")
+        buildConfigField("String", "EXCHANGE_RATE_API_KEY", "\"\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
