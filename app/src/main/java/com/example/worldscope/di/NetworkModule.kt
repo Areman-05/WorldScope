@@ -1,6 +1,7 @@
 package com.example.worldscope.di
 
 import com.example.worldscope.data.remote.api.CountriesApi
+import com.example.worldscope.data.remote.api.ExchangeRateApi
 import com.example.worldscope.data.remote.api.WeatherApi
 import dagger.Module
 import dagger.Provides
@@ -20,6 +21,7 @@ object NetworkModule {
 
     private const val COUNTRIES_BASE_URL = "https://restcountries.com/"
     private const val WEATHER_BASE_URL = "https://api.openweathermap.org/"
+    private const val EXCHANGE_RATE_BASE_URL = "https://v6.exchangerate-api.com/"
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
@@ -51,4 +53,16 @@ object NetworkModule {
     @Provides
     fun provideWeatherApi(@Named("weather") retrofit: Retrofit): WeatherApi =
         retrofit.create(WeatherApi::class.java)
+
+    @Provides
+    @Named("exchange")
+    fun provideExchangeRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(EXCHANGE_RATE_BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    @Provides
+    fun provideExchangeRateApi(@Named("exchange") retrofit: Retrofit): ExchangeRateApi =
+        retrofit.create(ExchangeRateApi::class.java)
 }
