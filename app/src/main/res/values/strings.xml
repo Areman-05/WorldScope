@@ -12,6 +12,13 @@
     <string name="country_code3">Codigo 3</string>
     <string name="coordinates">Coordenadas</string>
     <string name="coordinates_unknown">Sin coordenadas</string>
+    <string name="weather">Clima</string>
+    <string name="temperature">Temperatura</string>
+    <string name="feels_like">Sensacion termica</string>
+    <string name="humidity">Humedad</string>
+    <string name="exchange_rate">Cambio divisa</string>
+    <string name="from_to_format">%1$s a %2$s</string>
+    <string name="unknown_rate">Sin tasa</string>
     <string name="languages">Idiomas</string>
     <string name="currencies">Monedas</string>
     <string name="no_data">Sin datos</string>
