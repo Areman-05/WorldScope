@@ -1,6 +1,7 @@
 package com.example.worldscope.di
 
 import com.example.worldscope.data.remote.api.CountriesApi
+import com.example.worldscope.data.remote.api.WeatherApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,6 +19,7 @@ import javax.inject.Named
 object NetworkModule {
 
     private const val COUNTRIES_BASE_URL = "https://restcountries.com/"
+    private const val WEATHER_BASE_URL = "https://api.openweathermap.org/"
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
@@ -37,4 +39,16 @@ object NetworkModule {
     @Provides
     fun provideCountriesApi(@Named("countries") retrofit: Retrofit): CountriesApi =
         retrofit.create(CountriesApi::class.java)
+
+    @Provides
+    @Named("weather")
+    fun provideWeatherRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(WEATHER_BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    @Provides
+    fun provideWeatherApi(@Named("weather") retrofit: Retrofit): WeatherApi =
+        retrofit.create(WeatherApi::class.java)
 }
