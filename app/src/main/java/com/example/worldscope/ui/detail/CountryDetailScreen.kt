@@ -35,6 +35,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.worldscope.R
 import com.example.worldscope.domain.model.Country
+import com.example.worldscope.domain.model.ExchangeInfo
+import com.example.worldscope.domain.model.WeatherInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -126,6 +128,10 @@ fun CountryDetailScreen(
                 state.country != null -> {
                     CountryDetailContent(
                         country = state.country!!,
+                        weatherInfo = state.weatherInfo,
+                        exchangeInfo = state.exchangeInfo,
+                        isLoadingWeather = state.isLoadingWeather,
+                        isLoadingExchange = state.isLoadingExchange,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -145,6 +151,10 @@ fun CountryDetailScreen(
 @Composable
 private fun CountryDetailContent(
     country: Country,
+    weatherInfo: WeatherInfo?,
+    exchangeInfo: ExchangeInfo?,
+    isLoadingWeather: Boolean,
+    isLoadingExchange: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -272,6 +282,32 @@ private fun CountryDetailContent(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.testTag("country_detail_currencies")
             )
+        }
+        Text(
+            text = stringResource(R.string.weather),
+            style = MaterialTheme.typography.titleMedium
+        )
+        if (isLoadingWeather) {
+            Text(stringResource(R.string.loading))
+        } else if (weatherInfo != null) {
+            Text("${stringResource(R.string.temperature)}: ${weatherInfo.temperatureCelsius ?: "-"}")
+            Text("${stringResource(R.string.feels_like)}: ${weatherInfo.feelsLikeCelsius ?: "-"}")
+            Text("${stringResource(R.string.humidity)}: ${weatherInfo.humidity ?: "-"}")
+            Text(weatherInfo.description ?: weatherInfo.condition ?: "-")
+        } else {
+            Text(stringResource(R.string.no_data))
+        }
+        Text(
+            text = stringResource(R.string.exchange_rate),
+            style = MaterialTheme.typography.titleMedium
+        )
+        if (isLoadingExchange) {
+            Text(stringResource(R.string.loading))
+        } else if (exchangeInfo != null) {
+            Text(stringResource(R.string.from_to_format, exchangeInfo.baseCode, exchangeInfo.targetCode))
+            Text(exchangeInfo.rate?.toString() ?: stringResource(R.string.unknown_rate))
+        } else {
+            Text(stringResource(R.string.no_data))
         }
     }
 }
