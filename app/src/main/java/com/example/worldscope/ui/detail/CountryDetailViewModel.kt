@@ -66,6 +66,8 @@ class CountryDetailViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(country = country, isLoading = false, error = null, isFavorite = isFav, hasLoaded = true)
                     }
+                    loadWeather(country)
+                    loadExchangeRate(country)
                 }
                 .onFailure { e ->
                     _uiState.update {
