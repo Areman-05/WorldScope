@@ -19,8 +19,8 @@ class WorldBankRepository @Inject constructor(
         )
     }
 
-    private fun parseFirstNumericValue(json: String): Double? =
-        try {
+    private fun parseFirstNumericValue(json: String): Double? {
+        return try {
             val root = JSONArray(json)
             if (root.length() < 2) return null
             val data = root.getJSONArray(1)
@@ -33,6 +33,7 @@ class WorldBankRepository @Inject constructor(
         } catch (_: Exception) {
             null
         }
+    }
 
     companion object {
         private const val INDICATOR_GDP_USD = "NY.GDP.MKTP.CD"
