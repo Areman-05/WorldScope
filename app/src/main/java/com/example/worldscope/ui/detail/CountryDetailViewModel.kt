@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.worldscope.BuildConfig
+import com.example.worldscope.domain.model.EconomicInfo
 import com.example.worldscope.domain.model.ExchangeInfo
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.domain.model.WeatherInfo
@@ -11,6 +12,7 @@ import com.example.worldscope.data.repository.CountriesRepository
 import com.example.worldscope.data.repository.ExchangeRateRepository
 import com.example.worldscope.data.repository.FavoritesRepository
 import com.example.worldscope.data.repository.WeatherRepository
+import com.example.worldscope.data.repository.WorldBankRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +27,7 @@ class CountryDetailViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
     private val weatherRepository: WeatherRepository,
     private val exchangeRateRepository: ExchangeRateRepository,
+    private val worldBankRepository: WorldBankRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -68,6 +71,7 @@ class CountryDetailViewModel @Inject constructor(
                     }
                     loadWeather(country)
                     loadExchangeRate(country)
+                    loadEconomic(country)
                 }
                 .onFailure { e ->
                     _uiState.update {
@@ -95,6 +99,20 @@ class CountryDetailViewModel @Inject constructor(
         }
     }
 
+    private fun loadEconomic(country: Country) {
+        val iso2 = country.alpha2Code ?: return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingEconomic = true) }
+            worldBankRepository.getEconomicInfo(iso2)
+                .onSuccess { info ->
+                    _uiState.update { it.copy(economicInfo = info, isLoadingEconomic = false) }
+                }
+                .onFailure {
+                    _uiState.update { it.copy(isLoadingEconomic = false) }
+                }
+        }
+    }
+
     private fun loadExchangeRate(country: Country) {
         if (BuildConfig.EXCHANGE_RATE_API_KEY.isBlank()) return
         val baseCode = extractCurrencyCode(country) ?: return
@@ -114,11 +132,7 @@ class CountryDetailViewModel @Inject constructor(
     }
 
     private fun extractCurrencyCode(country: Country): String? =
-        country.currencies.firstOrNull()
-            ?.trim()
-            ?.take(3)
-            ?.uppercase()
-            ?.takeIf { it.length == 3 && it.all(Char::isLetter) }
+        country.currencyCodes.firstOrNull()?.uppercase()?.takeIf { it.length == 3 }
             ?: "USD"
 }
 
@@ -131,5 +145,7 @@ data class CountryDetailUiState(
     val weatherInfo: WeatherInfo? = null,
     val exchangeInfo: ExchangeInfo? = null,
     val isLoadingWeather: Boolean = false,
-    val isLoadingExchange: Boolean = false
+    val isLoadingExchange: Boolean = false,
+    val economicInfo: EconomicInfo? = null,
+    val isLoadingEconomic: Boolean = false
 )
