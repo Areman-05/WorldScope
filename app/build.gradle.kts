@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.example.worldscope"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.worldscope"
