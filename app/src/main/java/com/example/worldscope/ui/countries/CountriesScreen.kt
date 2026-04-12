@@ -1,3 +1,4 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
 package com.example.worldscope.ui.countries
 
 import androidx.compose.foundation.layout.Arrangement
@@ -9,11 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExposedDropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -33,8 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardOptions
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
 
@@ -72,6 +75,29 @@ fun CountriesScreen(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
             )
+            if (state.recentVisits.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.recent_title),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .testTag("countries_recent_title")
+                )
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .testTag("countries_recent_row")
+                ) {
+                    items(state.recentVisits, key = { it.alpha2Code }) { recent ->
+                        AssistChip(
+                            onClick = { onCountryClick(recent.alpha2Code) },
+                            label = { Text(recent.name) },
+                            modifier = Modifier.testTag("countries_recent_${recent.alpha2Code}")
+                        )
+                    }
+                }
+            }
             Text(
                 text = stringResource(R.string.region),
                 modifier = Modifier
