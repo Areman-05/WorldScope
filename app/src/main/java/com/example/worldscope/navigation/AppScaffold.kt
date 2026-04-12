@@ -1,6 +1,8 @@
 package com.example.worldscope.navigation
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CompareArrows
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Icon
@@ -8,6 +10,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -15,17 +18,19 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
+import com.example.worldscope.ui.compare.CompareScreen
 import com.example.worldscope.ui.countries.CountriesScreen
 import com.example.worldscope.ui.detail.CountryDetailScreen
 import com.example.worldscope.ui.favorites.FavoritesScreen
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavType
-import androidx.navigation.navArgument
+import com.example.worldscope.ui.quiz.QuizScreen
 
 @Composable
 fun AppScaffold() {
@@ -65,6 +70,32 @@ fun AppScaffold() {
                         label = { Text(stringResource(R.string.favorites)) },
                         modifier = Modifier.testTag("nav_favorites")
                     )
+                    NavigationBarItem(
+                        selected = currentDestination?.hierarchy?.any { it.route == Routes.COMPARE } == true,
+                        onClick = {
+                            navController.navigate(Routes.COMPARE) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = { Icon(Icons.Filled.CompareArrows, contentDescription = null) },
+                        label = { Text(stringResource(R.string.compare_title)) },
+                        modifier = Modifier.testTag("nav_compare")
+                    )
+                    NavigationBarItem(
+                        selected = currentDestination?.hierarchy?.any { it.route == Routes.QUIZ } == true,
+                        onClick = {
+                            navController.navigate(Routes.QUIZ) {
+                                popUpTo(navController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        icon = { Icon(Icons.Filled.EmojiEvents, contentDescription = null) },
+                        label = { Text(stringResource(R.string.quiz_title)) },
+                        modifier = Modifier.testTag("nav_quiz")
+                    )
                 }
             }
         }
@@ -103,7 +134,12 @@ fun AppScaffold() {
                     }
                 )
             }
+            composable(Routes.COMPARE) {
+                CompareScreen()
+            }
+            composable(Routes.QUIZ) {
+                QuizScreen()
+            }
         }
     }
 }
-
