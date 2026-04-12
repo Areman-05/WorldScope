@@ -35,8 +35,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.worldscope.R
 import com.example.worldscope.domain.model.Country
+import com.example.worldscope.domain.model.EconomicInfo
 import com.example.worldscope.domain.model.ExchangeInfo
 import com.example.worldscope.domain.model.WeatherInfo
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -130,8 +132,10 @@ fun CountryDetailScreen(
                         country = state.country!!,
                         weatherInfo = state.weatherInfo,
                         exchangeInfo = state.exchangeInfo,
+                        economicInfo = state.economicInfo,
                         isLoadingWeather = state.isLoadingWeather,
                         isLoadingExchange = state.isLoadingExchange,
+                        isLoadingEconomic = state.isLoadingEconomic,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -153,8 +157,10 @@ private fun CountryDetailContent(
     country: Country,
     weatherInfo: WeatherInfo?,
     exchangeInfo: ExchangeInfo?,
+    economicInfo: EconomicInfo?,
     isLoadingWeather: Boolean,
     isLoadingExchange: Boolean,
+    isLoadingEconomic: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -284,6 +290,25 @@ private fun CountryDetailContent(
             )
         }
         Text(
+            text = stringResource(R.string.economy),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.testTag("country_detail_economy_title")
+        )
+        if (isLoadingEconomic) {
+            Text(stringResource(R.string.loading))
+        } else if (economicInfo != null) {
+            Text(
+                "${stringResource(R.string.gdp_usd)}: ${formatGdpUsd(economicInfo.gdpUsd)}",
+                modifier = Modifier.testTag("country_detail_economy_gdp")
+            )
+            Text(
+                "${stringResource(R.string.inflation)}: ${formatInflation(economicInfo.inflationPercent)}",
+                modifier = Modifier.testTag("country_detail_economy_inflation")
+            )
+        } else {
+            Text(stringResource(R.string.no_data))
+        }
+        Text(
             text = stringResource(R.string.weather),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.testTag("country_detail_weather_title")
@@ -331,3 +356,9 @@ private fun CountryDetailContent(
         }
     }
 }
+
+private fun formatGdpUsd(value: Double?): String =
+    value?.let { v -> String.format(Locale.US, "%,.0f USD", v) } ?: "-"
+
+private fun formatInflation(value: Double?): String =
+    value?.let { v -> String.format(Locale.US, "%.2f %%", v) } ?: "-"
