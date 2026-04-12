@@ -11,6 +11,7 @@ import com.example.worldscope.domain.model.WeatherInfo
 import com.example.worldscope.data.repository.CountriesRepository
 import com.example.worldscope.data.repository.ExchangeRateRepository
 import com.example.worldscope.data.repository.FavoritesRepository
+import com.example.worldscope.data.repository.RecentCountriesRepository
 import com.example.worldscope.data.repository.WeatherRepository
 import com.example.worldscope.data.repository.WorldBankRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +29,7 @@ class CountryDetailViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val exchangeRateRepository: ExchangeRateRepository,
     private val worldBankRepository: WorldBankRepository,
+    private val recentCountriesRepository: RecentCountriesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -68,6 +70,11 @@ class CountryDetailViewModel @Inject constructor(
                     val isFav = favoritesRepository.isFavorite(country.alpha2Code ?: "")
                     _uiState.update {
                         it.copy(country = country, isLoading = false, error = null, isFavorite = isFav, hasLoaded = true)
+                    }
+                    country.alpha2Code?.let { alpha2 ->
+                        viewModelScope.launch {
+                            recentCountriesRepository.recordVisit(alpha2, country.name)
+                        }
                     }
                     loadWeather(country)
                     loadExchangeRate(country)
