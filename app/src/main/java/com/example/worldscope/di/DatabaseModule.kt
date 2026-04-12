@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import com.example.worldscope.data.local.WorldScopeDatabase
 import com.example.worldscope.data.local.dao.FavoriteDao
+import com.example.worldscope.data.local.dao.RecentCountryDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,9 +24,14 @@ object DatabaseModule {
             context,
             WorldScopeDatabase::class.java,
             "worldscope_db"
-        ).build()
+        ).addMigrations(WorldScopeDatabase.MIGRATION_1_2)
+            .build()
 
     @Provides
     fun provideFavoriteDao(database: WorldScopeDatabase): FavoriteDao =
         database.favoriteDao()
+
+    @Provides
+    fun provideRecentCountryDao(database: WorldScopeDatabase): RecentCountryDao =
+        database.recentCountryDao()
 }
