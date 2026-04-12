@@ -2,8 +2,10 @@ package com.example.worldscope.ui.countries
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.worldscope.data.local.entity.RecentCountryEntity
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.data.repository.CountriesRepository
+import com.example.worldscope.data.repository.RecentCountriesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CountriesViewModel @Inject constructor(
-    private val repository: CountriesRepository
+    private val repository: CountriesRepository,
+    private val recentCountriesRepository: RecentCountriesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CountriesUiState())
@@ -22,6 +25,11 @@ class CountriesViewModel @Inject constructor(
 
     init {
         loadCountries()
+        viewModelScope.launch {
+            recentCountriesRepository.observeRecent().collect { list ->
+                _uiState.update { it.copy(recentVisits = list) }
+            }
+        }
     }
 
     fun loadCountries() {
@@ -183,6 +191,7 @@ enum class SortMode {
 }
 
 data class CountriesUiState(
+    val recentVisits: List<RecentCountryEntity> = emptyList(),
     val countries: List<Country> = emptyList(),
     val filteredCountries: List<Country> = emptyList(),
     val availableRegions: List<String> = emptyList(),
