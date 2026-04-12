@@ -40,4 +40,21 @@
     <string name="sort_name">Nombre</string>
     <string name="sort_population">Poblacion</string>
     <string name="clear_filters">Limpiar filtros</string>
+    <string name="compare_title">Comparador</string>
+    <string name="compare_country_a">Pais A</string>
+    <string name="compare_country_b">Pais B</string>
+    <string name="compare_run">Comparar</string>
+    <string name="compare_need_two">Selecciona dos paises</string>
+    <string name="compare_same_country">Elige dos paises distintos</string>
+    <string name="compare_results">Resultados</string>
+    <string name="quiz_title">Quiz</string>
+    <string name="quiz_start">Nueva pregunta</string>
+    <string name="quiz_question_capital">Cual es la capital de %1$s?</string>
+    <string name="quiz_correct">Correcto</string>
+    <string name="quiz_wrong">Incorrecto</string>
+    <string name="quiz_next">Siguiente</string>
+    <string name="quiz_score_format">Puntos: %1$d / rondas: %2$d</string>
+    <string name="quiz_reset">Reiniciar puntuacion</string>
+    <string name="quiz_not_enough_data">No hay suficientes paises para el quiz</string>
+    <string name="recent_title">Vistos recientemente</string>
 </resources>
