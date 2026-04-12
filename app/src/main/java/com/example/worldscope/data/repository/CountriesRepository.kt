@@ -33,7 +33,10 @@ class CountriesRepository @Inject constructor(
         population = population ?: 0L,
         flagUrl = flags?.png,
         languages = languages?.values?.toList() ?: emptyList(),
-        currencies = currencies?.mapNotNull { "${it.value.name} (${it.value.symbol ?: ""})" } ?: emptyList(),
+        currencyCodes = currencies?.keys?.map { it.uppercase() } ?: emptyList(),
+        currencies = currencies?.mapNotNull { (code, cur) ->
+            "${cur.name} (${cur.symbol ?: ""}) — $code"
+        } ?: emptyList(),
         alpha2Code = alpha2Code,
         alpha3Code = alpha3Code,
         latlng = latlng?.let { list -> if (list.size >= 2) Pair(list[0], list[1]) else null }

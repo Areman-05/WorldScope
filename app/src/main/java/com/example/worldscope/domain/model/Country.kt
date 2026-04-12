@@ -9,7 +9,10 @@ data class Country(
     val population: Long,
     val flagUrl: String?,
     val languages: List<String>,
+    /** Etiquetas legibles de moneda. */
     val currencies: List<String>,
+    /** Codigos ISO de moneda (p. ej. EUR) desde RestCountries. */
+    val currencyCodes: List<String> = emptyList(),
     val alpha2Code: String?,
     val alpha3Code: String?,
     val latlng: Pair<Double, Double>?
