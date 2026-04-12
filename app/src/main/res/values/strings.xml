@@ -16,6 +16,9 @@
     <string name="temperature">Temperatura</string>
     <string name="feels_like">Sensacion termica</string>
     <string name="humidity">Humedad</string>
+    <string name="economy">Economia</string>
+    <string name="gdp_usd">PIB nominal (USD)</string>
+    <string name="inflation">Inflacion anual %</string>
     <string name="exchange_rate">Cambio divisa</string>
     <string name="from_to_format">%1$s a %2$s</string>
     <string name="unknown_rate">Sin tasa</string>
