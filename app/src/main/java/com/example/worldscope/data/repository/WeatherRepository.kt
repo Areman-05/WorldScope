@@ -11,15 +11,19 @@ class WeatherRepository @Inject constructor(
         lat: Double,
         lon: Double,
         apiKey: String
-    ): Result<WeatherInfo> = runCatching {
+    ): Result<WeatherInfo> = try {
         val dto = weatherApi.getCurrentWeather(lat = lat, lon = lon, apiKey = apiKey)
-        WeatherInfo(
-            temperatureCelsius = dto.main?.temperature,
-            feelsLikeCelsius = dto.main?.feelsLike,
-            humidity = dto.main?.humidity,
-            condition = dto.weather?.firstOrNull()?.main,
-            description = dto.weather?.firstOrNull()?.description
+        Result.success(
+            WeatherInfo(
+                temperatureCelsius = dto.main?.temperature,
+                feelsLikeCelsius = dto.main?.feelsLike,
+                humidity = dto.main?.humidity,
+                condition = dto.weather?.firstOrNull()?.main,
+                description = dto.weather?.firstOrNull()?.description
+            )
         )
+    } catch (e: Exception) {
+        Result.failure(Exception("No se pudo cargar el clima: ${e.message ?: "error"}", e))
     }
 }
 
