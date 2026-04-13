@@ -16,13 +16,15 @@ class CountriesRepository @Inject constructor(
             val response = api.getAllCountries()
             emit(Result.success(response.map { it.toDomain() }))
         } catch (e: Exception) {
-            emit(Result.failure(e))
+            emit(Result.failure(Exception("Error al cargar paises: ${e.message ?: "red"}", e)))
         }
     }
 
-    suspend fun getCountryByCode(code: String): Result<Country> = runCatching {
+    suspend fun getCountryByCode(code: String): Result<Country> = try {
         val dto = api.getCountryByCode(code)
-        dto.toDomain()
+        Result.success(dto.toDomain())
+    } catch (e: Exception) {
+        Result.failure(Exception("Error al cargar el pais: ${e.message ?: "red"}", e))
     }
 
     private fun CountryDto.toDomain(): Country = Country(
