@@ -1,3 +1,4 @@
+# WorldScope: minify desactivado en release por defecto; revisar al endurecer R8.
 # Add project specific ProGuard rules here.
 # You can control the set of applied configuration files using the
 # proguardFiles setting in build.gradle.
