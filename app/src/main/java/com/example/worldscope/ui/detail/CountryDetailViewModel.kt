@@ -8,11 +8,13 @@ import com.example.worldscope.domain.model.EconomicInfo
 import com.example.worldscope.domain.model.ExchangeInfo
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.domain.model.WeatherInfo
+import com.example.worldscope.domain.model.WikiSummary
 import com.example.worldscope.data.repository.CountriesRepository
 import com.example.worldscope.data.repository.ExchangeRateRepository
 import com.example.worldscope.data.repository.FavoritesRepository
 import com.example.worldscope.data.repository.RecentCountriesRepository
 import com.example.worldscope.data.repository.WeatherRepository
+import com.example.worldscope.data.repository.WikipediaRepository
 import com.example.worldscope.data.repository.WorldBankRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +31,7 @@ class CountryDetailViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
     private val exchangeRateRepository: ExchangeRateRepository,
     private val worldBankRepository: WorldBankRepository,
+    private val wikipediaRepository: WikipediaRepository,
     private val recentCountriesRepository: RecentCountriesRepository,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -64,7 +67,15 @@ class CountryDetailViewModel @Inject constructor(
         }
         if (_uiState.value.isLoading) return
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, error = null, hasLoaded = false) }
+            _uiState.update {
+                it.copy(
+                    isLoading = true,
+                    error = null,
+                    hasLoaded = false,
+                    wikiSummary = null,
+                    isLoadingWiki = false
+                )
+            }
             repository.getCountryByCode(code)
                 .onSuccess { country ->
                     val isFav = favoritesRepository.isFavorite(country.alpha2Code ?: "")
@@ -79,6 +90,7 @@ class CountryDetailViewModel @Inject constructor(
                     loadWeather(country)
                     loadExchangeRate(country)
                     loadEconomic(country)
+                    loadWikipedia(country)
                 }
                 .onFailure { e ->
                     _uiState.update {
@@ -103,6 +115,21 @@ class CountryDetailViewModel @Inject constructor(
             }.onFailure {
                 _uiState.update { it.copy(isLoadingWeather = false) }
             }
+        }
+    }
+
+    private fun loadWikipedia(country: Country) {
+        val title = country.name.trim()
+        if (title.isBlank()) return
+        viewModelScope.launch {
+            _uiState.update { it.copy(isLoadingWiki = true) }
+            wikipediaRepository.getSummaryForCountryName(title)
+                .onSuccess { summary ->
+                    _uiState.update { it.copy(wikiSummary = summary, isLoadingWiki = false) }
+                }
+                .onFailure {
+                    _uiState.update { it.copy(wikiSummary = null, isLoadingWiki = false) }
+                }
         }
     }
 
@@ -154,5 +181,7 @@ data class CountryDetailUiState(
     val isLoadingWeather: Boolean = false,
     val isLoadingExchange: Boolean = false,
     val economicInfo: EconomicInfo? = null,
-    val isLoadingEconomic: Boolean = false
+    val isLoadingEconomic: Boolean = false,
+    val wikiSummary: WikiSummary? = null,
+    val isLoadingWiki: Boolean = false
 )
