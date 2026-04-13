@@ -36,6 +36,7 @@ import coil.compose.AsyncImage
 import com.example.worldscope.R
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.domain.model.EconomicInfo
+import com.example.worldscope.domain.model.WikiSummary
 import com.example.worldscope.domain.model.ExchangeInfo
 import com.example.worldscope.domain.model.WeatherInfo
 import java.util.Locale
@@ -133,9 +134,11 @@ fun CountryDetailScreen(
                         weatherInfo = state.weatherInfo,
                         exchangeInfo = state.exchangeInfo,
                         economicInfo = state.economicInfo,
+                        wikiSummary = state.wikiSummary,
                         isLoadingWeather = state.isLoadingWeather,
                         isLoadingExchange = state.isLoadingExchange,
                         isLoadingEconomic = state.isLoadingEconomic,
+                        isLoadingWiki = state.isLoadingWiki,
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -158,9 +161,11 @@ private fun CountryDetailContent(
     weatherInfo: WeatherInfo?,
     exchangeInfo: ExchangeInfo?,
     economicInfo: EconomicInfo?,
+    wikiSummary: WikiSummary?,
     isLoadingWeather: Boolean,
     isLoadingExchange: Boolean,
     isLoadingEconomic: Boolean,
+    isLoadingWiki: Boolean,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -304,6 +309,36 @@ private fun CountryDetailContent(
             Text(
                 "${stringResource(R.string.inflation)}: ${formatInflation(economicInfo.inflationPercent)}",
                 modifier = Modifier.testTag("country_detail_economy_inflation")
+            )
+        } else {
+            Text(stringResource(R.string.no_data))
+        }
+        Text(
+            text = stringResource(R.string.wikipedia),
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.testTag("country_detail_wiki_title")
+        )
+        if (isLoadingWiki) {
+            Text(stringResource(R.string.loading))
+        } else if (wikiSummary?.extract != null) {
+            wikiSummary.thumbnailUrl?.let { url ->
+                AsyncImage(
+                    model = url,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag("country_detail_wiki_thumb")
+                )
+            }
+            Text(
+                text = wikiSummary.extract,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.testTag("country_detail_wiki_extract")
+            )
+            Text(
+                text = stringResource(R.string.wikipedia_source),
+                style = MaterialTheme.typography.labelSmall,
+                modifier = Modifier.testTag("country_detail_wiki_source")
             )
         } else {
             Text(stringResource(R.string.no_data))
