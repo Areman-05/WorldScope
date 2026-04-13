@@ -1,7 +1,7 @@
 package com.example.worldscope.navigation
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CompareArrows
+import androidx.compose.material.icons.automirrored.filled.CompareArrows
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Public
@@ -26,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
+import com.example.worldscope.ui.about.AboutScreen
 import com.example.worldscope.ui.compare.CompareScreen
 import com.example.worldscope.ui.countries.CountriesScreen
 import com.example.worldscope.ui.detail.CountryDetailScreen
@@ -79,7 +80,7 @@ fun AppScaffold() {
                                 restoreState = true
                             }
                         },
-                        icon = { Icon(Icons.Filled.CompareArrows, contentDescription = null) },
+                        icon = { Icon(Icons.AutoMirrored.Filled.CompareArrows, contentDescription = null) },
                         label = { Text(stringResource(R.string.compare_title)) },
                         modifier = Modifier.testTag("nav_compare")
                     )
@@ -109,8 +110,12 @@ fun AppScaffold() {
         ) {
             composable(Routes.COUNTRIES) {
                 CountriesScreen(
-                    onCountryClick = { code -> navController.navigate(Routes.countryDetail(code)) }
+                    onCountryClick = { code -> navController.navigate(Routes.countryDetail(code)) },
+                    onAboutClick = { navController.navigate(Routes.ABOUT) }
                 )
+            }
+            composable(Routes.ABOUT) {
+                AboutScreen(onBackClick = { navController.popBackStack() })
             }
             composable(
                 route = Routes.COUNTRY_DETAIL,
