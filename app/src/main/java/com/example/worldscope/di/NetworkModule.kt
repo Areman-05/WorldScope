@@ -3,6 +3,7 @@ package com.example.worldscope.di
 import com.example.worldscope.data.remote.api.CountriesApi
 import com.example.worldscope.data.remote.api.ExchangeRateApi
 import com.example.worldscope.data.remote.api.WeatherApi
+import com.example.worldscope.data.remote.api.WikipediaApi
 import com.example.worldscope.data.remote.api.WorldBankApi
 import dagger.Module
 import dagger.Provides
@@ -25,10 +26,11 @@ object NetworkModule {
     private const val WEATHER_BASE_URL = "https://api.openweathermap.org/"
     private const val EXCHANGE_RATE_BASE_URL = "https://v6.exchangerate-api.com/"
     private const val WORLD_BANK_BASE_URL = "https://api.worldbank.org/"
+    private const val WIKIPEDIA_REST_BASE_URL = "https://en.wikipedia.org/api/rest_v1/"
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
@@ -80,4 +82,16 @@ object NetworkModule {
     @Provides
     fun provideWorldBankApi(@Named("worldbank") retrofit: Retrofit): WorldBankApi =
         retrofit.create(WorldBankApi::class.java)
+
+    @Provides
+    @Named("wikipedia")
+    fun provideWikipediaRetrofit(client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(WIKIPEDIA_REST_BASE_URL)
+        .client(client)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    @Provides
+    fun provideWikipediaApi(@Named("wikipedia") retrofit: Retrofit): WikipediaApi =
+        retrofit.create(WikipediaApi::class.java)
 }
