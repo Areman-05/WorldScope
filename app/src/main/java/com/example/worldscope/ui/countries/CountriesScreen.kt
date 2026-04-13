@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AssistChip
@@ -23,6 +25,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -44,6 +48,7 @@ import com.example.worldscope.R
 @Composable
 fun CountriesScreen(
     onCountryClick: (String) -> Unit = {},
+    onAboutClick: () -> Unit = {},
     viewModel: CountriesViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
@@ -55,7 +60,18 @@ fun CountriesScreen(
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.app_name)) },
-                modifier = Modifier.testTag("countries_topbar")
+                modifier = Modifier.testTag("countries_topbar"),
+                actions = {
+                    IconButton(
+                        onClick = onAboutClick,
+                        modifier = Modifier.testTag("countries_about")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = stringResource(R.string.about_title)
+                        )
+                    }
+                }
             )
         }
         ) { paddingValues ->
