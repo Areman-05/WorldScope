@@ -18,6 +18,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -116,6 +117,15 @@ fun CompareScreen(
                     ) {
                         Text(stringResource(R.string.compare_run))
                     }
+                    OutlinedButton(
+                        onClick = { viewModel.clearComparison() },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("compare_clear"),
+                        enabled = !state.isLoadingCompare
+                    ) {
+                        Text(stringResource(R.string.compare_clear))
+                    }
                     when (state.compareUserError) {
                         CompareUserError.NeedTwo ->
                             Text(
@@ -166,6 +176,7 @@ fun CompareScreen(
     }
 }
 
+@Suppress("DEPRECATION")
 @Composable
 private fun CountryPicker(
     label: String,
