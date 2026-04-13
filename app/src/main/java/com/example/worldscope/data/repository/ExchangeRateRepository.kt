@@ -11,14 +11,18 @@ class ExchangeRateRepository @Inject constructor(
         apiKey: String,
         baseCode: String,
         targetCode: String
-    ): Result<ExchangeInfo> = runCatching {
+    ): Result<ExchangeInfo> = try {
         val dto = exchangeRateApi.getLatestRates(apiKey = apiKey, baseCode = baseCode)
         val rate = dto.rates?.get(targetCode)
-        ExchangeInfo(
-            baseCode = baseCode,
-            targetCode = targetCode,
-            rate = rate
+        Result.success(
+            ExchangeInfo(
+                baseCode = baseCode,
+                targetCode = targetCode,
+                rate = rate
+            )
         )
+    } catch (e: Exception) {
+        Result.failure(Exception("No se pudo cargar el cambio de divisa: ${e.message ?: "error"}", e))
     }
 }
 
