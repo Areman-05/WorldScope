@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import com.example.worldscope.navigation.AppScaffold
 import com.example.worldscope.ui.theme.WorldScopeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -21,7 +22,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             WorldScopeTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .testTag("main_surface"),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     AppScaffold()
