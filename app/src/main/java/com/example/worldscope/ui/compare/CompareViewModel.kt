@@ -141,6 +141,22 @@ class CompareViewModel @Inject constructor(
             }
         }
     }
+
+    fun clearComparison() {
+        _uiState.update {
+            it.copy(
+                codeA = null,
+                codeB = null,
+                countryA = null,
+                countryB = null,
+                economicA = null,
+                economicB = null,
+                compareUserError = null,
+                loadError = null,
+                isLoadingCompare = false
+            )
+        }
+    }
 }
 
 enum class CompareUserError {
