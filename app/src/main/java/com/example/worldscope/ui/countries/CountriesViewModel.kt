@@ -190,6 +190,11 @@ enum class SortMode {
     POPULATION
 }
 
+enum class CountriesViewMode {
+    LIST,
+    GRID
+}
+
 data class CountriesUiState(
     val recentVisits: List<RecentCountryEntity> = emptyList(),
     val countries: List<Country> = emptyList(),
@@ -197,6 +202,7 @@ data class CountriesUiState(
     val availableRegions: List<String> = emptyList(),
     val regionFilter: String? = null,
     val sortMode: SortMode = SortMode.NAME,
+    val viewMode: CountriesViewMode = CountriesViewMode.LIST,
     val hasActiveFilters: Boolean = false,
     val isLoading: Boolean = false,
     val error: String? = null,
