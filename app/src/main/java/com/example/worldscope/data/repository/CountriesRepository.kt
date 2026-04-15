@@ -33,6 +33,7 @@ class CountriesRepository @Inject constructor(
         region = region,
         subregion = subregion,
         population = population ?: 0L,
+        areaKm2 = area,
         flagUrl = flags?.png,
         languages = languages?.values?.toList() ?: emptyList(),
         currencyCodes = currencies?.keys?.map { it.uppercase() } ?: emptyList(),
