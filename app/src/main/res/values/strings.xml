@@ -13,6 +13,7 @@
     <string name="country_code3">Codigo 3</string>
     <string name="coordinates">Coordenadas</string>
     <string name="coordinates_unknown">Sin coordenadas</string>
+    <string name="open_map">Abrir mapa</string>
     <string name="weather">Clima</string>
     <string name="temperature">Temperatura</string>
     <string name="feels_like">Sensacion termica</string>
