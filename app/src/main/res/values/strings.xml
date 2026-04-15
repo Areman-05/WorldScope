@@ -8,6 +8,7 @@
     <string name="region">Region</string>
     <string name="subregion">Subregion</string>
     <string name="population">Poblacion</string>
+    <string name="area">Superficie</string>
     <string name="country_code">Codigo</string>
     <string name="country_code3">Codigo 3</string>
     <string name="coordinates">Coordenadas</string>
