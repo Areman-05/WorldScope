@@ -58,6 +58,7 @@
     <string name="quiz_reset">Reiniciar puntuacion</string>
     <string name="quiz_not_enough_data">No hay suficientes paises para el quiz</string>
     <string name="recent_title">Vistos recientemente</string>
+    <string name="recent_searches_title">Busquedas recientes</string>
     <string name="wikipedia">Wikipedia</string>
     <string name="wikipedia_source">Texto adaptado de Wikipedia (ingles)</string>
     <string name="about_title">Acerca de</string>

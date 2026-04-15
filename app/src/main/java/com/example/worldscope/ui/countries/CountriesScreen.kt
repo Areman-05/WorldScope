@@ -108,6 +108,29 @@ fun CountriesScreen(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
             )
+            if (state.recentSearches.isNotEmpty()) {
+                Text(
+                    text = stringResource(R.string.recent_searches_title),
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .testTag("countries_recent_searches_title")
+                )
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .testTag("countries_recent_searches_row")
+                ) {
+                    items(state.recentSearches, key = { it.query }) { entry ->
+                        AssistChip(
+                            onClick = { viewModel.applyRecentSearch(entry.query) },
+                            label = { Text(entry.query) },
+                            modifier = Modifier.testTag("countries_recent_search_${entry.query}")
+                        )
+                    }
+                }
+            }
             if (state.recentVisits.isNotEmpty()) {
                 Text(
                     text = stringResource(R.string.recent_title),

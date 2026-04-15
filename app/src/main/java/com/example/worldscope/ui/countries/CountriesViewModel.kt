@@ -3,9 +3,11 @@ package com.example.worldscope.ui.countries
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.worldscope.data.local.entity.RecentCountryEntity
+import com.example.worldscope.data.local.entity.SearchHistoryEntity
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.data.repository.CountriesRepository
 import com.example.worldscope.data.repository.RecentCountriesRepository
+import com.example.worldscope.data.repository.SearchHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +19,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CountriesViewModel @Inject constructor(
     private val repository: CountriesRepository,
-    private val recentCountriesRepository: RecentCountriesRepository
+    private val recentCountriesRepository: RecentCountriesRepository,
+    private val searchHistoryRepository: SearchHistoryRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CountriesUiState())
@@ -28,6 +31,11 @@ class CountriesViewModel @Inject constructor(
         viewModelScope.launch {
             recentCountriesRepository.observeRecent().collect { list ->
                 _uiState.update { it.copy(recentVisits = list) }
+            }
+        }
+        viewModelScope.launch {
+            searchHistoryRepository.observeRecentSearches().collect { list ->
+                _uiState.update { it.copy(recentSearches = list) }
             }
         }
     }
@@ -94,6 +102,15 @@ class CountriesViewModel @Inject constructor(
                 )
             )
         }
+        if (normalizedQuery.trim().length >= 2) {
+            viewModelScope.launch {
+                searchHistoryRepository.recordSearch(normalizedQuery)
+            }
+        }
+    }
+
+    fun applyRecentSearch(query: String) {
+        updateSearchQuery(query)
     }
 
     fun updateRegionFilter(region: String?) {
@@ -208,6 +225,7 @@ enum class CountriesViewMode {
 
 data class CountriesUiState(
     val recentVisits: List<RecentCountryEntity> = emptyList(),
+    val recentSearches: List<SearchHistoryEntity> = emptyList(),
     val countries: List<Country> = emptyList(),
     val filteredCountries: List<Country> = emptyList(),
     val availableRegions: List<String> = emptyList(),
