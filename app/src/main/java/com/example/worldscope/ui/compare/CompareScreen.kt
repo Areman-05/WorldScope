@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -242,10 +243,13 @@ private fun CompareColumn(
         modifier = Modifier.testTag("compare_results")
     ) {
         Text(stringResource(R.string.compare_results), style = MaterialTheme.typography.titleMedium)
-        RowCompareRow(
+        RowCompareMetric(
             label = stringResource(R.string.population),
-            left = "%,d".format(Locale.US, left.population),
-            right = "%,d".format(Locale.US, right.population)
+            leftValue = left.population.toDouble(),
+            rightValue = right.population.toDouble(),
+            leftText = "%,d".format(Locale.US, left.population),
+            rightText = "%,d".format(Locale.US, right.population),
+            testTag = "compare_metric_population"
         )
         RowCompareRow(
             label = stringResource(R.string.area),
@@ -262,10 +266,13 @@ private fun CompareColumn(
             left = left.region ?: "-",
             right = right.region ?: "-"
         )
-        RowCompareRow(
+        RowCompareMetric(
             label = stringResource(R.string.gdp_usd),
-            left = gdpLeft?.let { String.format(Locale.US, "%,.0f", it) } ?: "-",
-            right = gdpRight?.let { String.format(Locale.US, "%,.0f", it) } ?: "-"
+            leftValue = gdpLeft,
+            rightValue = gdpRight,
+            leftText = gdpLeft?.let { String.format(Locale.US, "%,.0f", it) } ?: "-",
+            rightText = gdpRight?.let { String.format(Locale.US, "%,.0f", it) } ?: "-",
+            testTag = "compare_metric_gdp"
         )
         RowCompareRow(
             label = stringResource(R.string.inflation),
@@ -299,6 +306,54 @@ private fun RowCompareRow(
         ) {
             Text(left, modifier = Modifier.weight(1f))
             Text(right, modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+private fun RowCompareMetric(
+    label: String,
+    leftValue: Double?,
+    rightValue: Double?,
+    leftText: String,
+    rightText: String,
+    testTag: String
+) {
+    val l = (leftValue ?: 0.0).coerceAtLeast(0.0)
+    val r = (rightValue ?: 0.0).coerceAtLeast(0.0)
+    val max = maxOf(l, r, 1.0)
+    val leftProgress = (l / max).toFloat()
+    val rightProgress = (r / max).toFloat()
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag(testTag)
+    ) {
+        Text(label, style = MaterialTheme.typography.labelMedium)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(leftText)
+                LinearProgressIndicator(
+                    progress = { leftProgress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .testTag("${testTag}_left")
+                )
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(rightText)
+                LinearProgressIndicator(
+                    progress = { rightProgress },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .testTag("${testTag}_right")
+                )
+            }
         }
     }
 }
