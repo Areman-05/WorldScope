@@ -41,6 +41,7 @@
     <string name="sort_by">Ordenar por</string>
     <string name="sort_name">Nombre</string>
     <string name="sort_population">Poblacion</string>
+    <string name="sort_area">Superficie</string>
     <string name="clear_filters">Limpiar filtros</string>
     <string name="compare_title">Comparador</string>
     <string name="compare_country_a">Pais A</string>
