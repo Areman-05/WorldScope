@@ -149,6 +149,17 @@ class CountriesViewModel @Inject constructor(
         }
     }
 
+    fun toggleViewMode() {
+        _uiState.update { state ->
+            val next = if (state.viewMode == CountriesViewMode.LIST) {
+                CountriesViewMode.GRID
+            } else {
+                CountriesViewMode.LIST
+            }
+            state.copy(viewMode = next)
+        }
+    }
+
     private fun getAvailableRegions(list: List<Country>): List<String> =
         list.mapNotNull { it.region }.distinct().sorted()
 
