@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
 import com.example.worldscope.domain.model.Country
+import com.example.worldscope.domain.model.WeatherInfo
 import java.util.Locale
 
 @Composable
@@ -167,7 +168,9 @@ fun CompareScreen(
                             gdpLeft = state.economicA?.gdpUsd,
                             gdpRight = state.economicB?.gdpUsd,
                             inflLeft = state.economicA?.inflationPercent,
-                            inflRight = state.economicB?.inflationPercent
+                            inflRight = state.economicB?.inflationPercent,
+                            weatherLeft = state.weatherA,
+                            weatherRight = state.weatherB
                         )
                     }
                 }
@@ -230,7 +233,9 @@ private fun CompareColumn(
     gdpLeft: Double?,
     gdpRight: Double?,
     inflLeft: Double?,
-    inflRight: Double?
+    inflRight: Double?,
+    weatherLeft: WeatherInfo?,
+    weatherRight: WeatherInfo?
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -241,6 +246,11 @@ private fun CompareColumn(
             label = stringResource(R.string.population),
             left = "%,d".format(Locale.US, left.population),
             right = "%,d".format(Locale.US, right.population)
+        )
+        RowCompareRow(
+            label = stringResource(R.string.area),
+            left = left.areaKm2?.let { String.format(Locale.US, "%,.0f km2", it) } ?: "-",
+            right = right.areaKm2?.let { String.format(Locale.US, "%,.0f km2", it) } ?: "-"
         )
         RowCompareRow(
             label = stringResource(R.string.capital),
@@ -262,6 +272,16 @@ private fun CompareColumn(
             left = inflLeft?.let { String.format(Locale.US, "%.2f %%", it) } ?: "-",
             right = inflRight?.let { String.format(Locale.US, "%.2f %%", it) } ?: "-"
         )
+        RowCompareRow(
+            label = stringResource(R.string.currencies),
+            left = left.currencyCodes.firstOrNull() ?: "-",
+            right = right.currencyCodes.firstOrNull() ?: "-"
+        )
+        RowCompareRow(
+            label = stringResource(R.string.weather),
+            left = weatherLeft?.let { formatWeather(it) } ?: "-",
+            right = weatherRight?.let { formatWeather(it) } ?: "-"
+        )
     }
 }
 
@@ -281,4 +301,10 @@ private fun RowCompareRow(
             Text(right, modifier = Modifier.weight(1f))
         }
     }
+}
+
+private fun formatWeather(info: WeatherInfo): String {
+    val temp = info.temperatureCelsius?.let { String.format(Locale.US, "%.1f C", it) } ?: "-"
+    val label = info.description ?: info.condition ?: ""
+    return if (label.isBlank()) temp else "$temp · $label"
 }
