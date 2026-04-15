@@ -209,13 +209,17 @@ class CountriesViewModel @Inject constructor(
             SortMode.POPULATION -> byRegion.sortedWith(
                 compareByDescending<Country> { it.population }.thenBy { it.name }
             )
+            SortMode.AREA -> byRegion.sortedWith(
+                compareByDescending<Country> { it.areaKm2 ?: -1.0 }.thenBy { it.name }
+            )
         }
     }
 }
 
 enum class SortMode {
     NAME,
-    POPULATION
+    POPULATION,
+    AREA
 }
 
 enum class CountriesViewMode {
