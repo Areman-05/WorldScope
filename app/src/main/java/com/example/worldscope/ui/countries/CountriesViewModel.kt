@@ -25,6 +25,7 @@ class CountriesViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(CountriesUiState())
     val uiState: StateFlow<CountriesUiState> = _uiState.asStateFlow()
+    private var lastRecordedSearch: String = ""
 
     init {
         loadCountries()
@@ -102,9 +103,11 @@ class CountriesViewModel @Inject constructor(
                 )
             )
         }
-        if (normalizedQuery.trim().length >= 2) {
+        val trimmed = normalizedQuery.trim()
+        if (trimmed.length >= 2 && !trimmed.equals(lastRecordedSearch, ignoreCase = true)) {
             viewModelScope.launch {
-                searchHistoryRepository.recordSearch(normalizedQuery)
+                searchHistoryRepository.recordSearch(trimmed)
+                lastRecordedSearch = trimmed
             }
         }
     }
