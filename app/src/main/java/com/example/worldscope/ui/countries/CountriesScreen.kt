@@ -11,9 +11,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AssistChip
@@ -69,6 +73,19 @@ fun CountriesScreen(
                         Icon(
                             imageVector = Icons.Filled.Info,
                             contentDescription = stringResource(R.string.about_title)
+                        )
+                    }
+                    IconButton(
+                        onClick = viewModel::toggleViewMode,
+                        modifier = Modifier.testTag("countries_toggle_view")
+                    ) {
+                        Icon(
+                            imageVector = if (state.viewMode == CountriesViewMode.LIST) {
+                                Icons.Filled.GridView
+                            } else {
+                                Icons.Filled.ViewAgenda
+                            },
+                            contentDescription = stringResource(R.string.countries)
                         )
                     }
                 }
@@ -311,6 +328,24 @@ fun CountriesScreen(
                         }
                     }
                     else -> {
+                        if (state.viewMode == CountriesViewMode.GRID) {
+                            LazyVerticalGrid(
+                                columns = GridCells.Adaptive(minSize = 160.dp),
+                                modifier = Modifier.testTag("countries_grid")
+                            ) {
+                                items(
+                                    count = state.filteredCountries.size,
+                                    key = { idx -> state.filteredCountries[idx].alpha2Code ?: state.filteredCountries[idx].name }
+                                ) { idx ->
+                                    val country = state.filteredCountries[idx]
+                                    CountryItem(
+                                        country = country,
+                                        onClick = { country.alpha2Code?.let { onCountryClick(it) } },
+                                        compact = true
+                                    )
+                                }
+                            }
+                        } else {
                         LazyColumn(
                             modifier = Modifier.testTag("countries_list")
                         ) {
@@ -326,6 +361,7 @@ fun CountriesScreen(
                                 )
                                 HorizontalDivider()
                             }
+                        }
                         }
                     }
                 }
