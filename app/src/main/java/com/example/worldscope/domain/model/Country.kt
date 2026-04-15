@@ -7,6 +7,7 @@ data class Country(
     val region: String?,
     val subregion: String?,
     val population: Long,
+    val areaKm2: Double?,
     val flagUrl: String?,
     val languages: List<String>,
     /** Etiquetas legibles de moneda. */
