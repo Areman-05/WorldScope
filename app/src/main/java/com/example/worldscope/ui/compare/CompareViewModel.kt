@@ -2,10 +2,13 @@ package com.example.worldscope.ui.compare
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.worldscope.BuildConfig
 import com.example.worldscope.data.repository.CountriesRepository
+import com.example.worldscope.data.repository.WeatherRepository
 import com.example.worldscope.data.repository.WorldBankRepository
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.domain.model.EconomicInfo
+import com.example.worldscope.domain.model.WeatherInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
@@ -19,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class CompareViewModel @Inject constructor(
     private val countriesRepository: CountriesRepository,
-    private val worldBankRepository: WorldBankRepository
+    private val worldBankRepository: WorldBankRepository,
+    private val weatherRepository: WeatherRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CompareUiState())
@@ -66,6 +70,8 @@ class CompareViewModel @Inject constructor(
                 countryB = null,
                 economicA = null,
                 economicB = null,
+                weatherA = null,
+                weatherB = null,
                 compareUserError = null
             )
         }
@@ -79,6 +85,8 @@ class CompareViewModel @Inject constructor(
                 countryB = null,
                 economicA = null,
                 economicB = null,
+                weatherA = null,
+                weatherB = null,
                 compareUserError = null
             )
         }
@@ -104,7 +112,9 @@ class CompareViewModel @Inject constructor(
                     countryA = null,
                     countryB = null,
                     economicA = null,
-                    economicB = null
+                    economicB = null,
+                    weatherA = null,
+                    weatherB = null
                 )
             }
             val resA = countriesRepository.getCountryByCode(codeA)
@@ -130,12 +140,23 @@ class CompareViewModel @Inject constructor(
                 }
                 Pair(jobA.await(), jobB.await())
             }
+            val (wa, wb) = coroutineScope {
+                val jobA = async {
+                    loadWeatherForCountry(ca)
+                }
+                val jobB = async {
+                    loadWeatherForCountry(cb)
+                }
+                Pair(jobA.await(), jobB.await())
+            }
             _uiState.update {
                 it.copy(
                     countryA = ca,
                     countryB = cb,
                     economicA = ea,
                     economicB = eb,
+                    weatherA = wa,
+                    weatherB = wb,
                     isLoadingCompare = false
                 )
             }
@@ -151,11 +172,24 @@ class CompareViewModel @Inject constructor(
                 countryB = null,
                 economicA = null,
                 economicB = null,
+                weatherA = null,
+                weatherB = null,
                 compareUserError = null,
                 loadError = null,
                 isLoadingCompare = false
             )
         }
+    }
+
+    private suspend fun loadWeatherForCountry(country: Country): WeatherInfo? {
+        val apiKey = BuildConfig.OPEN_WEATHER_API_KEY
+        val latlng = country.latlng ?: return null
+        if (apiKey.isBlank()) return null
+        return weatherRepository.getCurrentWeather(
+            lat = latlng.first,
+            lon = latlng.second,
+            apiKey = apiKey
+        ).getOrNull()
     }
 }
 
@@ -174,6 +208,8 @@ data class CompareUiState(
     val countryB: Country? = null,
     val economicA: EconomicInfo? = null,
     val economicB: EconomicInfo? = null,
+    val weatherA: WeatherInfo? = null,
+    val weatherB: WeatherInfo? = null,
     val isLoadingCompare: Boolean = false,
     val compareUserError: CompareUserError? = null,
     val loadError: String? = null
