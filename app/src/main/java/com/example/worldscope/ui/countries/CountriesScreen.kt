@@ -231,6 +231,7 @@ fun CountriesScreen(
                 val sortLabel = when (state.sortMode) {
                     SortMode.NAME -> stringResource(R.string.sort_name)
                     SortMode.POPULATION -> stringResource(R.string.sort_population)
+                    SortMode.AREA -> stringResource(R.string.sort_area)
                 }
                 OutlinedTextField(
                     value = sortLabel,
@@ -263,6 +264,14 @@ fun CountriesScreen(
                             expandedSort = false
                         },
                         modifier = Modifier.testTag("countries_sort_population")
+                    )
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.sort_area)) },
+                        onClick = {
+                            viewModel.updateSortMode(SortMode.AREA)
+                            expandedSort = false
+                        },
+                        modifier = Modifier.testTag("countries_sort_area")
                     )
                 }
             }
