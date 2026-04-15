@@ -6,17 +6,20 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.worldscope.data.local.dao.FavoriteDao
 import com.example.worldscope.data.local.dao.RecentCountryDao
+import com.example.worldscope.data.local.dao.SearchHistoryDao
 import com.example.worldscope.data.local.entity.FavoriteCountryEntity
 import com.example.worldscope.data.local.entity.RecentCountryEntity
+import com.example.worldscope.data.local.entity.SearchHistoryEntity
 
 @Database(
-    entities = [FavoriteCountryEntity::class, RecentCountryEntity::class],
-    version = 2,
+    entities = [FavoriteCountryEntity::class, RecentCountryEntity::class, SearchHistoryEntity::class],
+    version = 3,
     exportSchema = false
 )
 abstract class WorldScopeDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
     abstract fun recentCountryDao(): RecentCountryDao
+    abstract fun searchHistoryDao(): SearchHistoryDao
 
     companion object {
         val MIGRATION_1_2: Migration = object : Migration(1, 2) {
@@ -26,6 +29,15 @@ abstract class WorldScopeDatabase : RoomDatabase() {
                         "alpha2Code TEXT NOT NULL PRIMARY KEY, " +
                         "name TEXT NOT NULL, " +
                         "visitedAt INTEGER NOT NULL)"
+                )
+            }
+        }
+        val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS search_history (" +
+                        "query TEXT NOT NULL PRIMARY KEY, " +
+                        "searchedAt INTEGER NOT NULL)"
                 )
             }
         }
