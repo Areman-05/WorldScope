@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -168,6 +169,7 @@ private fun CountryDetailContent(
     isLoadingWiki: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val uriHandler = LocalUriHandler.current
     Column(
         modifier = modifier
             .verticalScroll(rememberScrollState())
@@ -292,6 +294,14 @@ private fun CountryDetailContent(
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.testTag("country_detail_coordinates_value")
             )
+        }
+        country.latlng?.let { latlng ->
+            Button(
+                onClick = { uriHandler.openUri("geo:${latlng.first},${latlng.second}") },
+                modifier = Modifier.testTag("country_detail_open_map")
+            ) {
+                Text(stringResource(R.string.open_map))
+            }
         }
         if (country.languages.isNotEmpty()) {
             Text(
