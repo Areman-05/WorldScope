@@ -24,14 +24,18 @@ import com.example.worldscope.domain.model.Country
 fun CountryItem(
     country: Country,
     onClick: () -> Unit,
+    compact: Boolean = false,
     modifier: Modifier = Modifier
 ) {
+    val padding = if (compact) 10.dp else 16.dp
+    val flagWidth = if (compact) 40.dp else 48.dp
+    val flagHeight = if (compact) 30.dp else 36.dp
     Row(
         modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .testTag("country_item")
-            .padding(16.dp),
+            .padding(padding),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -39,13 +43,13 @@ fun CountryItem(
             model = country.flagUrl,
             contentDescription = stringResource(R.string.flag_description, country.name),
             modifier = Modifier
-                .size(48.dp, 36.dp)
+                .size(flagWidth, flagHeight)
                 .testTag("country_item_flag")
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = country.name,
-                style = MaterialTheme.typography.titleMedium,
+                style = if (compact) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.testTag("country_item_name")
