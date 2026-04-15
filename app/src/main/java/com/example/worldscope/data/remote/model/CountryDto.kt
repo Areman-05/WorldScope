@@ -8,6 +8,7 @@ data class CountryDto(
     @SerializedName("region") val region: String?,
     @SerializedName("subregion") val subregion: String?,
     @SerializedName("population") val population: Long?,
+    @SerializedName("area") val area: Double?,
     @SerializedName("flags") val flags: CountryFlagsDto?,
     @SerializedName("languages") val languages: Map<String, String>?,
     @SerializedName("currencies") val currencies: Map<String, CurrencyDto>?,
