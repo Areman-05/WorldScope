@@ -243,6 +243,19 @@ private fun CountryDetailContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .testTag("country_detail_area"),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(stringResource(R.string.area), style = MaterialTheme.typography.titleMedium)
+            Text(
+                country.areaKm2?.let { "%.0f km2".format(it) } ?: "-",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.testTag("country_detail_area_value")
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
                 .testTag("country_detail_code2"),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
