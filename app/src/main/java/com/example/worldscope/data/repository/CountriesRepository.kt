@@ -3,8 +3,11 @@ package com.example.worldscope.data.repository
 import com.example.worldscope.data.remote.api.CountriesApi
 import com.example.worldscope.data.remote.model.CountryDto
 import com.example.worldscope.domain.model.Country
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class CountriesRepository @Inject constructor(
@@ -18,13 +21,15 @@ class CountriesRepository @Inject constructor(
         } catch (e: Exception) {
             emit(Result.failure(Exception("Error al cargar paises: ${e.message ?: "red"}", e)))
         }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    suspend fun getCountryByCode(code: String): Result<Country> = try {
-        val dto = api.getCountryByCode(code)
-        Result.success(dto.toDomain())
-    } catch (e: Exception) {
-        Result.failure(Exception("Error al cargar el pais: ${e.message ?: "red"}", e))
+    suspend fun getCountryByCode(code: String): Result<Country> = withContext(Dispatchers.IO) {
+        try {
+            val dto = api.getCountryByCode(code)
+            Result.success(dto.toDomain())
+        } catch (e: Exception) {
+            Result.failure(Exception("Error al cargar el pais: ${e.message ?: "red"}", e))
+        }
     }
 
     private fun CountryDto.toDomain(): Country = Country(

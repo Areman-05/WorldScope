@@ -42,6 +42,7 @@ class CountriesViewModel @Inject constructor(
     }
 
     fun loadCountries() {
+        if (_uiState.value.isLoading) return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, error = null, hasLoaded = false) }
             repository.getAllCountries().collect { result ->
