@@ -35,7 +35,9 @@ class CountriesRepository @Inject constructor(
             }
 
             val response = api.getAllCountries()
-            val mapped = response.map { it.toDomain() }
+            // Para la lista principal no necesitamos idiomas/carteras completas.
+            // Reducimos memoria: solo guardamos lo usado en explorador/comparador.
+            val mapped = response.map { it.toDomainForList() }
             val result: Result<List<Country>> = Result.success(mapped)
             cachedAllCountries = result
             cacheTsMs = now
@@ -53,13 +55,31 @@ class CountriesRepository @Inject constructor(
     suspend fun getCountryByCode(code: String): Result<Country> = withContext(Dispatchers.IO) {
         try {
             val dto = api.getCountryByCode(code)
-            Result.success(dto.toDomain())
+            // Para detalle, si necesitamos idiomas/codigos/monedas.
+            Result.success(dto.toDomainForDetail())
         } catch (e: Exception) {
             Result.failure(Exception("Error al cargar el pais: ${e.message ?: "red"}", e))
         }
     }
 
-    private fun CountryDto.toDomain(): Country = Country(
+    private fun CountryDto.toDomainForList(): Country = Country(
+        name = name?.common ?: "",
+        capital = capital?.firstOrNull(),
+        region = region,
+        subregion = subregion,
+        population = population ?: 0L,
+        areaKm2 = area,
+        flagUrl = flags?.png,
+        // Explorador no muestra idiomas ni todas las monedas; reducimos RAM.
+        languages = emptyList(),
+        currencyCodes = currencies?.keys?.map { it.uppercase() } ?: emptyList(),
+        currencies = emptyList(),
+        alpha2Code = alpha2Code,
+        alpha3Code = alpha3Code,
+        latlng = latlng?.let { list -> if (list.size >= 2) Pair(list[0], list[1]) else null }
+    )
+
+    private fun CountryDto.toDomainForDetail(): Country = Country(
         name = name?.common ?: "",
         capital = capital?.firstOrNull(),
         region = region,
@@ -76,5 +96,4 @@ class CountriesRepository @Inject constructor(
         alpha3Code = alpha3Code,
         latlng = latlng?.let { list -> if (list.size >= 2) Pair(list[0], list[1]) else null }
     )
-
 }
