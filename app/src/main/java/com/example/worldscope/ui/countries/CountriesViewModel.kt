@@ -9,11 +9,13 @@ import com.example.worldscope.data.repository.CountriesRepository
 import com.example.worldscope.data.repository.RecentCountriesRepository
 import com.example.worldscope.data.repository.SearchHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,27 +50,33 @@ class CountriesViewModel @Inject constructor(
             repository.getAllCountries().collect { result ->
                 result.fold(
                     onSuccess = { list ->
-                        val availableRegions = getAvailableRegions(list)
-                        _uiState.update { state ->
-                            val filtered = applyFilters(
-                                list = list,
-                                searchQuery = state.searchQuery,
-                                regionFilter = state.regionFilter,
-                                sortMode = state.sortMode
-                            )
-                            state.copy(
-                                countries = list,
-                                availableRegions = availableRegions,
-                                filteredCountries = filtered,
-                                hasActiveFilters = hasActiveFilters(
-                                    state.searchQuery,
-                                    state.regionFilter,
-                                    state.sortMode
-                                ),
-                                isLoading = false,
-                                error = null,
-                                hasLoaded = true
-                            )
+                        val snapshot = _uiState.value
+                        viewModelScope.launch {
+                            val (availableRegions, filtered) = withContext(Dispatchers.Default) {
+                                val regions = getAvailableRegions(list)
+                                val items = applyFilters(
+                                    list = list,
+                                    searchQuery = snapshot.searchQuery,
+                                    regionFilter = snapshot.regionFilter,
+                                    sortMode = snapshot.sortMode
+                                )
+                                Pair(regions, items)
+                            }
+                            _uiState.update { state ->
+                                state.copy(
+                                    countries = list,
+                                    availableRegions = availableRegions,
+                                    filteredCountries = filtered,
+                                    hasActiveFilters = hasActiveFilters(
+                                        snapshot.searchQuery,
+                                        snapshot.regionFilter,
+                                        snapshot.sortMode
+                                    ),
+                                    isLoading = false,
+                                    error = null,
+                                    hasLoaded = true
+                                )
+                            }
                         }
                     },
                     onFailure = { e ->
