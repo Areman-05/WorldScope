@@ -10,6 +10,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -27,13 +28,33 @@ object NetworkModule {
     private const val EXCHANGE_RATE_BASE_URL = "https://v6.exchangerate-api.com/"
     private const val WORLD_BANK_BASE_URL = "https://api.worldbank.org/"
     private const val WIKIPEDIA_REST_BASE_URL = "https://en.wikipedia.org/api/rest_v1/"
+    private const val ALL_COUNTRIES_FIELDS =
+        "name,capital,region,population,area,flags,currencies,cca2,cca3,latlng"
 
     @Provides
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .addInterceptor { chain ->
+            val original = chain.request()
+            val rewritten = enforceCountriesAllFields(original)
+            chain.proceed(rewritten)
+        }
         .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
         .connectTimeout(30, TimeUnit.SECONDS)
         .readTimeout(30, TimeUnit.SECONDS)
         .build()
+
+    private fun enforceCountriesAllFields(request: Request): Request {
+        val url = request.url
+        val isCountriesAllEndpoint =
+            url.host.equals("restcountries.com", ignoreCase = true) &&
+                url.encodedPath == "/v3.1/all"
+        if (!isCountriesAllEndpoint) return request
+        if (!url.queryParameter("fields").isNullOrBlank()) return request
+        val updatedUrl = url.newBuilder()
+            .addQueryParameter("fields", ALL_COUNTRIES_FIELDS)
+            .build()
+        return request.newBuilder().url(updatedUrl).build()
+    }
 
     @Provides
     @Named("countries")

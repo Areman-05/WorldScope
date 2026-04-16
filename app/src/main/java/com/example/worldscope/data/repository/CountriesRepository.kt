@@ -15,6 +15,8 @@ import javax.inject.Inject
 class CountriesRepository @Inject constructor(
     private val api: CountriesApi
 ) {
+    private val allCountriesFields =
+        "name,capital,region,population,area,flags,currencies,cca2,cca3,latlng"
 
     @Volatile
     private var cachedAllCountries: Result<List<Country>>? = null
@@ -34,7 +36,7 @@ class CountriesRepository @Inject constructor(
                 return@flow
             }
 
-            val response = api.getAllCountries()
+            val response = api.getAllCountries(fields = allCountriesFields)
             // Para la lista principal no necesitamos idiomas/carteras completas.
             // Reducimos memoria: solo guardamos lo usado en explorador/comparador.
             val mapped = response.map { it.toDomainForList() }

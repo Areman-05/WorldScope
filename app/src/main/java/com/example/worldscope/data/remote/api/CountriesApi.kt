@@ -9,7 +9,10 @@ import retrofit2.http.Query
 interface CountriesApi {
 
     @GET("v3.1/all")
-    suspend fun getAllCountries(): List<CountryDto>
+    suspend fun getAllCountries(
+        @Query("fields")
+        fields: String = "name,capital,region,population,area,flags,currencies,cca2,cca3,latlng"
+    ): List<CountryDto>
 
     @GET("v3.1/name/{name}")
     suspend fun getCountriesByName(@Path("name") name: String): List<CountryDto>
