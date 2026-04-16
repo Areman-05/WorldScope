@@ -14,12 +14,37 @@ class CountriesRepository @Inject constructor(
     private val api: CountriesApi
 ) {
 
+    @Volatile
+    private var cachedAllCountries: Result<List<Country>>? = null
+
+    @Volatile
+    private var cacheTsMs: Long = 0L
+
+    // Evita spamear la API si Android remonta pantallas durante tests (teclado/IME, navegacion, etc).
+    private val cacheTtlMs: Long = 30_000
+
     fun getAllCountries(): Flow<Result<List<Country>>> = flow {
         try {
+            val now = System.currentTimeMillis()
+            val cached = cachedAllCountries
+            if (cached != null && now - cacheTsMs <= cacheTtlMs) {
+                emit(cached)
+                return@flow
+            }
+
             val response = api.getAllCountries()
-            emit(Result.success(response.map { it.toDomain() }))
+            val mapped = response.map { it.toDomain() }
+            val result: Result<List<Country>> = Result.success(mapped)
+            cachedAllCountries = result
+            cacheTsMs = now
+            emit(result)
         } catch (e: Exception) {
-            emit(Result.failure(Exception("Error al cargar paises: ${e.message ?: "red"}", e)))
+            val now = System.currentTimeMillis()
+            val result: Result<List<Country>> =
+                Result.failure(Exception("Error al cargar paises: ${e.message ?: "red"}", e))
+            cachedAllCountries = result
+            cacheTsMs = now
+            emit(result)
         }
     }.flowOn(Dispatchers.IO)
 
