@@ -100,17 +100,25 @@ class CountriesViewModel @Inject constructor(
     fun updateSearchQuery(query: String) {
         val normalizedQuery = query.trimStart()
         if (_uiState.value.searchQuery == normalizedQuery) return
+        val snapshotCountries = _uiState.value.countries
+        val snapshotRegion = _uiState.value.regionFilter
+        val snapshotSort = _uiState.value.sortMode
         _uiState.update { state ->
             state.copy(
                 searchQuery = normalizedQuery,
-                hasActiveFilters = hasActiveFilters(normalizedQuery, state.regionFilter, state.sortMode),
-                filteredCountries = applyFilters(
-                    list = state.countries,
-                    searchQuery = normalizedQuery,
-                    regionFilter = state.regionFilter,
-                    sortMode = state.sortMode
-                )
+                hasActiveFilters = hasActiveFilters(normalizedQuery, state.regionFilter, state.sortMode)
             )
+        }
+        viewModelScope.launch {
+            val filtered = withContext(Dispatchers.Default) {
+                applyFilters(
+                    list = snapshotCountries,
+                    searchQuery = normalizedQuery,
+                    regionFilter = snapshotRegion,
+                    sortMode = snapshotSort
+                )
+            }
+            _uiState.update { it.copy(filteredCountries = filtered) }
         }
         val trimmed = normalizedQuery.trim()
         if (trimmed.length >= 2 && !trimmed.equals(lastRecordedSearch, ignoreCase = true)) {

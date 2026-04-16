@@ -8,8 +8,10 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import javax.inject.Singleton
 import javax.inject.Inject
 
+@Singleton
 class CountriesRepository @Inject constructor(
     private val api: CountriesApi
 ) {
