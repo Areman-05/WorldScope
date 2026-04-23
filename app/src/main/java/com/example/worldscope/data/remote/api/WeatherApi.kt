@@ -5,6 +5,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 interface WeatherApi {
+    // Open-Meteo no requiere api key para consulta basica.
     @GET("v1/forecast")
     suspend fun getCurrentWeather(
         @Query("latitude") lat: Double,
