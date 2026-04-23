@@ -1,5 +1,3 @@
-import java.util.Properties
-
 // App module: Compose UI, Hilt, Room, Retrofit.
 plugins {
     alias(libs.plugins.android.application)
@@ -8,21 +6,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt.android)
 }
-
-val localProperties = Properties().apply {
-    val localFile = rootProject.file("local.properties")
-    if (localFile.exists()) {
-        localFile.inputStream().use { load(it) }
-    }
-}
-val openWeatherApiKey: String =
-    localProperties.getProperty("OPEN_WEATHER_API_KEY")
-        ?: System.getenv("OPEN_WEATHER_API_KEY")
-        ?: ""
-val exchangeRateApiKey: String =
-    localProperties.getProperty("EXCHANGE_RATE_API_KEY")
-        ?: System.getenv("EXCHANGE_RATE_API_KEY")
-        ?: ""
 
 android {
     namespace = "com.example.worldscope"
@@ -34,8 +17,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0.1"
-        buildConfigField("String", "OPEN_WEATHER_API_KEY", "\"$openWeatherApiKey\"")
-        buildConfigField("String", "EXCHANGE_RATE_API_KEY", "\"$exchangeRateApiKey\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
