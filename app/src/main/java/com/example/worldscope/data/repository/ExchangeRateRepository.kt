@@ -13,6 +13,9 @@ class ExchangeRateRepository @Inject constructor(
     ): Result<ExchangeInfo> = try {
         val dto = exchangeRateApi.getLatestRates(baseCode = baseCode, targetCode = targetCode)
         val rate = dto.rates?.get(targetCode)
+            ?: return Result.failure(
+                Exception("No se encontro tasa para $targetCode desde $baseCode")
+            )
         val resolvedBaseCode = dto.baseCode ?: dto.frankfurterBaseCode ?: baseCode
         Result.success(
             ExchangeInfo(
