@@ -12,13 +12,15 @@ class WeatherRepository @Inject constructor(
         lon: Double
     ): Result<WeatherInfo> = try {
         val dto = weatherApi.getCurrentWeather(lat = lat, lon = lon)
-        val code = dto.current?.weatherCode
+        val current = dto.current
+            ?: return Result.failure(Exception("Respuesta de clima incompleta"))
+        val code = current.weatherCode
         val (condition, description) = mapWeatherCode(code)
         Result.success(
             WeatherInfo(
-                temperatureCelsius = dto.current?.temperature,
-                feelsLikeCelsius = dto.current?.apparentTemperature,
-                humidity = dto.current?.humidity,
+                temperatureCelsius = current.temperature,
+                feelsLikeCelsius = current.apparentTemperature,
+                humidity = current.humidity,
                 condition = condition,
                 description = description
             )
