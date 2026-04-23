@@ -24,7 +24,7 @@ import javax.inject.Named
 object NetworkModule {
 
     private const val COUNTRIES_BASE_URL = "https://restcountries.com/"
-    private const val WEATHER_BASE_URL = "https://api.openweathermap.org/"
+    private const val WEATHER_BASE_URL = "https://api.open-meteo.com/"
     private const val EXCHANGE_RATE_BASE_URL = "https://v6.exchangerate-api.com/"
     private const val WORLD_BANK_BASE_URL = "https://api.worldbank.org/"
     private const val WIKIPEDIA_REST_BASE_URL = "https://en.wikipedia.org/api/rest_v1/"
