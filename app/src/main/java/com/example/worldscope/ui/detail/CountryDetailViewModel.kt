@@ -3,7 +3,6 @@ package com.example.worldscope.ui.detail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.worldscope.BuildConfig
 import com.example.worldscope.domain.model.EconomicInfo
 import com.example.worldscope.domain.model.ExchangeInfo
 import com.example.worldscope.domain.model.Country
@@ -102,13 +101,11 @@ class CountryDetailViewModel @Inject constructor(
 
     private fun loadWeather(country: Country) {
         val latLng = country.latlng ?: return
-        if (BuildConfig.OPEN_WEATHER_API_KEY.isBlank()) return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoadingWeather = true) }
             val result = weatherRepository.getCurrentWeather(
                 lat = latLng.first,
-                lon = latLng.second,
-                apiKey = BuildConfig.OPEN_WEATHER_API_KEY
+                lon = latLng.second
             )
             result.onSuccess { weather ->
                 _uiState.update { it.copy(weatherInfo = weather, isLoadingWeather = false) }
