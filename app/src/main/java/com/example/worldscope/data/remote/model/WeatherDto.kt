@@ -3,18 +3,13 @@ package com.example.worldscope.data.remote.model
 import com.google.gson.annotations.SerializedName
 
 data class WeatherDto(
-    @SerializedName("main") val main: WeatherMainDto?,
-    @SerializedName("weather") val weather: List<WeatherDescriptionDto>?
+    @SerializedName("current") val current: WeatherCurrentDto?
 )
 
-data class WeatherMainDto(
-    @SerializedName("temp") val temperature: Double?,
-    @SerializedName("feels_like") val feelsLike: Double?,
-    @SerializedName("humidity") val humidity: Int?
-)
-
-data class WeatherDescriptionDto(
-    @SerializedName("main") val main: String?,
-    @SerializedName("description") val description: String?
+data class WeatherCurrentDto(
+    @SerializedName("temperature_2m") val temperature: Double?,
+    @SerializedName("apparent_temperature") val apparentTemperature: Double?,
+    @SerializedName("relative_humidity_2m") val humidity: Int?,
+    @SerializedName("weather_code") val weatherCode: Int?
 )
 
