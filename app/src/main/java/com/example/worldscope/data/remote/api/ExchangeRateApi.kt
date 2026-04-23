@@ -2,13 +2,13 @@ package com.example.worldscope.data.remote.api
 
 import com.example.worldscope.data.remote.model.ExchangeRateDto
 import retrofit2.http.GET
-import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ExchangeRateApi {
-    @GET("v6/{apiKey}/latest/{baseCode}")
+    @GET("latest")
     suspend fun getLatestRates(
-        @Path("apiKey") apiKey: String,
-        @Path("baseCode") baseCode: String
+        @Query("from") baseCode: String,
+        @Query("to") targetCode: String
     ): ExchangeRateDto
 }
 
