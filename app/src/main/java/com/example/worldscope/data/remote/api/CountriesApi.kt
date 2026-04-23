@@ -21,5 +21,5 @@ interface CountriesApi {
     suspend fun getCountriesByRegion(@Path("region") region: String): List<CountryDto>
 
     @GET("v3.1/alpha/{code}")
-    suspend fun getCountryByCode(@Path("code") code: String): CountryDto
+    suspend fun getCountryByCode(@Path("code") code: String): List<CountryDto>
 }

@@ -56,7 +56,8 @@ class CountriesRepository @Inject constructor(
 
     suspend fun getCountryByCode(code: String): Result<Country> = withContext(Dispatchers.IO) {
         try {
-            val dto = api.getCountryByCode(code)
+            val dto = api.getCountryByCode(code).firstOrNull()
+                ?: return@withContext Result.failure(Exception("No se encontro el pais solicitado"))
             // Para detalle, si necesitamos idiomas/codigos/monedas.
             Result.success(dto.toDomainForDetail())
         } catch (e: Exception) {

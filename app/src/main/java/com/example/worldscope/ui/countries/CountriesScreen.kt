@@ -1,4 +1,5 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
+@file:Suppress("DEPRECATION")
 package com.example.worldscope.ui.countries
 
 import androidx.compose.foundation.layout.Arrangement
@@ -179,6 +180,7 @@ fun CountriesScreen(
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRegion)
                     },
                     modifier = Modifier
+                        .menuAnchor()
                         .fillMaxWidth()
                         .testTag("countries_region"),
                     singleLine = true
@@ -241,6 +243,7 @@ fun CountriesScreen(
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSort)
                     },
                     modifier = Modifier
+                        .menuAnchor()
                         .fillMaxWidth()
                         .testTag("countries_sort"),
                     singleLine = true
