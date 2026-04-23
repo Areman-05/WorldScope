@@ -2,7 +2,6 @@ package com.example.worldscope.ui.compare
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.worldscope.BuildConfig
 import com.example.worldscope.data.repository.CountriesRepository
 import com.example.worldscope.data.repository.WeatherRepository
 import com.example.worldscope.data.repository.WorldBankRepository
@@ -182,13 +181,10 @@ class CompareViewModel @Inject constructor(
     }
 
     private suspend fun loadWeatherForCountry(country: Country): WeatherInfo? {
-        val apiKey = BuildConfig.OPEN_WEATHER_API_KEY
         val latlng = country.latlng ?: return null
-        if (apiKey.isBlank()) return null
         return weatherRepository.getCurrentWeather(
             lat = latlng.first,
-            lon = latlng.second,
-            apiKey = apiKey
+            lon = latlng.second
         ).getOrNull()
     }
 }
