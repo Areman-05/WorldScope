@@ -8,15 +8,15 @@ class ExchangeRateRepository @Inject constructor(
     private val exchangeRateApi: ExchangeRateApi
 ) {
     suspend fun getExchangeRate(
-        apiKey: String,
         baseCode: String,
         targetCode: String
     ): Result<ExchangeInfo> = try {
-        val dto = exchangeRateApi.getLatestRates(apiKey = apiKey, baseCode = baseCode)
+        val dto = exchangeRateApi.getLatestRates(baseCode = baseCode, targetCode = targetCode)
         val rate = dto.rates?.get(targetCode)
+        val resolvedBaseCode = dto.baseCode ?: dto.frankfurterBaseCode ?: baseCode
         Result.success(
             ExchangeInfo(
-                baseCode = baseCode,
+                baseCode = resolvedBaseCode,
                 targetCode = targetCode,
                 rate = rate
             )
