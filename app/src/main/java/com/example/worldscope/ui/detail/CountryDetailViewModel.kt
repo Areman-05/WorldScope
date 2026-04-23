@@ -145,12 +145,10 @@ class CountryDetailViewModel @Inject constructor(
     }
 
     private fun loadExchangeRate(country: Country) {
-        if (BuildConfig.EXCHANGE_RATE_API_KEY.isBlank()) return
         val baseCode = extractCurrencyCode(country) ?: return
         viewModelScope.launch {
             _uiState.update { it.copy(isLoadingExchange = true) }
             val result = exchangeRateRepository.getExchangeRate(
-                apiKey = BuildConfig.EXCHANGE_RATE_API_KEY,
                 baseCode = baseCode,
                 targetCode = "USD"
             )
