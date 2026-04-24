@@ -16,10 +16,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.stringResource
@@ -37,16 +48,51 @@ fun CountryItem(
     country: Country,
     onClick: () -> Unit,
     compact: Boolean = false,
+    appearDelayMs: Int = 0,
     modifier: Modifier = Modifier
 ) {
     val padding = if (compact) 10.dp else 16.dp
     val flagWidth = if (compact) 40.dp else 48.dp
     val flagHeight = if (compact) 30.dp else 36.dp
     val cardShape = RoundedCornerShape(if (compact) 14.dp else 16.dp)
+    val interaction = remember { MutableInteractionSource() }
+    val isPressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) 0.97f else 1f,
+        animationSpec = tween(durationMillis = 120),
+        label = "country_card_scale"
+    )
+    val elevation by animateFloatAsState(
+        targetValue = if (isPressed) 1f else 3f,
+        animationSpec = tween(durationMillis = 120),
+        label = "country_card_elevation"
+    )
+    var appeared by remember { mutableStateOf(false) }
+    LaunchedEffect(country.alpha2Code, country.name) {
+        kotlinx.coroutines.delay(appearDelayMs.toLong())
+        appeared = true
+    }
+    val appearScale by animateFloatAsState(
+        targetValue = if (appeared) 1f else 0.92f,
+        animationSpec = tween(durationMillis = 240),
+        label = "country_appear_scale"
+    )
+    val appearAlpha by animateFloatAsState(
+        targetValue = if (appeared) 1f else 0f,
+        animationSpec = tween(durationMillis = 260),
+        label = "country_appear_alpha"
+    )
     Surface(
         modifier = modifier
+            .alpha(appearAlpha)
+            .scale(appearScale)
+            .scale(scale)
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                interactionSource = interaction,
+                indication = null,
+                onClick = onClick
+            )
             .testTag("country_item")
             .padding(horizontal = 10.dp, vertical = 6.dp)
             .border(
@@ -57,7 +103,7 @@ fun CountryItem(
         shape = cardShape,
         color = Color.White,
         tonalElevation = 2.dp,
-        shadowElevation = 3.dp
+        shadowElevation = elevation.dp
     ) {
         Row(
             modifier = Modifier.padding(padding),

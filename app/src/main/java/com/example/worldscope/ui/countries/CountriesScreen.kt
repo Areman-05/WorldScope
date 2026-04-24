@@ -46,8 +46,15 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,6 +65,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -107,8 +116,29 @@ fun CountriesScreen(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
+                            val planetAnim = rememberInfiniteTransition(label = "planet_infinite_anim")
+                            val planetRotation by planetAnim.animateFloat(
+                                initialValue = 0f,
+                                targetValue = 360f,
+                                animationSpec = infiniteRepeatable(
+                                    animation = tween(durationMillis = 9000),
+                                    repeatMode = RepeatMode.Restart
+                                ),
+                                label = "planet_rotation"
+                            )
+                            val planetScale by planetAnim.animateFloat(
+                                initialValue = 1f,
+                                targetValue = 1.09f,
+                                animationSpec = infiniteRepeatable(
+                                    animation = tween(durationMillis = 1400),
+                                    repeatMode = RepeatMode.Reverse
+                                ),
+                                label = "planet_scale"
+                            )
                             Box(
                                 modifier = Modifier
+                                    .rotate(planetRotation)
+                                    .scale(planetScale)
                                     .clip(RoundedCornerShape(999.dp))
                                     .background(
                                         brush = Brush.radialGradient(
@@ -261,9 +291,15 @@ fun CountriesScreen(
                     shape = RoundedCornerShape(12.dp),
                     modifier = Modifier.testTag("countries_filters_toggle")
                 ) {
+                    val tuneRotation by animateFloatAsState(
+                        targetValue = if (filtersExpanded) 180f else 0f,
+                        animationSpec = tween(durationMillis = 260),
+                        label = "filters_tune_rotation"
+                    )
                     Icon(
                         imageVector = Icons.Filled.Tune,
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier.rotate(tuneRotation)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(if (filtersExpanded) "Ocultar filtros" else "Mostrar filtros")
@@ -447,12 +483,15 @@ fun CountriesScreen(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
-                                CircularProgressIndicator(color = WsGreen)
+                                LoadingShimmerDot()
                                 Text(
                                     stringResource(R.string.loading),
                                     color = WsGreenDark,
                                     modifier = Modifier.testTag("countries_loading_text")
                                 )
+                                repeat(3) { idx ->
+                                    LoadingShimmerRow(delayFactor = idx)
+                                }
                             }
                         }
                     }
@@ -520,44 +559,106 @@ fun CountriesScreen(
                         }
                     }
                     else -> {
-                        if (state.viewMode == CountriesViewMode.GRID) {
-                            LazyVerticalGrid(
-                                columns = GridCells.Adaptive(minSize = 160.dp),
-                                modifier = Modifier.testTag("countries_grid")
-                            ) {
-                                items(
-                                    count = state.filteredCountries.size,
-                                    key = { idx -> state.filteredCountries[idx].alpha2Code ?: state.filteredCountries[idx].name }
-                                ) { idx ->
-                                    val country = state.filteredCountries[idx]
-                                    CountryItem(
-                                        country = country,
-                                        onClick = { country.alpha2Code?.let { onCountryClick(it) } },
-                                        compact = true
-                                    )
+                        Crossfade(
+                            targetState = state.viewMode,
+                            animationSpec = tween(durationMillis = 280),
+                            label = "countries_viewmode_crossfade"
+                        ) { mode ->
+                            if (mode == CountriesViewMode.GRID) {
+                                LazyVerticalGrid(
+                                    columns = GridCells.Adaptive(minSize = 160.dp),
+                                    modifier = Modifier.testTag("countries_grid")
+                                ) {
+                                    items(
+                                        count = state.filteredCountries.size,
+                                        key = { idx -> state.filteredCountries[idx].alpha2Code ?: state.filteredCountries[idx].name }
+                                    ) { idx ->
+                                        val country = state.filteredCountries[idx]
+                                        CountryItem(
+                                            country = country,
+                                            onClick = { country.alpha2Code?.let { onCountryClick(it) } },
+                                            compact = true,
+                                            appearDelayMs = (idx % 10) * 30
+                                        )
+                                    }
+                                }
+                            } else {
+                                LazyColumn(
+                                    modifier = Modifier.testTag("countries_list")
+                                ) {
+                                    items(
+                                        state.filteredCountries,
+                                        key = { it.alpha2Code ?: it.name }
+                                    ) { country ->
+                                        val idx = state.filteredCountries.indexOf(country).coerceAtLeast(0)
+                                        CountryItem(
+                                            country = country,
+                                            onClick = {
+                                                country.alpha2Code?.let { onCountryClick(it) }
+                                            },
+                                            appearDelayMs = (idx % 10) * 35
+                                        )
+                                        HorizontalDivider(color = WsGreenLight.copy(alpha = 0.7f))
+                                    }
                                 }
                             }
-                        } else {
-                        LazyColumn(
-                            modifier = Modifier.testTag("countries_list")
-                        ) {
-                            items(
-                                state.filteredCountries,
-                                key = { it.alpha2Code ?: it.name }
-                            ) { country ->
-                                CountryItem(
-                                    country = country,
-                                    onClick = {
-                                        country.alpha2Code?.let { onCountryClick(it) }
-                                    }
-                                )
-                                HorizontalDivider(color = WsGreenLight.copy(alpha = 0.7f))
-                            }
-                        }
                         }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun LoadingShimmerDot() {
+    val shimmer = rememberInfiniteTransition(label = "shimmer_dot")
+    val progress by shimmer.animateFloat(
+        initialValue = 0f,
+        targetValue = 1f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1100),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "shimmer_dot_progress"
+    )
+    CircularProgressIndicator(
+        color = Color(0xFF2E7D32).copy(alpha = 0.55f + (0.45f * progress))
+    )
+}
+
+@Composable
+private fun LoadingShimmerRow(delayFactor: Int) {
+    val shimmer = rememberInfiniteTransition(label = "shimmer_row_$delayFactor")
+    val shift by shimmer.animateFloat(
+        initialValue = 0f,
+        targetValue = 220f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1300 + delayFactor * 180),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "shimmer_shift_$delayFactor"
+    )
+    val brush = Brush.linearGradient(
+        colors = listOf(
+            Color(0xFFEAF5EA),
+            Color(0xFFCDE8CD),
+            Color(0xFFEAF5EA)
+        ),
+        start = androidx.compose.ui.geometry.Offset(shift - 220f, 0f),
+        end = androidx.compose.ui.geometry.Offset(shift, 120f)
+    )
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp),
+        shape = RoundedCornerShape(12.dp),
+        color = Color.Transparent
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(brush = brush)
+        )
     }
 }
