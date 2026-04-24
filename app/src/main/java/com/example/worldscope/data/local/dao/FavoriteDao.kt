@@ -15,10 +15,10 @@ interface FavoriteDao {
     fun getAllFavorites(): Flow<List<FavoriteCountryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertFavorite(country: FavoriteCountryEntity)
+    suspend fun insertFavorite(country: FavoriteCountryEntity): Unit
 
     @Query("DELETE FROM favorite_countries WHERE alpha2Code = :alpha2Code")
-    suspend fun removeFavorite(alpha2Code: String)
+    suspend fun removeFavorite(alpha2Code: String): Unit
 
     @Query("SELECT EXISTS(SELECT 1 FROM favorite_countries WHERE alpha2Code = :alpha2Code)")
     suspend fun isFavorite(alpha2Code: String): Boolean

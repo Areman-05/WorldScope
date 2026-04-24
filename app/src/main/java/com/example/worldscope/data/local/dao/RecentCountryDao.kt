@@ -14,5 +14,5 @@ interface RecentCountryDao {
     fun observeRecent(): Flow<List<RecentCountryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(entity: RecentCountryEntity)
+    suspend fun upsert(entity: RecentCountryEntity): Unit
 }

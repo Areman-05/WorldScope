@@ -14,5 +14,5 @@ interface SearchHistoryDao {
     fun observeRecentSearches(): Flow<List<SearchHistoryEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(entity: SearchHistoryEntity)
+    suspend fun upsert(entity: SearchHistoryEntity): Unit
 }
