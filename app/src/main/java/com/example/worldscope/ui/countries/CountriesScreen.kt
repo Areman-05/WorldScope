@@ -210,127 +210,141 @@ fun CountriesScreen(
                     }
                 }
             }
-            Text(
-                text = stringResource(R.string.region),
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .testTag("countries_region_label")
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            ExposedDropdownMenuBox(
-                expanded = expandedRegion,
-                onExpandedChange = {
-                    if (state.availableRegions.isNotEmpty()) expandedRegion = !expandedRegion
-                    else expandedRegion = false
-                },
+            Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = androidx.compose.ui.graphics.Color.White,
+                tonalElevation = 2.dp
             ) {
-                OutlinedTextField(
-                    value = state.regionFilter ?: stringResource(R.string.all_regions),
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRegion)
-                    },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                        .testTag("countries_region"),
-                    singleLine = true
-                )
-                ExposedDropdownMenu(
-                    expanded = expandedRegion,
-                    onDismissRequest = { expandedRegion = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.all_regions)) },
-                        onClick = {
-                            viewModel.updateRegionFilter(null)
-                            expandedRegion = false
-                        }
+                Column(modifier = Modifier.padding(10.dp)) {
+                    Text(
+                        text = stringResource(R.string.region),
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .testTag("countries_region_label"),
+                        color = WsGreenDark,
+                        style = androidx.compose.material3.MaterialTheme.typography.labelLarge
                     )
-                    if (state.availableRegions.isEmpty()) {
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.no_regions)) },
-                            onClick = { },
-                            enabled = false,
-                            modifier = Modifier.testTag("countries_region_empty")
+                    Spacer(modifier = Modifier.height(4.dp))
+                    ExposedDropdownMenuBox(
+                        expanded = expandedRegion,
+                        onExpandedChange = {
+                            if (state.availableRegions.isNotEmpty()) expandedRegion = !expandedRegion
+                            else expandedRegion = false
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        OutlinedTextField(
+                            value = state.regionFilter ?: stringResource(R.string.all_regions),
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedRegion)
+                            },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
+                                .testTag("countries_region"),
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp)
                         )
-                    } else {
-                        state.availableRegions.forEach { region ->
+                        ExposedDropdownMenu(
+                            expanded = expandedRegion,
+                            onDismissRequest = { expandedRegion = false }
+                        ) {
                             DropdownMenuItem(
-                                text = { Text(region) },
+                                text = { Text(stringResource(R.string.all_regions)) },
                                 onClick = {
-                                    viewModel.updateRegionFilter(region)
+                                    viewModel.updateRegionFilter(null)
                                     expandedRegion = false
                                 }
                             )
+                            if (state.availableRegions.isEmpty()) {
+                                DropdownMenuItem(
+                                    text = { Text(stringResource(R.string.no_regions)) },
+                                    onClick = { },
+                                    enabled = false,
+                                    modifier = Modifier.testTag("countries_region_empty")
+                                )
+                            } else {
+                                state.availableRegions.forEach { region ->
+                                    DropdownMenuItem(
+                                        text = { Text(region) },
+                                        onClick = {
+                                            viewModel.updateRegionFilter(region)
+                                            expandedRegion = false
+                                        }
+                                    )
+                                }
+                            }
                         }
                     }
-                }
-            }
-            Text(
-                text = stringResource(R.string.sort_by),
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .testTag("countries_sort_label")
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            ExposedDropdownMenuBox(
-                expanded = expandedSort,
-                onExpandedChange = { expandedSort = !expandedSort },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp)
-            ) {
-                val sortLabel = when (state.sortMode) {
-                    SortMode.NAME -> stringResource(R.string.sort_name)
-                    SortMode.POPULATION -> stringResource(R.string.sort_population)
-                    SortMode.AREA -> stringResource(R.string.sort_area)
-                }
-                OutlinedTextField(
-                    value = sortLabel,
-                    onValueChange = {},
-                    readOnly = true,
-                    trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSort)
-                    },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
-                        .testTag("countries_sort"),
-                    singleLine = true
-                )
-                ExposedDropdownMenu(
-                    expanded = expandedSort,
-                    onDismissRequest = { expandedSort = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.sort_name)) },
-                        onClick = {
-                            viewModel.updateSortMode(SortMode.NAME)
-                            expandedSort = false
-                        },
-                        modifier = Modifier.testTag("countries_sort_name")
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Text(
+                        text = stringResource(R.string.sort_by),
+                        modifier = Modifier
+                            .padding(horizontal = 4.dp)
+                            .testTag("countries_sort_label"),
+                        color = WsGreenDark,
+                        style = androidx.compose.material3.MaterialTheme.typography.labelLarge
                     )
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.sort_population)) },
-                        onClick = {
-                            viewModel.updateSortMode(SortMode.POPULATION)
-                            expandedSort = false
-                        },
-                        modifier = Modifier.testTag("countries_sort_population")
-                    )
-                    DropdownMenuItem(
-                        text = { Text(stringResource(R.string.sort_area)) },
-                        onClick = {
-                            viewModel.updateSortMode(SortMode.AREA)
-                            expandedSort = false
-                        },
-                        modifier = Modifier.testTag("countries_sort_area")
-                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    ExposedDropdownMenuBox(
+                        expanded = expandedSort,
+                        onExpandedChange = { expandedSort = !expandedSort },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        val sortLabel = when (state.sortMode) {
+                            SortMode.NAME -> stringResource(R.string.sort_name)
+                            SortMode.POPULATION -> stringResource(R.string.sort_population)
+                            SortMode.AREA -> stringResource(R.string.sort_area)
+                        }
+                        OutlinedTextField(
+                            value = sortLabel,
+                            onValueChange = {},
+                            readOnly = true,
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSort)
+                            },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
+                                .testTag("countries_sort"),
+                            singleLine = true,
+                            shape = RoundedCornerShape(12.dp)
+                        )
+                        ExposedDropdownMenu(
+                            expanded = expandedSort,
+                            onDismissRequest = { expandedSort = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.sort_name)) },
+                                onClick = {
+                                    viewModel.updateSortMode(SortMode.NAME)
+                                    expandedSort = false
+                                },
+                                modifier = Modifier.testTag("countries_sort_name")
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.sort_population)) },
+                                onClick = {
+                                    viewModel.updateSortMode(SortMode.POPULATION)
+                                    expandedSort = false
+                                },
+                                modifier = Modifier.testTag("countries_sort_population")
+                            )
+                            DropdownMenuItem(
+                                text = { Text(stringResource(R.string.sort_area)) },
+                                onClick = {
+                                    viewModel.updateSortMode(SortMode.AREA)
+                                    expandedSort = false
+                                },
+                                modifier = Modifier.testTag("countries_sort_area")
+                            )
+                        }
+                    }
                 }
             }
             if (state.hasLoaded && state.hasActiveFilters) {
