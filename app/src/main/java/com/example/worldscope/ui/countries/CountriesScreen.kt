@@ -18,8 +18,10 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.Button
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.DropdownMenuItem
@@ -44,9 +46,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
 
@@ -60,13 +64,33 @@ fun CountriesScreen(
     val state by viewModel.uiState.collectAsState()
     var expandedRegion by remember { mutableStateOf(false) }
     var expandedSort by remember { mutableStateOf(false) }
+    var searchExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
+            CenterAlignedTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("countries_topbar_title"),
+                        textAlign = TextAlign.Center,
+                        style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
+                        fontWeight = FontWeight.SemiBold
+                    )
+                },
                 modifier = Modifier.testTag("countries_topbar"),
                 actions = {
+                    IconButton(
+                        onClick = { searchExpanded = !searchExpanded },
+                        modifier = Modifier.testTag("countries_search_toggle")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = stringResource(R.string.search_country)
+                        )
+                    }
                     IconButton(
                         onClick = onAboutClick,
                         modifier = Modifier.testTag("countries_about")
@@ -98,39 +122,18 @@ fun CountriesScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            OutlinedTextField(
-                value = state.searchQuery,
-                onValueChange = viewModel::updateSearchQuery,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .testTag("countries_search"),
-                placeholder = { Text(stringResource(R.string.search_country)) },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
-            )
-            if (state.recentSearches.isNotEmpty()) {
-                Text(
-                    text = stringResource(R.string.recent_searches_title),
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .testTag("countries_recent_searches_title")
-                )
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+            if (searchExpanded) {
+                OutlinedTextField(
+                    value = state.searchQuery,
+                    onValueChange = viewModel::updateSearchQuery,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp, vertical = 4.dp)
-                        .testTag("countries_recent_searches_row")
-                ) {
-                    items(state.recentSearches, key = { it.query }) { entry ->
-                        AssistChip(
-                            onClick = { viewModel.applyRecentSearch(entry.query) },
-                            label = { Text(entry.query) },
-                            modifier = Modifier.testTag("countries_recent_search_${entry.query}")
-                        )
-                    }
-                }
+                        .padding(8.dp)
+                        .testTag("countries_search"),
+                    placeholder = { Text(stringResource(R.string.search_country)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search)
+                )
             }
             if (state.recentVisits.isNotEmpty()) {
                 Text(
