@@ -24,6 +24,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -53,6 +54,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
+import com.example.worldscope.ui.theme.WsGreen
+import com.example.worldscope.ui.theme.WsGreenDark
+import com.example.worldscope.ui.theme.WsGreenLight
+import com.example.worldscope.ui.theme.WsSurfaceSoft
 
 @Composable
 fun CountriesScreen(
@@ -67,6 +72,7 @@ fun CountriesScreen(
     var searchExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
+        containerColor = WsSurfaceSoft,
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
@@ -80,10 +86,18 @@ fun CountriesScreen(
                         fontWeight = FontWeight.SemiBold
                     )
                 },
+                colors = androidx.compose.material3.TopAppBarDefaults.centerAlignedTopAppBarColors(
+                    containerColor = WsGreenLight,
+                    titleContentColor = WsGreenDark,
+                    actionIconContentColor = WsGreenDark
+                ),
                 modifier = Modifier.testTag("countries_topbar"),
                 actions = {
                     IconButton(
                         onClick = { searchExpanded = !searchExpanded },
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = androidx.compose.ui.graphics.Color.White
+                        ),
                         modifier = Modifier.testTag("countries_search_toggle")
                     ) {
                         Icon(
@@ -93,6 +107,9 @@ fun CountriesScreen(
                     }
                     IconButton(
                         onClick = onAboutClick,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = androidx.compose.ui.graphics.Color.White
+                        ),
                         modifier = Modifier.testTag("countries_about")
                     ) {
                         Icon(
@@ -102,6 +119,9 @@ fun CountriesScreen(
                     }
                     IconButton(
                         onClick = viewModel::toggleViewMode,
+                        colors = IconButtonDefaults.iconButtonColors(
+                            containerColor = androidx.compose.ui.graphics.Color.White
+                        ),
                         modifier = Modifier.testTag("countries_toggle_view")
                     ) {
                         Icon(
