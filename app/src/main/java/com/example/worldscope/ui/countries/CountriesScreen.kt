@@ -369,39 +369,60 @@ fun CountriesScreen(
             ) {
                 when {
                     state.isLoading -> {
-                        Column(
+                        Surface(
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .testTag("countries_loading"),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            shape = RoundedCornerShape(18.dp),
+                            color = androidx.compose.ui.graphics.Color.White,
+                            tonalElevation = 3.dp
                         ) {
-                            CircularProgressIndicator()
-                            Text(
-                                stringResource(R.string.loading),
-                                modifier = Modifier.testTag("countries_loading_text")
-                            )
+                            Column(
+                                modifier = Modifier.padding(horizontal = 28.dp, vertical = 20.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                CircularProgressIndicator(color = WsGreen)
+                                Text(
+                                    stringResource(R.string.loading),
+                                    color = WsGreenDark,
+                                    modifier = Modifier.testTag("countries_loading_text")
+                                )
+                            }
                         }
                     }
                     state.error != null -> {
-                        Column(
+                        Surface(
                             modifier = Modifier
                                 .align(Alignment.Center)
                                 .testTag("countries_error"),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            shape = RoundedCornerShape(18.dp),
+                            color = androidx.compose.ui.graphics.Color.White,
+                            tonalElevation = 3.dp
                         ) {
-                            Text(
-                                text = state.error!!,
-                                modifier = Modifier.testTag("countries_error_text")
-                            )
-                            Button(
-                                onClick = { viewModel.loadCountries() },
-                                modifier = Modifier.testTag("countries_retry")
+                            Column(
+                                modifier = Modifier.padding(horizontal = 20.dp, vertical = 16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 Text(
-                                    stringResource(R.string.retry),
-                                    modifier = Modifier.testTag("countries_retry_text")
+                                    text = state.error!!,
+                                    color = androidx.compose.ui.graphics.Color.Black,
+                                    modifier = Modifier.testTag("countries_error_text"),
+                                    textAlign = TextAlign.Center
+                                )
+                                Button(
+                                    onClick = { viewModel.loadCountries() },
+                                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                        containerColor = WsGreen
+                                    ),
+                                    modifier = Modifier.testTag("countries_retry")
+                                ) {
+                                    Text(
+                                        stringResource(R.string.retry),
+                                        color = androidx.compose.ui.graphics.Color.White,
+                                        modifier = Modifier.testTag("countries_retry_text")
+                                    )
                                 )
                             }
                         }
@@ -427,7 +448,9 @@ fun CountriesScreen(
                                 modifier = Modifier
                                     .align(Alignment.Center)
                                     .testTag("countries_no_results")
-                                    .testTag("countries_no_results_text")
+                                    .testTag("countries_no_results_text"),
+                                color = WsGreenDark,
+                                textAlign = TextAlign.Center
                             )
                         }
                     }
