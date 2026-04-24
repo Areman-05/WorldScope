@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.border
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -15,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.stringResource
@@ -25,6 +27,7 @@ import com.example.worldscope.R
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.ui.theme.WsGreenDark
 import com.example.worldscope.ui.theme.WsGreenLight
+import com.example.worldscope.ui.theme.WsGreen
 
 @Composable
 fun CountryItem(
@@ -41,10 +44,15 @@ fun CountryItem(
             .fillMaxWidth()
             .clickable(onClick = onClick)
             .testTag("country_item")
-            .padding(horizontal = 10.dp, vertical = 6.dp),
+            .padding(horizontal = 10.dp, vertical = 6.dp)
+            .border(
+                width = 1.2.dp,
+                color = WsGreen.copy(alpha = 0.55f),
+                shape = RoundedCornerShape(if (compact) 14.dp else 16.dp)
+            ),
         shape = RoundedCornerShape(if (compact) 14.dp else 16.dp),
-        color = androidx.compose.ui.graphics.Color.White,
-        tonalElevation = 2.dp
+        color = WsGreenLight.copy(alpha = 0.45f),
+        tonalElevation = 3.dp
     ) {
         Row(
             modifier = Modifier.padding(padding),
@@ -62,7 +70,7 @@ fun CountryItem(
                 Text(
                     text = country.name,
                     style = if (compact) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight.Bold,
                     color = WsGreenDark,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -72,7 +80,7 @@ fun CountryItem(
                 Text(
                     text = "%,d".format(country.population),
                     style = MaterialTheme.typography.bodySmall,
-                    color = androidx.compose.ui.graphics.Color.Black,
+                    color = Color.Black,
                     modifier = Modifier.testTag("country_item_population")
                 )
             }

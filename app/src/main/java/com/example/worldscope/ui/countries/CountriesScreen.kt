@@ -5,12 +5,15 @@ package com.example.worldscope.ui.countries
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -19,7 +22,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.GridView
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material.icons.filled.ViewAgenda
 import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -39,7 +44,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -51,6 +55,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -75,92 +81,90 @@ fun CountriesScreen(
     val state by viewModel.uiState.collectAsState()
     var expandedRegion by remember { mutableStateOf(false) }
     var expandedSort by remember { mutableStateOf(false) }
-    var searchExpanded by remember { mutableStateOf(false) }
+    var filtersExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = WsSurfaceSoft,
         topBar = {
-            CenterAlignedTopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.app_name),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("countries_topbar_title"),
-                        textAlign = TextAlign.Center,
-                        style = androidx.compose.material3.MaterialTheme.typography.headlineSmall,
-                        fontWeight = FontWeight.SemiBold
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(WsGreen, WsGreenDark)
+                        )
                     )
-                },
-                colors = androidx.compose.material3.TopAppBarDefaults.centerAlignedTopAppBarColors(
-                    containerColor = WsGreenLight,
-                    titleContentColor = WsGreenDark,
-                    actionIconContentColor = WsGreenDark
-                ),
-                modifier = Modifier.testTag("countries_topbar"),
-                actions = {
-                    IconButton(
-                        onClick = { searchExpanded = !searchExpanded },
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = androidx.compose.ui.graphics.Color.White
-                        ),
-                        modifier = Modifier.testTag("countries_search_toggle")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = stringResource(R.string.search_country)
-                        )
-                    }
-                    IconButton(
-                        onClick = onAboutClick,
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = androidx.compose.ui.graphics.Color.White
-                        ),
-                        modifier = Modifier.testTag("countries_about")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Info,
-                            contentDescription = stringResource(R.string.about_title)
-                        )
-                    }
-                    IconButton(
-                        onClick = viewModel::toggleViewMode,
-                        colors = IconButtonDefaults.iconButtonColors(
-                            containerColor = androidx.compose.ui.graphics.Color.White
-                        ),
-                        modifier = Modifier.testTag("countries_toggle_view")
-                    ) {
-                        Icon(
-                            imageVector = if (state.viewMode == CountriesViewMode.LIST) {
-                                Icons.Filled.GridView
-                            } else {
-                                Icons.Filled.ViewAgenda
-                            },
-                            contentDescription = stringResource(R.string.countries)
-                        )
-                    }
-                }
-            )
-        }
-        ) { paddingValues ->
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            AnimatedVisibility(
-                visible = searchExpanded,
-                enter = fadeIn(),
-                exit = fadeOut()
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .testTag("countries_topbar")
             ) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("countries_topbar_title"),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Public,
+                                contentDescription = null,
+                                tint = Color(0xFFFFF176)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = stringResource(R.string.app_name),
+                                textAlign = TextAlign.Center,
+                                style = androidx.compose.material3.MaterialTheme.typography.headlineLarge,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.White
+                            )
+                        }
+                    },
+                    colors = androidx.compose.material3.TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = Color.White,
+                        actionIconContentColor = Color.White
+                    ),
+                    actions = {
+                        IconButton(
+                            onClick = onAboutClick,
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = Color.White.copy(alpha = 0.2f),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier.testTag("countries_about")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Info,
+                                contentDescription = stringResource(R.string.about_title)
+                            )
+                        }
+                        IconButton(
+                            onClick = viewModel::toggleViewMode,
+                            colors = IconButtonDefaults.iconButtonColors(
+                                containerColor = Color.White.copy(alpha = 0.2f),
+                                contentColor = Color.White
+                            ),
+                            modifier = Modifier.testTag("countries_toggle_view")
+                        ) {
+                            Icon(
+                                imageVector = if (state.viewMode == CountriesViewMode.LIST) {
+                                    Icons.Filled.GridView
+                                } else {
+                                    Icons.Filled.ViewAgenda
+                                },
+                                contentDescription = stringResource(R.string.countries)
+                            )
+                        }
+                    }
+                )
                 Surface(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                        .padding(top = 4.dp),
                     shape = RoundedCornerShape(14.dp),
-                    color = androidx.compose.ui.graphics.Color.White,
-                    tonalElevation = 2.dp,
-                    shadowElevation = 2.dp
+                    color = Color.White.copy(alpha = 0.95f)
                 ) {
                     OutlinedTextField(
                         value = state.searchQuery,
@@ -170,17 +174,31 @@ fun CountriesScreen(
                             .padding(6.dp)
                             .testTag("countries_search"),
                         placeholder = { Text(stringResource(R.string.search_country)) },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = null,
+                                tint = WsGreenDark
+                            )
+                        },
                         singleLine = true,
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                         shape = RoundedCornerShape(12.dp)
                     )
                 }
             }
+        }
+        ) { paddingValues ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
             if (state.recentVisits.isNotEmpty()) {
                 Text(
-                    text = stringResource(R.string.recent_title),
+                    text = "⭐ ${stringResource(R.string.recent_title)}",
                     modifier = Modifier
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 10.dp, vertical = 6.dp)
                         .testTag("countries_recent_title"),
                     color = WsGreenDark,
                     style = androidx.compose.material3.MaterialTheme.typography.titleSmall,
@@ -199,17 +217,45 @@ fun CountriesScreen(
                             label = { Text(recent.name) },
                             modifier = Modifier.testTag("countries_recent_${recent.alpha2Code}"),
                             colors = AssistChipDefaults.assistChipColors(
-                                containerColor = WsGreenLight,
-                                labelColor = androidx.compose.ui.graphics.Color.Black
+                                containerColor = WsGreen,
+                                labelColor = Color.White
                             ),
                             border = androidx.compose.foundation.BorderStroke(
                                 width = 1.dp,
-                                color = WsGreen.copy(alpha = 0.5f)
+                                color = WsGreenDark
                             )
                         )
                     }
                 }
             }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 10.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Button(
+                    onClick = { filtersExpanded = !filtersExpanded },
+                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                        containerColor = WsGreenDark,
+                        contentColor = Color.White
+                    ),
+                    shape = RoundedCornerShape(12.dp),
+                    modifier = Modifier.testTag("countries_filters_toggle")
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Tune,
+                        contentDescription = null
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(if (filtersExpanded) "Ocultar filtros" else "Mostrar filtros")
+                }
+            }
+            AnimatedVisibility(
+                visible = filtersExpanded,
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -347,6 +393,7 @@ fun CountriesScreen(
                     }
                 }
             }
+            }
             if (state.hasLoaded && state.hasActiveFilters) {
                 OutlinedButton(
                     onClick = {
@@ -356,7 +403,7 @@ fun CountriesScreen(
                     },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 8.dp)
+                        .padding(horizontal = 10.dp)
                         .testTag("countries_clear_filters")
                 ) {
                     Text(stringResource(R.string.clear_filters))
