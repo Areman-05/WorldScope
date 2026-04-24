@@ -38,6 +38,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.animation.AnimatedVisibility
@@ -180,7 +181,10 @@ fun CountriesScreen(
                     text = stringResource(R.string.recent_title),
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
-                        .testTag("countries_recent_title")
+                        .testTag("countries_recent_title"),
+                    color = WsGreenDark,
+                    style = androidx.compose.material3.MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold
                 )
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -193,7 +197,15 @@ fun CountriesScreen(
                         AssistChip(
                             onClick = { onCountryClick(recent.alpha2Code) },
                             label = { Text(recent.name) },
-                            modifier = Modifier.testTag("countries_recent_${recent.alpha2Code}")
+                            modifier = Modifier.testTag("countries_recent_${recent.alpha2Code}"),
+                            colors = AssistChipDefaults.assistChipColors(
+                                containerColor = WsGreenLight,
+                                labelColor = androidx.compose.ui.graphics.Color.Black
+                            ),
+                            border = androidx.compose.foundation.BorderStroke(
+                                width = 1.dp,
+                                color = WsGreen.copy(alpha = 0.5f)
+                            )
                         )
                     }
                 }
