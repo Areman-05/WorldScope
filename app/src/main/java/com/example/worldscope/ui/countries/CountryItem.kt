@@ -2,6 +2,7 @@ package com.example.worldscope.ui.countries
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,7 @@ fun CountryItem(
     val padding = if (compact) 10.dp else 16.dp
     val flagWidth = if (compact) 40.dp else 48.dp
     val flagHeight = if (compact) 30.dp else 36.dp
+    val cardShape = RoundedCornerShape(if (compact) 14.dp else 16.dp)
     Surface(
         modifier = modifier
             .fillMaxWidth()
@@ -48,25 +50,32 @@ fun CountryItem(
             .testTag("country_item")
             .padding(horizontal = 10.dp, vertical = 6.dp)
             .border(
-                width = 1.2.dp,
-                color = WsGreen.copy(alpha = 0.55f),
-                shape = RoundedCornerShape(if (compact) 14.dp else 16.dp)
+                width = 1.dp,
+                color = WsGreenLight.copy(alpha = 0.9f),
+                shape = cardShape
             ),
-        shape = RoundedCornerShape(if (compact) 14.dp else 16.dp),
-        color = WsGreenLight.copy(alpha = 0.45f),
-        tonalElevation = 3.dp
+        shape = cardShape,
+        color = Color.White,
+        tonalElevation = 2.dp,
+        shadowElevation = 3.dp
     ) {
         Row(
             modifier = Modifier.padding(padding),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
+            Box(
+                modifier = Modifier
+                    .size(width = 4.dp, height = if (compact) 34.dp else 40.dp)
+                    .clip(RoundedCornerShape(999.dp))
+                    .background(WsGreen)
+            )
             AsyncImage(
                 model = country.flagUrl,
                 contentDescription = stringResource(R.string.flag_description, country.name),
                 modifier = Modifier
                     .clip(RoundedCornerShape(8.dp))
-                    .background(Color.White.copy(alpha = 0.55f))
+                    .background(WsGreenLight.copy(alpha = 0.25f))
                     .size(flagWidth, flagHeight)
                     .testTag("country_item_flag")
             )
@@ -84,12 +93,12 @@ fun CountryItem(
                 Text(
                     text = "%,d".format(country.population),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Black,
+                    color = Color(0xFF2B2B2B),
                     modifier = Modifier
                         .testTag("country_item_population")
                         .background(
-                            color = Color.White.copy(alpha = 0.75f),
-                            shape = RoundedCornerShape(6.dp)
+                            color = WsGreenLight.copy(alpha = 0.38f),
+                            shape = RoundedCornerShape(7.dp)
                         )
                         .padding(horizontal = 8.dp, vertical = 2.dp)
                 )

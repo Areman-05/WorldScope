@@ -10,6 +10,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,7 +40,6 @@ import com.example.worldscope.ui.favorites.FavoritesScreen
 import com.example.worldscope.ui.quiz.QuizScreen
 import com.example.worldscope.ui.theme.WsGreen
 import com.example.worldscope.ui.theme.WsGreenDark
-import com.example.worldscope.ui.theme.WsGreenLight
 
 @Composable
 fun AppScaffold() {
@@ -52,11 +52,15 @@ fun AppScaffold() {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar(
-                    containerColor = WsGreenLight.copy(alpha = 0.35f),
+                Surface(
+                    color = Color.White,
+                    shadowElevation = 8.dp,
                     modifier = Modifier
                         .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
                         .testTag("app_bottom_bar")
+                ) {
+                NavigationBar(
+                    containerColor = Color.White
                 ) {
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.route == Routes.COUNTRIES } == true,
@@ -138,6 +142,7 @@ fun AppScaffold() {
                         ),
                         modifier = Modifier.testTag("nav_quiz")
                     )
+                }
                 }
             }
         }
