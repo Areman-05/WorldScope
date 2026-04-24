@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Payments
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.QueryStats
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -36,13 +37,20 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -60,6 +68,7 @@ import com.example.worldscope.ui.theme.WsGreen
 import com.example.worldscope.ui.theme.WsGreenDark
 import com.example.worldscope.ui.theme.WsGreenLight
 import com.example.worldscope.ui.theme.WsSurfaceSoft
+import kotlinx.coroutines.delay
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -97,11 +106,11 @@ fun CountryDetailScreen(
                                 tint = Color(0xFFFFF59D)
                             )
                             Text(
-                                state.country?.name ?: stringResource(R.string.detail),
+                                stringResource(R.string.app_name),
                                 modifier = Modifier.testTag("country_detail_title"),
                                 color = Color.White,
-                                style = MaterialTheme.typography.titleLarge,
-                                fontWeight = FontWeight.Bold
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.ExtraBold
                             )
                         }
                     },
@@ -113,11 +122,16 @@ fun CountryDetailScreen(
                     navigationIcon = {
                         IconButton(
                             onClick = onBackClick,
+                            colors = androidx.compose.material3.IconButtonDefaults.iconButtonColors(
+                                containerColor = Color.White,
+                                contentColor = WsGreenDark
+                            ),
                             modifier = Modifier.testTag("country_detail_back")
                         ) {
                             Icon(
                                 Icons.AutoMirrored.Filled.ArrowBack,
-                                contentDescription = stringResource(R.string.back)
+                                contentDescription = stringResource(R.string.back),
+                                tint = WsGreenDark
                             )
                         }
                     },
@@ -226,9 +240,28 @@ private fun CountryDetailContent(
             .testTag("country_detail_content"),
         verticalArrangement = Arrangement.spacedBy(14.dp)
     ) {
+        var flagVisible by remember { mutableStateOf(false) }
+        LaunchedEffect(country.alpha2Code, country.name) {
+            flagVisible = true
+        }
+        val flagScale by animateFloatAsState(
+            targetValue = if (flagVisible) 1f else 0.94f,
+            animationSpec = tween(durationMillis = 380),
+            label = "detail_flag_scale"
+        )
+        val flagAlpha by animateFloatAsState(
+            targetValue = if (flagVisible) 1f else 0f,
+            animationSpec = tween(durationMillis = 380),
+            label = "detail_flag_alpha"
+        )
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
+                .graphicsLayer {
+                    this.alpha = flagAlpha
+                    this.scaleX = flagScale
+                    this.scaleY = flagScale
+                }
                 .testTag("country_detail_flag"),
             color = Color.White,
             shape = RoundedCornerShape(16.dp),
@@ -244,15 +277,18 @@ private fun CountryDetailContent(
         }
         Text(
             text = country.name,
-            style = MaterialTheme.typography.headlineMedium,
+            modifier = Modifier.fillMaxWidth(),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineLarge,
             color = WsGreenDark,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.ExtraBold,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
         DetailSectionCard(
             title = stringResource(R.string.detail),
-            icon = Icons.Filled.LocationOn
+            icon = Icons.Filled.LocationOn,
+            appearDelayMs = 40
         ) {
             DetailMetricRow(
                 label = stringResource(R.string.capital),
@@ -283,6 +319,10 @@ private fun CountryDetailContent(
         country.latlng?.let { latlng ->
             Button(
                 onClick = { uriHandler.openUri("geo:${latlng.first},${latlng.second}") },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFFFBC02D),
+                    contentColor = Color(0xFF1B5E20)
+                ),
                 modifier = Modifier.testTag("country_detail_open_map")
             ) {
                 Text(stringResource(R.string.open_map))
@@ -291,7 +331,8 @@ private fun CountryDetailContent(
         if (country.languages.isNotEmpty()) {
             DetailSectionCard(
                 title = stringResource(R.string.languages),
-                icon = Icons.Filled.Language
+                icon = Icons.Filled.Language,
+                appearDelayMs = 90
             ) {
                 Text(
                     country.languages.joinToString(),
@@ -303,7 +344,8 @@ private fun CountryDetailContent(
         if (country.currencies.isNotEmpty()) {
             DetailSectionCard(
                 title = stringResource(R.string.currencies),
-                icon = Icons.Filled.Payments
+                icon = Icons.Filled.Payments,
+                appearDelayMs = 120
             ) {
                 Text(
                     country.currencies.joinToString(),
@@ -315,7 +357,8 @@ private fun CountryDetailContent(
         DetailSectionCard(
             title = stringResource(R.string.economy),
             icon = Icons.Filled.QueryStats,
-            tag = "country_detail_economy_title"
+            tag = "country_detail_economy_title",
+            appearDelayMs = 150
         ) {
             if (isLoadingEconomic) {
                 Text(stringResource(R.string.loading))
@@ -337,7 +380,8 @@ private fun CountryDetailContent(
         DetailSectionCard(
             title = stringResource(R.string.wikipedia),
             icon = Icons.Filled.MenuBook,
-            tag = "country_detail_wiki_title"
+            tag = "country_detail_wiki_title",
+            appearDelayMs = 180
         ) {
             if (isLoadingWiki) {
                 Text(stringResource(R.string.loading))
@@ -368,7 +412,8 @@ private fun CountryDetailContent(
         DetailSectionCard(
             title = "Clima actualmente",
             icon = Icons.Filled.Public,
-            tag = "country_detail_weather_title"
+            tag = "country_detail_weather_title",
+            appearDelayMs = 210
         ) {
             if (isLoadingWeather) {
                 Text(stringResource(R.string.loading))
@@ -404,10 +449,31 @@ private fun DetailSectionCard(
     title: String,
     icon: ImageVector,
     tag: String? = null,
+    appearDelayMs: Int = 0,
     content: @Composable ColumnScope.() -> Unit
 ) {
+    var visible by remember { mutableStateOf(false) }
+    LaunchedEffect(title) {
+        if (appearDelayMs > 0) delay(appearDelayMs.toLong())
+        visible = true
+    }
+    val alpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 320),
+        label = "detail_section_alpha_$title"
+    )
+    val translationY by animateFloatAsState(
+        targetValue = if (visible) 0f else 24f,
+        animationSpec = tween(durationMillis = 320),
+        label = "detail_section_translation_$title"
+    )
     Surface(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                this.alpha = alpha
+                this.translationY = translationY
+            },
         color = Color.White,
         shape = RoundedCornerShape(14.dp),
         tonalElevation = 2.dp
