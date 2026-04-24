@@ -423,7 +423,7 @@ fun CountriesScreen(
                                         color = androidx.compose.ui.graphics.Color.White,
                                         modifier = Modifier.testTag("countries_retry_text")
                                     )
-                                )
+                                }
                             }
                         }
                     }
