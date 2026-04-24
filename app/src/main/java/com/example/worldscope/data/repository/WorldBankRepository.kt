@@ -25,11 +25,13 @@ class WorldBankRepository @Inject constructor(
             if (root.length() < 2) return null
             val data = root.getJSONArray(1)
             if (data.length() == 0) return null
-            val row = data.getJSONObject(0)
-            when {
-                row.isNull("value") -> null
-                else -> row.optDouble("value", Double.NaN).takeUnless { it.isNaN() }
+            for (i in 0 until data.length()) {
+                val row = data.optJSONObject(i) ?: continue
+                if (row.isNull("value")) continue
+                val value = row.optDouble("value", Double.NaN).takeUnless { it.isNaN() }
+                if (value != null) return value
             }
+            null
         } catch (_: Exception) {
             null
         }
