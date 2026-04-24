@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.border
+import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -17,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.res.stringResource
@@ -63,6 +65,8 @@ fun CountryItem(
                 model = country.flagUrl,
                 contentDescription = stringResource(R.string.flag_description, country.name),
                 modifier = Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.White.copy(alpha = 0.55f))
                     .size(flagWidth, flagHeight)
                     .testTag("country_item_flag")
             )
@@ -81,7 +85,13 @@ fun CountryItem(
                     text = "%,d".format(country.population),
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Black,
-                    modifier = Modifier.testTag("country_item_population")
+                    modifier = Modifier
+                        .testTag("country_item_population")
+                        .background(
+                            color = Color.White.copy(alpha = 0.75f),
+                            shape = RoundedCornerShape(6.dp)
+                        )
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
                 )
             }
         }

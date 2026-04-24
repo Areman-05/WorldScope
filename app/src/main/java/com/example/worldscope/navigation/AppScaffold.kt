@@ -8,14 +8,19 @@ import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
@@ -32,6 +37,9 @@ import com.example.worldscope.ui.countries.CountriesScreen
 import com.example.worldscope.ui.detail.CountryDetailScreen
 import com.example.worldscope.ui.favorites.FavoritesScreen
 import com.example.worldscope.ui.quiz.QuizScreen
+import com.example.worldscope.ui.theme.WsGreen
+import com.example.worldscope.ui.theme.WsGreenDark
+import com.example.worldscope.ui.theme.WsGreenLight
 
 @Composable
 fun AppScaffold() {
@@ -44,7 +52,12 @@ fun AppScaffold() {
     Scaffold(
         bottomBar = {
             if (showBottomBar) {
-                NavigationBar(modifier = Modifier.testTag("app_bottom_bar")) {
+                NavigationBar(
+                    containerColor = WsGreenLight.copy(alpha = 0.35f),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                        .testTag("app_bottom_bar")
+                ) {
                     NavigationBarItem(
                         selected = currentDestination?.hierarchy?.any { it.route == Routes.COUNTRIES } == true,
                         onClick = {
@@ -56,6 +69,13 @@ fun AppScaffold() {
                         },
                         icon = { Icon(Icons.Filled.Public, contentDescription = null) },
                         label = { Text(stringResource(R.string.countries)) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Color.White,
+                            selectedTextColor = WsGreenDark,
+                            indicatorColor = WsGreen,
+                            unselectedIconColor = Color(0xFF5A5A5A),
+                            unselectedTextColor = Color(0xFF5A5A5A)
+                        ),
                         modifier = Modifier.testTag("nav_countries")
                     )
                     NavigationBarItem(
@@ -69,6 +89,13 @@ fun AppScaffold() {
                         },
                         icon = { Icon(Icons.Filled.Favorite, contentDescription = null) },
                         label = { Text(stringResource(R.string.favorites)) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Color.White,
+                            selectedTextColor = WsGreenDark,
+                            indicatorColor = WsGreen,
+                            unselectedIconColor = Color(0xFF5A5A5A),
+                            unselectedTextColor = Color(0xFF5A5A5A)
+                        ),
                         modifier = Modifier.testTag("nav_favorites")
                     )
                     NavigationBarItem(
@@ -82,6 +109,13 @@ fun AppScaffold() {
                         },
                         icon = { Icon(Icons.AutoMirrored.Filled.CompareArrows, contentDescription = null) },
                         label = { Text(stringResource(R.string.compare_title)) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Color.White,
+                            selectedTextColor = WsGreenDark,
+                            indicatorColor = WsGreen,
+                            unselectedIconColor = Color(0xFF5A5A5A),
+                            unselectedTextColor = Color(0xFF5A5A5A)
+                        ),
                         modifier = Modifier.testTag("nav_compare")
                     )
                     NavigationBarItem(
@@ -95,6 +129,13 @@ fun AppScaffold() {
                         },
                         icon = { Icon(Icons.Filled.EmojiEvents, contentDescription = null) },
                         label = { Text(stringResource(R.string.quiz_title)) },
+                        colors = NavigationBarItemDefaults.colors(
+                            selectedIconColor = Color.White,
+                            selectedTextColor = WsGreenDark,
+                            indicatorColor = WsGreen,
+                            unselectedIconColor = Color(0xFF5A5A5A),
+                            unselectedTextColor = Color(0xFF5A5A5A)
+                        ),
                         modifier = Modifier.testTag("nav_quiz")
                     )
                 }

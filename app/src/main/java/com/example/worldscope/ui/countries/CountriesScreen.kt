@@ -57,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -106,11 +107,28 @@ fun CountriesScreen(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.Public,
-                                contentDescription = null,
-                                tint = Color(0xFFFFF176)
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .background(
+                                        brush = Brush.radialGradient(
+                                            colors = listOf(
+                                                Color(0xFFFFF59D),
+                                                Color(0xFFFBC02D)
+                                            )
+                                        )
+                                    )
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Public,
+                                    contentDescription = null,
+                                    tint = Color(0xFF1B5E20),
+                                    modifier = Modifier
+                                        .width(26.dp)
+                                        .height(26.dp)
+                                )
+                            }
                             Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = stringResource(R.string.app_name),
@@ -533,7 +551,7 @@ fun CountriesScreen(
                                         country.alpha2Code?.let { onCountryClick(it) }
                                     }
                                 )
-                                HorizontalDivider()
+                                HorizontalDivider(color = WsGreenLight.copy(alpha = 0.7f))
                             }
                         }
                         }
