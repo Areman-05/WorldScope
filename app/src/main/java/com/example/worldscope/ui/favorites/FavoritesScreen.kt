@@ -9,24 +9,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -64,6 +65,8 @@ fun FavoritesScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
+    val groupedCodes = state.groups.flatMap { it.countryCodes }.toSet()
+    val freeFavorites = state.favorites.filterNot { groupedCodes.contains(it.alpha2Code) }
 
     Scaffold(
         containerColor = WsSurfaceSoft,
@@ -222,9 +225,142 @@ fun FavoritesScreen(
                 modifier = modifier
                     .fillMaxSize()
                     .padding(paddingValues)
-                    .testTag("favorites_list")
+                    .padding(horizontal = 8.dp, vertical = 6.dp)
+                    .testTag("favorites_list"),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(state.favorites, key = { it.alpha2Code }) { favorite ->
+                item {
+                    Surface(
+                        color = Color.White,
+                        shape = RoundedCornerShape(14.dp),
+                        tonalElevation = 2.dp,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Text(
+                                text = "Listas personalizadas",
+                                color = WsGreenDark,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 10.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                OutlinedTextField(
+                                    value = state.newGroupName,
+                                    onValueChange = viewModel::updateNewGroupName,
+                                    modifier = Modifier.weight(1f),
+                                    placeholder = { Text("Nombre de la lista") },
+                                    singleLine = true
+                                )
+                                Button(
+                                    onClick = viewModel::createGroup,
+                                    colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                        containerColor = WsGreenDark,
+                                        contentColor = Color.White
+                                    )
+                                ) {
+                                    Icon(Icons.Filled.Add, contentDescription = null)
+                                }
+                            }
+                        }
+                    }
+                }
+                items(state.groups, key = { it.id }) { group ->
+                    Surface(
+                        color = Color.White,
+                        shape = RoundedCornerShape(16.dp),
+                        tonalElevation = 2.dp,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(modifier = Modifier.padding(12.dp)) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = group.name,
+                                    color = WsGreenDark,
+                                    fontWeight = FontWeight.Bold,
+                                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                                )
+                                androidx.compose.material3.IconButton(
+                                    onClick = { viewModel.removeGroup(group.id) }
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Delete,
+                                        contentDescription = "Eliminar lista",
+                                        tint = Color(0xFFC62828)
+                                    )
+                                }
+                            }
+                            if (state.favorites.isNotEmpty()) {
+                                LazyRow(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 4.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    items(state.favorites, key = { it.alpha2Code }) { favorite ->
+                                        val selected = group.countryCodes.contains(favorite.alpha2Code)
+                                        AssistChip(
+                                            onClick = {
+                                                viewModel.toggleCountryInGroup(
+                                                    group.id,
+                                                    favorite.alpha2Code
+                                                )
+                                            },
+                                            label = { Text(favorite.name) },
+                                            colors = AssistChipDefaults.assistChipColors(
+                                                containerColor = if (selected) WsGreen else Color(0xFFF4F7F4),
+                                                labelColor = if (selected) Color.White else WsGreenDark
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                            val groupedFavorites = state.favorites.filter { group.countryCodes.contains(it.alpha2Code) }
+                            if (groupedFavorites.isEmpty()) {
+                                Text(
+                                    text = "Aun no hay paises en esta lista.",
+                                    color = Color(0xFF6A6A6A),
+                                    modifier = Modifier.padding(top = 8.dp)
+                                )
+                            } else {
+                                Column(
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(4.dp)
+                                ) {
+                                    groupedFavorites.forEach { favorite ->
+                                        FavoriteItem(
+                                            favorite = favorite,
+                                            onClick = {
+                                                val code = favorite.alpha2Code
+                                                if (code.isNotBlank()) onCountryClick(code)
+                                            },
+                                            onRemoveClick = { viewModel.removeFavorite(favorite.alpha2Code) }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                item {
+                    Text(
+                        text = "Favoritos libres",
+                        color = WsGreenDark,
+                        fontWeight = FontWeight.ExtraBold,
+                        modifier = Modifier
+                            .padding(top = 6.dp, start = 4.dp)
+                            .testTag("favorites_free_title")
+                    )
+                }
+                items(freeFavorites, key = { it.alpha2Code }) { favorite ->
                     FavoriteItem(
                         favorite = favorite,
                         onClick = {
