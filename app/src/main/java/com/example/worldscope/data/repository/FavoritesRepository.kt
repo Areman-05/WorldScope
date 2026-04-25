@@ -5,9 +5,9 @@ import com.example.worldscope.data.local.dao.FavoriteGroupDao
 import com.example.worldscope.data.local.entity.FavoriteCountryEntity
 import com.example.worldscope.data.local.entity.FavoriteGroupEntity
 import com.example.worldscope.data.local.entity.FavoriteGroupItemCrossRef
+import com.example.worldscope.domain.model.Country
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import com.example.worldscope.domain.model.Country
 import javax.inject.Inject
 
 class FavoritesRepository @Inject constructor(
@@ -76,6 +76,17 @@ class FavoritesRepository @Inject constructor(
 
     suspend fun removeCountryFromGroup(groupId: Long, alpha2Code: String) {
         favoriteGroupDao.removeGroupItem(groupId, alpha2Code)
+    }
+
+    suspend fun addCountryToGroup(country: Country, groupId: Long) {
+        val alpha2 = country.alpha2Code ?: return
+        favoriteDao.insertFavorite(country.toFavoriteEntity())
+        favoriteGroupDao.upsertGroupItem(
+            FavoriteGroupItemCrossRef(
+                groupId = groupId,
+                alpha2Code = alpha2
+            )
+        )
     }
 
     private fun Country.toFavoriteEntity(): FavoriteCountryEntity =

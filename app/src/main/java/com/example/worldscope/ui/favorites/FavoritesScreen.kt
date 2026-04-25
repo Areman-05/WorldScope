@@ -29,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -36,6 +37,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.core.RepeatMode
@@ -46,6 +48,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -171,7 +174,7 @@ fun FavoritesScreen(
             }
         }
         AnimatedVisibility(
-            visible = state.hasLoaded && state.favorites.isEmpty(),
+            visible = state.hasLoaded && state.favorites.isEmpty() && state.groups.isEmpty(),
             enter = fadeIn(),
             exit = fadeOut()
         ) {
@@ -225,7 +228,7 @@ fun FavoritesScreen(
             }
         }
         AnimatedVisibility(
-            visible = state.hasLoaded && state.favorites.isNotEmpty(),
+            visible = state.hasLoaded,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
@@ -315,8 +318,10 @@ fun FavoritesScreen(
     val selectedGroup = state.groups.firstOrNull { it.id == selectedGroupId }
     if (selectedGroup != null) {
         val favoritesInGroup = state.favorites.filter { selectedGroup.countryCodes.contains(it.alpha2Code) }
-        val candidatesToAdd = state.favorites.filterNot { selectedGroup.countryCodes.contains(it.alpha2Code) }
+        val candidatesToAdd = state.allCountries
+            .filterNot { selectedGroup.countryCodes.contains(it.alpha2Code) }
             .filter { it.name.contains(addSearchQuery, ignoreCase = true) }
+            .take(30)
         GroupDetailDialog(
             groupName = selectedGroup.name,
             favoritesInGroup = favoritesInGroup,
@@ -389,17 +394,19 @@ private fun GroupSummaryCard(
 private fun GroupDetailDialog(
     groupName: String,
     favoritesInGroup: List<FavoriteCountryEntity>,
-    candidatesToAdd: List<FavoriteCountryEntity>,
+    candidatesToAdd: List<CountryCandidate>,
     addSearchQuery: String,
     showAddPanel: Boolean,
     onDismiss: () -> Unit,
     onDeleteGroup: () -> Unit,
     onToggleAddPanel: () -> Unit,
     onAddSearchQueryChange: (String) -> Unit,
-    onAddCountry: (FavoriteCountryEntity) -> Unit,
+    onAddCountry: (CountryCandidate) -> Unit,
     onRemoveCountry: (FavoriteCountryEntity) -> Unit,
     onCountryClick: (String) -> Unit
 ) {
+    var showDeleteConfirm by remember { mutableStateOf(false) }
+
     Dialog(onDismissRequest = onDismiss) {
         Surface(
             shape = RoundedCornerShape(20.dp),
@@ -430,7 +437,7 @@ private fun GroupDetailDialog(
                                 tint = WsGreenDark
                             )
                         }
-                        IconButton(onClick = onDeleteGroup) {
+                        IconButton(onClick = { showDeleteConfirm = true }) {
                             Icon(
                                 imageVector = Icons.Filled.Delete,
                                 contentDescription = "Eliminar grupo",
@@ -508,37 +515,109 @@ private fun GroupDetailDialog(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         items(favoritesInGroup, key = { it.alpha2Code }) { country ->
-                            Surface(
-                                color = Color(0xFFF7FBF7),
-                                shape = RoundedCornerShape(10.dp),
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 10.dp, vertical = 8.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Text(
-                                        text = country.name,
-                                        color = WsGreenDark,
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .clickable { onCountryClick(country.alpha2Code) }
-                                    )
-                                    IconButton(onClick = { onRemoveCountry(country) }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Close,
-                                            contentDescription = "Quitar de la lista",
-                                            tint = Color(0xFFC62828)
-                                        )
-                                    }
-                                }
-                            }
+                            GroupCountryRow(
+                                country = country,
+                                onCountryClick = { onCountryClick(country.alpha2Code) },
+                                onRemove = { onRemoveCountry(country) }
+                            )
                         }
                     }
                 }
+            }
+        }
+    }
+
+    if (showDeleteConfirm) {
+        Dialog(onDismissRequest = { showDeleteConfirm = false }) {
+            Surface(
+                shape = RoundedCornerShape(16.dp),
+                color = Color.White
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    Text(
+                        text = "Eliminar lista \"$groupName\"?",
+                        color = WsGreenDark,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text("Se quitara la lista, pero los paises seguiran en favoritos.")
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        TextButton(onClick = { showDeleteConfirm = false }) {
+                            Text("Cancelar")
+                        }
+                        TextButton(
+                            onClick = {
+                                showDeleteConfirm = false
+                                onDeleteGroup()
+                            }
+                        ) {
+                            Text("Eliminar", color = Color(0xFFC62828))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun GroupCountryRow(
+    country: FavoriteCountryEntity,
+    onCountryClick: () -> Unit,
+    onRemove: () -> Unit
+) {
+    var visible by remember(country.alpha2Code) { mutableStateOf(true) }
+    val rowAlpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(durationMillis = 180),
+        label = "group_row_alpha"
+    )
+    val rowScale by animateFloatAsState(
+        targetValue = if (visible) 1f else 0.94f,
+        animationSpec = tween(durationMillis = 180),
+        label = "group_row_scale"
+    )
+    Surface(
+        color = Color(0xFFF7FBF7),
+        shape = RoundedCornerShape(10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                alpha = rowAlpha
+                scaleX = rowScale
+                scaleY = rowScale
+            }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 10.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = country.name,
+                color = WsGreenDark,
+                modifier = Modifier
+                    .weight(1f)
+                    .clickable { onCountryClick() }
+            )
+            IconButton(
+                onClick = {
+                    visible = false
+                    onRemove()
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Quitar de la lista",
+                    tint = Color(0xFFC62828)
+                )
             }
         }
     }
