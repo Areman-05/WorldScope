@@ -577,6 +577,8 @@ fun CountriesScreen(
                                         CountryItem(
                                             country = country,
                                             onClick = { country.alpha2Code?.let { onCountryClick(it) } },
+                                            isFavorite = country.alpha2Code?.let { state.favoriteCodes.contains(it) } == true,
+                                            onFavoriteClick = { viewModel.toggleFavorite(country) },
                                             compact = true,
                                             appearDelayMs = (idx % 10) * 30
                                         )
@@ -596,6 +598,8 @@ fun CountriesScreen(
                                             onClick = {
                                                 country.alpha2Code?.let { onCountryClick(it) }
                                             },
+                                            isFavorite = country.alpha2Code?.let { state.favoriteCodes.contains(it) } == true,
+                                            onFavoriteClick = { viewModel.toggleFavorite(country) },
                                             appearDelayMs = (idx % 10) * 35
                                         )
                                         HorizontalDivider(color = WsGreenLight.copy(alpha = 0.7f))

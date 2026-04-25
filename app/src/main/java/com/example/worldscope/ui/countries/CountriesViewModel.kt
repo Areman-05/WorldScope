@@ -6,6 +6,7 @@ import com.example.worldscope.data.local.entity.RecentCountryEntity
 import com.example.worldscope.data.local.entity.SearchHistoryEntity
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.data.repository.CountriesRepository
+import com.example.worldscope.data.repository.FavoritesRepository
 import com.example.worldscope.data.repository.RecentCountriesRepository
 import com.example.worldscope.data.repository.SearchHistoryRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class CountriesViewModel @Inject constructor(
     private val repository: CountriesRepository,
+    private val favoritesRepository: FavoritesRepository,
     private val recentCountriesRepository: RecentCountriesRepository,
     private val searchHistoryRepository: SearchHistoryRepository
 ) : ViewModel() {
@@ -39,6 +41,11 @@ class CountriesViewModel @Inject constructor(
         viewModelScope.launch {
             searchHistoryRepository.observeRecentSearches().collect { list ->
                 _uiState.update { it.copy(recentSearches = list) }
+            }
+        }
+        viewModelScope.launch {
+            favoritesRepository.getAllFavorites().collect { list ->
+                _uiState.update { it.copy(favoriteCodes = list.map { fav -> fav.alpha2Code }.toSet()) }
             }
         }
     }
@@ -197,6 +204,17 @@ class CountriesViewModel @Inject constructor(
         }
     }
 
+    fun toggleFavorite(country: Country) {
+        val alpha2 = country.alpha2Code ?: return
+        viewModelScope.launch {
+            if (_uiState.value.favoriteCodes.contains(alpha2)) {
+                favoritesRepository.removeFavorite(alpha2)
+            } else {
+                favoritesRepository.addFavorite(country)
+            }
+        }
+    }
+
     private fun getAvailableRegions(list: List<Country>): List<String> =
         list.mapNotNull { it.region }.distinct().sorted()
 
@@ -260,5 +278,6 @@ data class CountriesUiState(
     val isLoading: Boolean = false,
     val error: String? = null,
     val hasLoaded: Boolean = false,
-    val searchQuery: String = ""
+    val searchQuery: String = "",
+    val favoriteCodes: Set<String> = emptySet()
 )

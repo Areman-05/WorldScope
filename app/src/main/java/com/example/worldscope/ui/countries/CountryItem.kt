@@ -13,6 +13,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.background
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -47,6 +52,8 @@ import com.example.worldscope.ui.theme.WsGreen
 fun CountryItem(
     country: Country,
     onClick: () -> Unit,
+    isFavorite: Boolean,
+    onFavoriteClick: () -> Unit,
     compact: Boolean = false,
     appearDelayMs: Int = 0,
     modifier: Modifier = Modifier
@@ -81,6 +88,22 @@ fun CountryItem(
         targetValue = if (appeared) 1f else 0f,
         animationSpec = tween(durationMillis = 260),
         label = "country_appear_alpha"
+    )
+    var favoriteAnimReady by remember(country.alpha2Code) { mutableStateOf(false) }
+    var favoritePopped by remember(country.alpha2Code) { mutableStateOf(false) }
+    LaunchedEffect(isFavorite) {
+        if (!favoriteAnimReady) {
+            favoriteAnimReady = true
+            return@LaunchedEffect
+        }
+        favoritePopped = true
+        kotlinx.coroutines.delay(150)
+        favoritePopped = false
+    }
+    val favoriteScale by animateFloatAsState(
+        targetValue = if (favoritePopped) 1.22f else 1f,
+        animationSpec = tween(durationMillis = 150),
+        label = "country_favorite_pop_scale"
     )
     Surface(
         modifier = modifier
@@ -128,7 +151,7 @@ fun CountryItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = country.name,
-                    style = if (compact) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
+                    style = if (compact) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = WsGreenDark,
                     maxLines = 1,
@@ -136,17 +159,22 @@ fun CountryItem(
                     modifier = Modifier.testTag("country_item_name")
                 )
                 SpacerLine()
-                Text(
-                    text = "%,d".format(country.population),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = Color(0xFF2B2B2B),
-                    modifier = Modifier
-                        .testTag("country_item_population")
-                        .background(
-                            color = WsGreenLight.copy(alpha = 0.38f),
-                            shape = RoundedCornerShape(7.dp)
-                        )
-                        .padding(horizontal = 8.dp, vertical = 2.dp)
+            }
+            IconButton(
+                onClick = onFavoriteClick,
+                modifier = Modifier.testTag("country_item_favorite_toggle")
+            ) {
+                Icon(
+                    imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    contentDescription = if (isFavorite) {
+                        stringResource(R.string.remove_favorite)
+                    } else {
+                        stringResource(R.string.add_favorite)
+                    },
+                    tint = if (isFavorite) Color(0xFFF06292) else Color(0xFFDADADA),
+                    modifier = Modifier.testTag(
+                        if (isFavorite) "country_item_favorite_on" else "country_item_favorite_off"
+                    ).scale(favoriteScale)
                 )
             }
         }
