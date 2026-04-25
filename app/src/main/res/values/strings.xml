@@ -67,4 +67,5 @@
     <string name="about_description">Explora paises, favoritos, comparador, quiz y datos en vivo con APIs publicas.</string>
     <string name="about_version">Version %1$s</string>
     <string name="compare_clear">Limpiar comparacion</string>
+    <string name="splash_subtitle">Explora el mundo con estilo</string>
 </resources>

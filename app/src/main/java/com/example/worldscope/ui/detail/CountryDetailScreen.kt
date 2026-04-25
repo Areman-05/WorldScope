@@ -79,6 +79,22 @@ fun CountryDetailScreen(
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsState()
+    var favoriteAnimReady by remember { mutableStateOf(false) }
+    var favoritePopped by remember { mutableStateOf(false) }
+    LaunchedEffect(state.isFavorite) {
+        if (!favoriteAnimReady) {
+            favoriteAnimReady = true
+            return@LaunchedEffect
+        }
+        favoritePopped = true
+        delay(150)
+        favoritePopped = false
+    }
+    val favoriteScale by animateFloatAsState(
+        targetValue = if (favoritePopped) 1.22f else 1f,
+        animationSpec = tween(durationMillis = 150),
+        label = "detail_favorite_pop_scale"
+    )
 
     Scaffold(
         containerColor = WsSurfaceSoft,
@@ -144,10 +160,13 @@ fun CountryDetailScreen(
                                 Icon(
                                     imageVector = if (state.isFavorite) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                                     contentDescription = stringResource(if (state.isFavorite) R.string.remove_favorite else R.string.add_favorite),
-                                    tint = Color.White,
+                                    tint = if (state.isFavorite) Color(0xFFF06292) else Color.White,
                                     modifier = Modifier.testTag(
                                         if (state.isFavorite) "country_detail_favorite_on" else "country_detail_favorite_off"
-                                    )
+                                    ).graphicsLayer {
+                                        scaleX = favoriteScale
+                                        scaleY = favoriteScale
+                                    }
                                 )
                             }
                         }
