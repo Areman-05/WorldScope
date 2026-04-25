@@ -1,21 +1,25 @@
 package com.example.worldscope.ui.splash
 
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Icon
@@ -285,23 +289,52 @@ private fun SparkleLayer() {
 
 @Composable
 private fun SplashLoadingDots(modifier: Modifier = Modifier) {
-    val dotsTransition = rememberInfiniteTransition(label = "splash_dots")
-    val dotCount by dotsTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 3f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 1200),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "splash_dots_count"
-    )
-    val count = dotCount.toInt().coerceIn(1, 3)
-    Text(
-        text = "Cargando${".".repeat(count)}",
-        color = Color.White.copy(alpha = 0.92f),
-        fontSize = 13.sp,
-        fontWeight = FontWeight.SemiBold,
-        textAlign = TextAlign.Center,
+    val progress = remember { Animatable(0f) }
+    LaunchedEffect(Unit) {
+        progress.snapTo(0f)
+        progress.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = SplashDurationMs.toInt())
+        )
+    }
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
-    )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .height(10.dp)
+                .border(
+                    width = 1.dp,
+                    color = Color.White.copy(alpha = 0.55f),
+                    shape = RoundedCornerShape(999.dp)
+                )
+                .background(
+                    color = Color.White.copy(alpha = 0.16f),
+                    shape = RoundedCornerShape(999.dp)
+                )
+                .padding(1.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(progress.value.coerceIn(0f, 1f))
+                    .height(8.dp)
+                    .background(
+                        brush = Brush.horizontalGradient(
+                            colors = listOf(Color(0xFFFFF59D), Color(0xFFFBC02D))
+                        ),
+                        shape = RoundedCornerShape(999.dp)
+                    )
+            )
+        }
+        Text(
+            text = "${(progress.value * 100).toInt()}%",
+            color = Color.White.copy(alpha = 0.92f),
+            fontSize = 12.sp,
+            fontWeight = FontWeight.SemiBold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 6.dp)
+        )
+    }
 }
