@@ -65,6 +65,18 @@ class FavoritesViewModel @Inject constructor(
         }
     }
 
+    fun addCountryToGroup(groupId: Long, alpha2Code: String) {
+        viewModelScope.launch {
+            favoritesRepository.addCountryToGroup(groupId, alpha2Code)
+        }
+    }
+
+    fun removeCountryFromGroup(groupId: Long, alpha2Code: String) {
+        viewModelScope.launch {
+            favoritesRepository.removeCountryFromGroup(groupId, alpha2Code)
+        }
+    }
+
     fun removeGroup(groupId: Long) {
         viewModelScope.launch {
             favoritesRepository.removeGroup(groupId)

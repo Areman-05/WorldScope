@@ -65,6 +65,19 @@ class FavoritesRepository @Inject constructor(
         }
     }
 
+    suspend fun addCountryToGroup(groupId: Long, alpha2Code: String) {
+        favoriteGroupDao.upsertGroupItem(
+            FavoriteGroupItemCrossRef(
+                groupId = groupId,
+                alpha2Code = alpha2Code
+            )
+        )
+    }
+
+    suspend fun removeCountryFromGroup(groupId: Long, alpha2Code: String) {
+        favoriteGroupDao.removeGroupItem(groupId, alpha2Code)
+    }
+
     private fun Country.toFavoriteEntity(): FavoriteCountryEntity =
         FavoriteCountryEntity(
             alpha2Code = alpha2Code ?: "",

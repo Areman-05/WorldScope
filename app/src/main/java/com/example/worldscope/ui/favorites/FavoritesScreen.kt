@@ -1,36 +1,40 @@
 package com.example.worldscope.ui.favorites
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,15 +47,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.worldscope.R
+import com.example.worldscope.data.local.entity.FavoriteCountryEntity
 import com.example.worldscope.ui.theme.WsGreen
 import com.example.worldscope.ui.theme.WsGreenDark
 import com.example.worldscope.ui.theme.WsSurfaceSoft
@@ -67,6 +72,9 @@ fun FavoritesScreen(
     val state by viewModel.uiState.collectAsState()
     val groupedCodes = state.groups.flatMap { it.countryCodes }.toSet()
     val freeFavorites = state.favorites.filterNot { groupedCodes.contains(it.alpha2Code) }
+    var selectedGroupId by remember { mutableStateOf<Long?>(null) }
+    var addSearchQuery by remember { mutableStateOf("") }
+    var showAddPanel by remember { mutableStateOf(false) }
 
     Scaffold(
         containerColor = WsSurfaceSoft,
@@ -270,85 +278,15 @@ fun FavoritesScreen(
                     }
                 }
                 items(state.groups, key = { it.id }) { group ->
-                    Surface(
-                        color = Color.White,
-                        shape = RoundedCornerShape(16.dp),
-                        tonalElevation = 2.dp,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Text(
-                                    text = group.name,
-                                    color = WsGreenDark,
-                                    fontWeight = FontWeight.Bold,
-                                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium
-                                )
-                                androidx.compose.material3.IconButton(
-                                    onClick = { viewModel.removeGroup(group.id) }
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Filled.Delete,
-                                        contentDescription = "Eliminar lista",
-                                        tint = Color(0xFFC62828)
-                                    )
-                                }
-                            }
-                            if (state.favorites.isNotEmpty()) {
-                                LazyRow(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 4.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
-                                    items(state.favorites, key = { it.alpha2Code }) { favorite ->
-                                        val selected = group.countryCodes.contains(favorite.alpha2Code)
-                                        AssistChip(
-                                            onClick = {
-                                                viewModel.toggleCountryInGroup(
-                                                    group.id,
-                                                    favorite.alpha2Code
-                                                )
-                                            },
-                                            label = { Text(favorite.name) },
-                                            colors = AssistChipDefaults.assistChipColors(
-                                                containerColor = if (selected) WsGreen else Color(0xFFF4F7F4),
-                                                labelColor = if (selected) Color.White else WsGreenDark
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-                            val groupedFavorites = state.favorites.filter { group.countryCodes.contains(it.alpha2Code) }
-                            if (groupedFavorites.isEmpty()) {
-                                Text(
-                                    text = "Aun no hay paises en esta lista.",
-                                    color = Color(0xFF6A6A6A),
-                                    modifier = Modifier.padding(top = 8.dp)
-                                )
-                            } else {
-                                Column(
-                                    modifier = Modifier.padding(top = 8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
-                                    groupedFavorites.forEach { favorite ->
-                                        FavoriteItem(
-                                            favorite = favorite,
-                                            onClick = {
-                                                val code = favorite.alpha2Code
-                                                if (code.isNotBlank()) onCountryClick(code)
-                                            },
-                                            onRemoveClick = { viewModel.removeFavorite(favorite.alpha2Code) }
-                                        )
-                                    }
-                                }
-                            }
+                    GroupSummaryCard(
+                        group = group,
+                        itemCount = group.countryCodes.size,
+                        onOpen = {
+                            selectedGroupId = group.id
+                            addSearchQuery = ""
+                            showAddPanel = false
                         }
-                    }
+                    )
                 }
                 item {
                     Text(
@@ -369,6 +307,237 @@ fun FavoritesScreen(
                         },
                         onRemoveClick = { viewModel.removeFavorite(favorite.alpha2Code) }
                     )
+                }
+            }
+        }
+    }
+
+    val selectedGroup = state.groups.firstOrNull { it.id == selectedGroupId }
+    if (selectedGroup != null) {
+        val favoritesInGroup = state.favorites.filter { selectedGroup.countryCodes.contains(it.alpha2Code) }
+        val candidatesToAdd = state.favorites.filterNot { selectedGroup.countryCodes.contains(it.alpha2Code) }
+            .filter { it.name.contains(addSearchQuery, ignoreCase = true) }
+        GroupDetailDialog(
+            groupName = selectedGroup.name,
+            favoritesInGroup = favoritesInGroup,
+            candidatesToAdd = candidatesToAdd,
+            addSearchQuery = addSearchQuery,
+            showAddPanel = showAddPanel,
+            onDismiss = { selectedGroupId = null },
+            onDeleteGroup = {
+                viewModel.removeGroup(selectedGroup.id)
+                selectedGroupId = null
+            },
+            onToggleAddPanel = { showAddPanel = !showAddPanel },
+            onAddSearchQueryChange = { addSearchQuery = it },
+            onAddCountry = { country ->
+                viewModel.addCountryToGroup(selectedGroup.id, country.alpha2Code)
+            },
+            onRemoveCountry = { country ->
+                viewModel.removeCountryFromGroup(selectedGroup.id, country.alpha2Code)
+            },
+            onCountryClick = onCountryClick
+        )
+    }
+}
+
+@Composable
+private fun GroupSummaryCard(
+    group: FavoriteGroup,
+    itemCount: Int,
+    onOpen: () -> Unit
+) {
+    Surface(
+        color = Color.White,
+        shape = RoundedCornerShape(16.dp),
+        tonalElevation = 2.dp,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onOpen)
+    ) {
+        Row(
+            modifier = Modifier.padding(14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = group.name,
+                    color = WsGreenDark,
+                    fontWeight = FontWeight.Bold,
+                    style = androidx.compose.material3.MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    text = "$itemCount paises en la lista",
+                    color = Color(0xFF5C6B5C)
+                )
+            }
+            Button(
+                onClick = onOpen,
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                    containerColor = WsGreenDark,
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Abrir")
+            }
+        }
+    }
+}
+
+@Composable
+private fun GroupDetailDialog(
+    groupName: String,
+    favoritesInGroup: List<FavoriteCountryEntity>,
+    candidatesToAdd: List<FavoriteCountryEntity>,
+    addSearchQuery: String,
+    showAddPanel: Boolean,
+    onDismiss: () -> Unit,
+    onDeleteGroup: () -> Unit,
+    onToggleAddPanel: () -> Unit,
+    onAddSearchQueryChange: (String) -> Unit,
+    onAddCountry: (FavoriteCountryEntity) -> Unit,
+    onRemoveCountry: (FavoriteCountryEntity) -> Unit,
+    onCountryClick: (String) -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Surface(
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White,
+            tonalElevation = 6.dp,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(14.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = groupName,
+                        color = WsGreenDark,
+                        fontWeight = FontWeight.ExtraBold,
+                        style = androidx.compose.material3.MaterialTheme.typography.titleLarge
+                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        IconButton(onClick = onToggleAddPanel) {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = "Añadir paises",
+                                tint = WsGreenDark
+                            )
+                        }
+                        IconButton(onClick = onDeleteGroup) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Eliminar grupo",
+                                tint = Color(0xFFC62828)
+                            )
+                        }
+                        IconButton(onClick = onDismiss) {
+                            Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Cerrar",
+                                tint = Color(0xFF666666)
+                            )
+                        }
+                    }
+                }
+
+                AnimatedVisibility(visible = showAddPanel, enter = fadeIn(), exit = fadeOut()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(
+                            value = addSearchQuery,
+                            onValueChange = onAddSearchQueryChange,
+                            modifier = Modifier.fillMaxWidth(),
+                            placeholder = { Text("Buscar pais para anadir") },
+                            singleLine = true
+                        )
+                        if (candidatesToAdd.isEmpty()) {
+                            Text("No hay paises disponibles con esa busqueda.")
+                        } else {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .heightIn(max = 180.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                items(candidatesToAdd, key = { it.alpha2Code }) { country ->
+                                    Surface(
+                                        color = Color(0xFFF7FBF7),
+                                        shape = RoundedCornerShape(10.dp)
+                                    ) {
+                                        Row(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(horizontal = 10.dp, vertical = 8.dp),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Text(country.name, color = WsGreenDark)
+                                            IconButton(onClick = { onAddCountry(country) }) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Add,
+                                                    contentDescription = "Anadir a la lista",
+                                                    tint = WsGreen
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Text(
+                    text = "Paises dentro de la lista",
+                    color = WsGreenDark,
+                    fontWeight = FontWeight.SemiBold
+                )
+                if (favoritesInGroup.isEmpty()) {
+                    Text("Esta lista esta vacia. Pulsa + para anadir paises.")
+                } else {
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .heightIn(max = 280.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                    ) {
+                        items(favoritesInGroup, key = { it.alpha2Code }) { country ->
+                            Surface(
+                                color = Color(0xFFF7FBF7),
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 10.dp, vertical = 8.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = country.name,
+                                        color = WsGreenDark,
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable { onCountryClick(country.alpha2Code) }
+                                    )
+                                    IconButton(onClick = { onRemoveCountry(country) }) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Close,
+                                            contentDescription = "Quitar de la lista",
+                                            tint = Color(0xFFC62828)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
