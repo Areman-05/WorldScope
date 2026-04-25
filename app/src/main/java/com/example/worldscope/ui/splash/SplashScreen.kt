@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.worldscope.R
@@ -201,6 +202,13 @@ fun SplashScreen(
                     .alpha(subtitleAlpha)
                     .testTag("splash_subtitle")
             )
+
+            SplashLoadingDots(
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .alpha(subtitleAlpha)
+                    .testTag("splash_loading_dots")
+            )
         }
     }
 }
@@ -273,4 +281,27 @@ private fun SparkleLayer() {
                 .background(Color.White.copy(alpha = 0.75f), CircleShape)
         )
     }
+}
+
+@Composable
+private fun SplashLoadingDots(modifier: Modifier = Modifier) {
+    val dotsTransition = rememberInfiniteTransition(label = "splash_dots")
+    val dotCount by dotsTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 3f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 1200),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "splash_dots_count"
+    )
+    val count = dotCount.toInt().coerceIn(1, 3)
+    Text(
+        text = "Cargando${".".repeat(count)}",
+        color = Color.White.copy(alpha = 0.92f),
+        fontSize = 13.sp,
+        fontWeight = FontWeight.SemiBold,
+        textAlign = TextAlign.Center,
+        modifier = modifier
+    )
 }
