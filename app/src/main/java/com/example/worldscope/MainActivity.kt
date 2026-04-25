@@ -5,6 +5,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
@@ -40,15 +41,15 @@ class MainActivity : ComponentActivity() {
                     Box(modifier = Modifier.fillMaxSize()) {
                         AnimatedVisibility(
                             visible = !showSplash,
-                            enter = fadeIn(),
-                            exit = fadeOut()
+                            enter = fadeIn(animationSpec = tween(durationMillis = 500)),
+                            exit = fadeOut(animationSpec = tween(durationMillis = 240))
                         ) {
                             AppScaffold()
                         }
                         AnimatedVisibility(
                             visible = showSplash,
-                            enter = fadeIn(),
-                            exit = fadeOut()
+                            enter = fadeIn(animationSpec = tween(durationMillis = 260)),
+                            exit = fadeOut(animationSpec = tween(durationMillis = 520))
                         ) {
                             SplashScreen(onFinished = { showSplash = false })
                         }
