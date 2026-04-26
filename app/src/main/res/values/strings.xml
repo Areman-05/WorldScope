@@ -59,6 +59,16 @@
     <string name="quiz_score_format">Puntos: %1$d / rondas: %2$d</string>
     <string name="quiz_reset">Reiniciar puntuacion</string>
     <string name="quiz_not_enough_data">No hay suficientes paises para el quiz</string>
+    <string name="quiz_choose_difficulty">Elige dificultad</string>
+    <string name="quiz_easy">Facil</string>
+    <string name="quiz_medium">Media</string>
+    <string name="quiz_hard">Dificil</string>
+    <string name="quiz_questions_count">%1$d preguntas</string>
+    <string name="quiz_start_game">Empezar partida</string>
+    <string name="quiz_progress">Pregunta %1$d de %2$d</string>
+    <string name="quiz_result_title">Partida completada</string>
+    <string name="quiz_result_score">Has acertado %1$d de %2$d</string>
+    <string name="quiz_play_again">Jugar otra vez</string>
     <string name="recent_title">Vistos recientemente</string>
     <string name="recent_searches_title">Busquedas recientes</string>
     <string name="wikipedia">Wikipedia</string>
