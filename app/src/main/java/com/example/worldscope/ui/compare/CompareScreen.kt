@@ -1,6 +1,11 @@
 @file:OptIn(ExperimentalMaterial3Api::class)
 package com.example.worldscope.ui.compare
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -222,27 +227,41 @@ fun CompareScreen(
                     }
                     when (state.compareUserError) {
                         CompareUserError.NeedTwo ->
-                            Text(
-                                stringResource(R.string.compare_need_two),
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.testTag("compare_error_user")
-                            )
+                            AnimatedVisibility(visible = true, enter = fadeIn(), exit = fadeOut()) {
+                                Text(
+                                    stringResource(R.string.compare_need_two),
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.testTag("compare_error_user")
+                                )
+                            }
                         CompareUserError.SameCountry ->
-                            Text(
-                                stringResource(R.string.compare_same_country),
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.testTag("compare_error_user")
-                            )
+                            AnimatedVisibility(visible = true, enter = fadeIn(), exit = fadeOut()) {
+                                Text(
+                                    stringResource(R.string.compare_same_country),
+                                    color = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.testTag("compare_error_user")
+                                )
+                            }
                         null -> Unit
                     }
-                    if (state.loadError != null) {
-                        Text(
-                            state.loadError!!,
-                            color = MaterialTheme.colorScheme.error,
-                            modifier = Modifier.testTag("compare_error_load")
-                        )
+                    AnimatedVisibility(
+                        visible = state.loadError != null,
+                        enter = fadeIn(animationSpec = tween(180)),
+                        exit = fadeOut(animationSpec = tween(180))
+                    ) {
+                        if (state.loadError != null) {
+                            Text(
+                                state.loadError!!,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.testTag("compare_error_load")
+                            )
+                        }
                     }
-                    if (state.isLoadingCompare) {
+                    AnimatedVisibility(
+                        visible = state.isLoadingCompare,
+                        enter = fadeIn(animationSpec = tween(180)),
+                        exit = fadeOut(animationSpec = tween(180))
+                    ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -254,17 +273,23 @@ fun CompareScreen(
                     }
                     val a = state.countryA
                     val b = state.countryB
-                    if (a != null && b != null) {
-                        CompareColumn(
-                            left = a,
-                            right = b,
-                            gdpLeft = state.economicA?.gdpUsd,
-                            gdpRight = state.economicB?.gdpUsd,
-                            inflLeft = state.economicA?.inflationPercent,
-                            inflRight = state.economicB?.inflationPercent,
-                            weatherLeft = state.weatherA,
-                            weatherRight = state.weatherB
-                        )
+                    Crossfade(
+                        targetState = a != null && b != null,
+                        animationSpec = tween(durationMillis = 260),
+                        label = "compare_results_crossfade"
+                    ) { ready ->
+                        if (ready && a != null && b != null) {
+                            CompareColumn(
+                                left = a,
+                                right = b,
+                                gdpLeft = state.economicA?.gdpUsd,
+                                gdpRight = state.economicB?.gdpUsd,
+                                inflLeft = state.economicA?.inflationPercent,
+                                inflRight = state.economicB?.inflationPercent,
+                                weatherLeft = state.weatherA,
+                                weatherRight = state.weatherB
+                            )
+                        }
                     }
                 }
             }
