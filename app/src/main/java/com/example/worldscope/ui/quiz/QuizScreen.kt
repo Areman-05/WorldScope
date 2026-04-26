@@ -44,6 +44,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -64,6 +65,7 @@ import com.example.worldscope.ui.theme.WsGreen
 import com.example.worldscope.ui.theme.WsGreenDark
 import com.example.worldscope.ui.theme.WsGreenLight
 import com.example.worldscope.ui.theme.WsSurfaceSoft
+import kotlinx.coroutines.delay
 
 @Composable
 fun QuizScreen(
@@ -408,10 +410,17 @@ private fun QuizOverlay(
     onClose: () -> Unit,
     onRestart: () -> Unit
 ) {
+    LaunchedEffect(state.currentQuestionIndex, state.answered, state.gameStarted, state.completed) {
+        if (state.gameStarted && state.answered && !state.completed) {
+            delay(900)
+            onNext()
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black.copy(alpha = 0.45f))
+            .background(Color.Black.copy(alpha = 0.52f))
             .testTag("quiz_overlay")
     ) {
         Card(
@@ -420,13 +429,14 @@ private fun QuizOverlay(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
             colors = CardDefaults.cardColors(containerColor = Color.White),
-            shape = RoundedCornerShape(18.dp)
+            shape = RoundedCornerShape(22.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(14.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Box(modifier = Modifier.fillMaxWidth()) {
                     IconButton(
@@ -438,34 +448,53 @@ private fun QuizOverlay(
                     Column {
                         Text(
                             text = stringResource(R.string.quiz_title),
-                            style = MaterialTheme.typography.titleLarge,
+                            style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.ExtraBold,
                             color = WsGreenDark
                         )
-                        Text(
-                            text = stringResource(
-                                R.string.quiz_progress,
-                                state.currentQuestionIndex + 1,
-                                state.totalQuestions
-                            ),
-                            style = MaterialTheme.typography.labelLarge,
-                            color = WsGreenDark,
-                            modifier = Modifier.testTag("quiz_progress")
-                        )
+                        Surface(
+                            color = WsGreenLight.copy(alpha = 0.7f),
+                            shape = RoundedCornerShape(999.dp)
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    R.string.quiz_progress,
+                                    state.currentQuestionIndex + 1,
+                                    state.totalQuestions
+                                ),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = WsGreenDark,
+                                modifier = Modifier
+                                    .testTag("quiz_progress")
+                                    .padding(horizontal = 10.dp, vertical = 4.dp)
+                            )
+                        }
                     }
                 }
 
                 if (state.completed) {
-                    Text(
-                        text = stringResource(R.string.quiz_result_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = WsGreenDark,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = stringResource(R.string.quiz_result_score, state.score, state.totalQuestions),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF8EF)),
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.quiz_result_title),
+                                style = MaterialTheme.typography.titleLarge,
+                                color = WsGreenDark,
+                                fontWeight = FontWeight.ExtraBold
+                            )
+                            Text(
+                                text = stringResource(R.string.quiz_result_score, state.score, state.totalQuestions),
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
+                    }
                     Button(
                         onClick = onRestart,
                         modifier = Modifier.fillMaxWidth(),
@@ -480,19 +509,33 @@ private fun QuizOverlay(
                 }
 
                 val target = state.target ?: return@Column
-                Text(
-                    stringResource(R.string.quiz_question_capital, target.name),
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.testTag("quiz_question")
-                )
-                AsyncImage(
-                    model = target.flagUrl,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(170.dp)
-                        .testTag("quiz_flag")
-                )
+                Card(
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF7FBF7)),
+                    shape = RoundedCornerShape(14.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.quiz_question_capital, target.name),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.testTag("quiz_question")
+                        )
+                        AsyncImage(
+                            model = target.flagUrl,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(180.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .testTag("quiz_flag")
+                        )
+                    }
+                }
                 state.options.forEachIndexed { index, option ->
                     val isCorrect = option.equals(state.correctCapital, ignoreCase = true)
                     val isSelected = state.selectedChoice == option
@@ -512,15 +555,21 @@ private fun QuizOverlay(
                         enabled = !state.answered,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(52.dp)
                             .testTag("quiz_option_$index"),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = containerColor,
                             contentColor = WsGreenDark,
                             disabledContainerColor = containerColor,
                             disabledContentColor = WsGreenDark
-                        )
+                        ),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
-                        Text(option)
+                        Text(
+                            option,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
                 }
                 if (state.answered) {
@@ -539,11 +588,13 @@ private fun QuizOverlay(
                         onClick = onNext,
                         modifier = Modifier
                             .fillMaxWidth()
+                            .height(50.dp)
                             .testTag("quiz_next"),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = WsGreenDark,
                             contentColor = Color.White
-                        )
+                        ),
+                        shape = RoundedCornerShape(12.dp)
                     ) {
                         Text(stringResource(R.string.quiz_next))
                     }
