@@ -24,7 +24,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -33,8 +36,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -219,17 +220,18 @@ fun QuizScreen(
                     modifier = modifier
                         .fillMaxSize()
                         .testTag("quiz_content"),
-                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                    verticalArrangement = Arrangement.spacedBy(0.dp)
                 ) {
                     Card(
+                        modifier = Modifier.fillMaxSize(),
                         colors = CardDefaults.cardColors(containerColor = Color.White),
                         shape = RoundedCornerShape(16.dp)
                     ) {
                         Column(
                             modifier = Modifier
-                                .fillMaxWidth()
+                                .fillMaxSize()
                                 .padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             Text(
                                 text = stringResource(R.string.quiz_choose_difficulty),
@@ -238,6 +240,7 @@ fun QuizScreen(
                                 fontWeight = FontWeight.SemiBold
                             )
                             DifficultyCardsRow(
+                                modifier = Modifier.weight(1f),
                                 selected = state.selectedDifficulty,
                                 onSelect = viewModel::selectDifficulty
                             )
@@ -269,7 +272,6 @@ fun QuizScreen(
                             }
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
                 }
             }
 
@@ -292,11 +294,12 @@ fun QuizScreen(
 
 @Composable
 private fun DifficultyCardsRow(
+    modifier: Modifier = Modifier,
     selected: QuizDifficulty,
     onSelect: (QuizDifficulty) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         QuizDifficulty.entries.forEach { difficulty ->
@@ -305,11 +308,21 @@ private fun DifficultyCardsRow(
                 QuizDifficulty.MEDIUM -> stringResource(R.string.quiz_medium)
                 QuizDifficulty.HARD -> stringResource(R.string.quiz_hard)
             }
+            val subtitle = when (difficulty) {
+                QuizDifficulty.EASY -> "Ideal para empezar"
+                QuizDifficulty.MEDIUM -> "Ritmo equilibrado"
+                QuizDifficulty.HARD -> "Solo para cracks"
+            }
             val isSelected = selected == difficulty
             val background = when (difficulty) {
-                QuizDifficulty.EASY -> Color(0xFF2E7D32)
-                QuizDifficulty.MEDIUM -> Color(0xFF1565C0)
-                QuizDifficulty.HARD -> Color(0xFFB71C1C)
+                QuizDifficulty.EASY -> if (isSelected) Color(0xFF2E7D32) else Color(0xFF4E8F53)
+                QuizDifficulty.MEDIUM -> if (isSelected) Color(0xFF1565C0) else Color(0xFF4F86C7)
+                QuizDifficulty.HARD -> if (isSelected) Color(0xFFB71C1C) else Color(0xFFC25757)
+            }
+            val icon = when (difficulty) {
+                QuizDifficulty.EASY -> Icons.Filled.Spa
+                QuizDifficulty.MEDIUM -> Icons.Filled.Bolt
+                QuizDifficulty.HARD -> Icons.Filled.LocalFireDepartment
             }
             val targetScale = if (isSelected) 1.02f else 1f
             val cardScale by androidx.compose.animation.core.animateFloatAsState(
@@ -320,33 +333,65 @@ private fun DifficultyCardsRow(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(104.dp)
+                    .weight(1f)
                     .scale(cardScale)
                     .clickable { onSelect(difficulty) }
                     .testTag("quiz_difficulty_${difficulty.name.lowercase()}"),
                 colors = CardDefaults.cardColors(
-                    containerColor = if (isSelected) background else background.copy(alpha = 0.45f)
+                    containerColor = background
                 ),
                 shape = RoundedCornerShape(14.dp),
                 elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 8.dp else 2.dp)
             ) {
+                val glowAlpha by animateColorAsState(
+                    targetValue = if (isSelected) Color.White.copy(alpha = 0.16f) else Color.White.copy(alpha = 0.06f),
+                    animationSpec = tween(durationMillis = 220),
+                    label = "difficulty_glow_${difficulty.name}"
+                )
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(10.dp),
+                        .padding(horizontal = 14.dp, vertical = 10.dp),
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.Start
                 ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = label,
+                            color = Color.White,
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.ExtraBold
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(RoundedCornerShape(999.dp))
+                                .background(glowAlpha),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = icon,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(2.dp))
                     Text(
-                        text = label,
-                        color = Color.White,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold
+                        text = subtitle,
+                        color = Color.White.copy(alpha = 0.9f),
+                        style = MaterialTheme.typography.bodyMedium
                     )
+                    Spacer(modifier = Modifier.height(4.dp))
                     Text(
-                        text = "${difficulty.questionCount}",
+                        text = "${difficulty.questionCount} preguntas",
                         color = Color.White,
-                        style = MaterialTheme.typography.headlineMedium,
+                        style = MaterialTheme.typography.headlineSmall,
                         fontWeight = FontWeight.ExtraBold
                     )
                 }
