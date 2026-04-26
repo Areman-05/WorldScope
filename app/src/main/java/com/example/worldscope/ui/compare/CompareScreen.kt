@@ -2,6 +2,7 @@
 package com.example.worldscope.ui.compare
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,10 +11,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -22,8 +27,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,13 +38,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Public
 import com.example.worldscope.R
 import com.example.worldscope.domain.model.Country
 import com.example.worldscope.domain.model.WeatherInfo
+import com.example.worldscope.ui.theme.WsGreen
+import com.example.worldscope.ui.theme.WsGreenDark
+import com.example.worldscope.ui.theme.WsSurfaceSoft
 import java.util.Locale
 
 @Composable
@@ -49,38 +63,92 @@ fun CompareScreen(
     val state by viewModel.uiState.collectAsState()
 
     Scaffold(
+        containerColor = WsSurfaceSoft,
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(R.string.compare_title)) },
-                modifier = Modifier.testTag("compare_topbar")
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(WsGreen, WsGreenDark)
+                        )
+                    )
+                    .padding(horizontal = 12.dp, vertical = 8.dp)
+                    .testTag("compare_topbar")
+            ) {
+                CenterAlignedTopAppBar(
+                    title = {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Public,
+                                contentDescription = null,
+                                tint = Color(0xFFFFF59D)
+                            )
+                            Text(
+                                text = stringResource(R.string.compare_title),
+                                style = MaterialTheme.typography.headlineMedium,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = Color.White
+                            )
+                        }
+                    },
+                    colors = androidx.compose.material3.TopAppBarDefaults.centerAlignedTopAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = Color.White
+                    )
+                )
+            }
         }
     ) { padding ->
         when {
             state.isLoadingList -> {
-                Column(
+                Box(
                     modifier = modifier
                         .fillMaxSize()
                         .padding(padding),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.testTag("compare_loading_list"))
-                    Text(stringResource(R.string.loading))
+                    Surface(
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(18.dp),
+                        color = Color.White,
+                        tonalElevation = 2.dp
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(horizontal = 22.dp, vertical = 18.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            CircularProgressIndicator(modifier = Modifier.testTag("compare_loading_list"))
+                            Text(stringResource(R.string.loading))
+                        }
+                    }
                 }
             }
             state.listError != null -> {
-                Column(
+                Box(
                     modifier = modifier
                         .fillMaxSize()
                         .padding(padding)
                         .padding(16.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    contentAlignment = Alignment.Center
                 ) {
-                    Text(state.listError!!, modifier = Modifier.testTag("compare_list_error"))
-                    Button(onClick = { viewModel.loadCountryList() }) {
-                        Text(stringResource(R.string.retry))
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(state.listError!!, modifier = Modifier.testTag("compare_list_error"))
+                            Button(onClick = { viewModel.loadCountryList() }) {
+                                Text(stringResource(R.string.retry))
+                            }
+                        }
                     }
                 }
             }
