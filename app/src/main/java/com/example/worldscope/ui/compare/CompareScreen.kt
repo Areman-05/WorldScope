@@ -178,6 +178,11 @@ fun CompareScreen(
                                 .padding(14.dp),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
+                            Text(
+                                text = stringResource(R.string.compare_subtitle),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFF476147)
+                            )
                             CountryPicker(
                                 label = stringResource(R.string.compare_country_a),
                                 countries = state.allCountries,
@@ -262,13 +267,19 @@ fun CompareScreen(
                         enter = fadeIn(animationSpec = tween(180)),
                         exit = fadeOut(animationSpec = tween(180))
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        Card(
+                            colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF8EF)),
+                            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
                             modifier = Modifier.testTag("compare_loading_compare")
                         ) {
-                            CircularProgressIndicator()
-                            Text(stringResource(R.string.loading))
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)
+                            ) {
+                                CircularProgressIndicator(modifier = Modifier.height(20.dp))
+                                Text(stringResource(R.string.loading))
+                            }
                         }
                     }
                     val a = state.countryA

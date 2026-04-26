@@ -50,6 +50,7 @@
     <string name="compare_need_two">Selecciona dos paises</string>
     <string name="compare_same_country">Elige dos paises distintos</string>
     <string name="compare_results">Resultados</string>
+    <string name="compare_subtitle">Selecciona dos paises y compara sus datos clave</string>
     <string name="quiz_title">Quiz</string>
     <string name="quiz_start">Nueva pregunta</string>
     <string name="quiz_question_capital">Cual es la capital de %1$s?</string>
