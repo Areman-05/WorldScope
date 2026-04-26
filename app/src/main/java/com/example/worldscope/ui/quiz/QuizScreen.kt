@@ -233,7 +233,47 @@ fun QuizScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color(0xFF4F6F4F)
                             )
-                            if (!state.gameStarted || state.target == null) {
+                            if (state.completed) {
+                                Card(
+                                    colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF8EF)),
+                                    shape = RoundedCornerShape(14.dp)
+                                ) {
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(12.dp),
+                                        verticalArrangement = Arrangement.spacedBy(6.dp)
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.quiz_result_title),
+                                            style = MaterialTheme.typography.titleMedium,
+                                            color = WsGreenDark,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Text(
+                                            text = stringResource(
+                                                R.string.quiz_result_score,
+                                                state.score,
+                                                state.totalQuestions
+                                            ),
+                                            style = MaterialTheme.typography.bodyLarge,
+                                            color = WsGreenDark
+                                        )
+                                    }
+                                }
+                                Button(
+                                    onClick = { viewModel.startGame() },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .testTag("quiz_play_again"),
+                                    colors = ButtonDefaults.buttonColors(
+                                        containerColor = WsGreenDark,
+                                        contentColor = Color.White
+                                    )
+                                ) {
+                                    Text(stringResource(R.string.quiz_play_again))
+                                }
+                            } else if (!state.gameStarted || state.target == null) {
                                 Button(
                                     onClick = { viewModel.startGame() },
                                     modifier = Modifier
