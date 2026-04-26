@@ -5,8 +5,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,10 +21,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -36,11 +41,15 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
@@ -78,17 +87,55 @@ fun QuizScreen(
             ) {
                 CenterAlignedTopAppBar(
                     title = {
-                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Icon(
-                                imageVector = Icons.Filled.Public,
-                                contentDescription = null,
-                                tint = Color.White,
-                                modifier = Modifier.size(24.dp)
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            val planetAnim = rememberInfiniteTransition(label = "quiz_planet_anim")
+                            val planetRotation by planetAnim.animateFloat(
+                                initialValue = 0f,
+                                targetValue = 360f,
+                                animationSpec = infiniteRepeatable(
+                                    animation = tween(durationMillis = 9000),
+                                    repeatMode = RepeatMode.Restart
+                                ),
+                                label = "quiz_planet_rotation"
                             )
+                            val planetScale by planetAnim.animateFloat(
+                                initialValue = 1f,
+                                targetValue = 1.1f,
+                                animationSpec = infiniteRepeatable(
+                                    animation = tween(durationMillis = 1400),
+                                    repeatMode = RepeatMode.Reverse
+                                ),
+                                label = "quiz_planet_scale"
+                            )
+                            Box(
+                                modifier = Modifier
+                                    .rotate(planetRotation)
+                                    .scale(planetScale)
+                                    .clip(RoundedCornerShape(999.dp))
+                                    .background(
+                                        brush = Brush.radialGradient(
+                                            colors = listOf(
+                                                Color(0xFFFFF59D),
+                                                Color(0xFFFBC02D)
+                                            )
+                                        )
+                                    )
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Public,
+                                    contentDescription = null,
+                                    tint = WsGreenDark,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                             Text(
                                 text = stringResource(R.string.quiz_title),
                                 color = Color.White,
-                                style = MaterialTheme.typography.headlineSmall,
+                                style = MaterialTheme.typography.headlineLarge,
                                 fontWeight = FontWeight.ExtraBold
                             )
                         }
@@ -171,40 +218,9 @@ fun QuizScreen(
                 Column(
                     modifier = modifier
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
                         .testTag("quiz_content"),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    Card(
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
-                        shape = RoundedCornerShape(16.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(14.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            Text(
-                                stringResource(R.string.quiz_title),
-                                style = MaterialTheme.typography.titleLarge,
-                                color = WsGreenDark,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                stringResource(R.string.quiz_score_format, state.score, state.roundsPlayed),
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.testTag("quiz_score")
-                            )
-                            OutlinedButton(
-                                onClick = { viewModel.resetGame() },
-                                modifier = Modifier.testTag("quiz_reset_score")
-                            ) {
-                                Text(stringResource(R.string.quiz_reset))
-                            }
-                        }
-                    }
-
                     Card(
                         colors = CardDefaults.cardColors(containerColor = Color.White),
                         shape = RoundedCornerShape(16.dp)
@@ -221,7 +237,7 @@ fun QuizScreen(
                                 color = WsGreenDark,
                                 fontWeight = FontWeight.SemiBold
                             )
-                            DifficultyChips(
+                            DifficultyCardsRow(
                                 selected = state.selectedDifficulty,
                                 onSelect = viewModel::selectDifficulty
                             )
@@ -233,157 +249,55 @@ fun QuizScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = Color(0xFF4F6F4F)
                             )
-                            if (state.completed) {
-                                Card(
-                                    colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF8EF)),
-                                    shape = RoundedCornerShape(14.dp)
-                                ) {
-                                    Column(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(12.dp),
-                                        verticalArrangement = Arrangement.spacedBy(6.dp)
-                                    ) {
-                                        Text(
-                                            text = stringResource(R.string.quiz_result_title),
-                                            style = MaterialTheme.typography.titleMedium,
-                                            color = WsGreenDark,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                        Text(
-                                            text = stringResource(
-                                                R.string.quiz_result_score,
-                                                state.score,
-                                                state.totalQuestions
-                                            ),
-                                            style = MaterialTheme.typography.bodyLarge,
-                                            color = WsGreenDark
-                                        )
-                                    }
-                                }
-                                Button(
-                                    onClick = { viewModel.startGame() },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .testTag("quiz_play_again"),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = WsGreenDark,
-                                        contentColor = Color.White
-                                    )
-                                ) {
-                                    Text(stringResource(R.string.quiz_play_again))
-                                }
-                            } else if (!state.gameStarted || state.target == null) {
-                                Button(
-                                    onClick = { viewModel.startGame() },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .testTag("quiz_start"),
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = WsGreen,
-                                        contentColor = Color.White
-                                    )
-                                ) {
-                                    Text(stringResource(R.string.quiz_start_game))
-                                }
-                            } else {
-                                val target = state.target!!
+                            Button(
+                                onClick = { viewModel.startGame() },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .testTag("quiz_start"),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = WsGreen,
+                                    contentColor = Color.White
+                                )
+                            ) {
                                 Text(
-                                    text = stringResource(
-                                        R.string.quiz_progress,
-                                        state.currentQuestionIndex + 1,
-                                        state.totalQuestions
-                                    ),
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = WsGreenDark,
-                                    modifier = Modifier.testTag("quiz_progress")
-                                )
-                                Text(
-                                    stringResource(R.string.quiz_question_capital, target.name),
-                                    style = MaterialTheme.typography.titleMedium,
-                                    modifier = Modifier.testTag("quiz_question")
-                                )
-                                AsyncImage(
-                                    model = target.flagUrl,
-                                    contentDescription = null,
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(180.dp)
-                                        .testTag("quiz_flag")
-                                )
-                                state.options.forEachIndexed { index, option ->
-                                    val isCorrect = option.equals(state.correctCapital, ignoreCase = true)
-                                    val isSelected = state.selectedChoice == option
-                                    val targetColor = when {
-                                        !state.answered -> Color.White
-                                        isCorrect -> Color(0xFFD8F3DC)
-                                        isSelected -> Color(0xFFFFE0E0)
-                                        else -> Color(0xFFF4F7F4)
-                                    }
-                                    val containerColor by animateColorAsState(
-                                        targetValue = targetColor,
-                                        animationSpec = tween(durationMillis = 260),
-                                        label = "quiz_option_color_$index"
-                                    )
-                                    Button(
-                                        onClick = { viewModel.answer(option) },
-                                        enabled = !state.answered,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .testTag("quiz_option_$index"),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = containerColor,
-                                            contentColor = WsGreenDark,
-                                            disabledContainerColor = containerColor,
-                                            disabledContentColor = WsGreenDark
-                                        )
-                                    ) {
-                                        Text(option)
-                                    }
-                                }
-                                if (state.answered) {
-                                    val msg = if (state.lastCorrect == true) {
-                                        stringResource(R.string.quiz_correct)
+                                    if (state.completed) {
+                                        stringResource(R.string.quiz_play_again)
                                     } else {
-                                        stringResource(R.string.quiz_wrong)
+                                        stringResource(R.string.quiz_start_game)
                                     }
-                                    Text(
-                                        msg,
-                                        modifier = Modifier.testTag("quiz_feedback"),
-                                        color = if (state.lastCorrect == true) WsGreen else Color(0xFFC62828),
-                                        fontWeight = FontWeight.Bold
-                                    )
-                                    Button(
-                                        onClick = { viewModel.nextQuestion() },
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .testTag("quiz_next"),
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = WsGreenDark,
-                                            contentColor = Color.White
-                                        )
-                                    ) {
-                                        Text(stringResource(R.string.quiz_next))
-                                    }
-                                }
+                                )
                             }
                         }
                     }
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
+
+            AnimatedVisibility(
+                visible = !state.isLoading && state.error == null && (state.gameStarted || state.completed),
+                enter = fadeIn(),
+                exit = fadeOut()
+            ) {
+                QuizOverlay(
+                    state = state,
+                    onAnswer = viewModel::answer,
+                    onNext = viewModel::nextQuestion,
+                    onClose = viewModel::resetGame,
+                    onRestart = viewModel::startGame
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun DifficultyChips(
+private fun DifficultyCardsRow(
     selected: QuizDifficulty,
     onSelect: (QuizDifficulty) -> Unit
 ) {
-    androidx.compose.foundation.layout.Row(
+    Column(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         QuizDifficulty.entries.forEach { difficulty ->
             val label = when (difficulty) {
@@ -391,16 +305,205 @@ private fun DifficultyChips(
                 QuizDifficulty.MEDIUM -> stringResource(R.string.quiz_medium)
                 QuizDifficulty.HARD -> stringResource(R.string.quiz_hard)
             }
-            FilterChip(
-                selected = selected == difficulty,
-                onClick = { onSelect(difficulty) },
-                label = { Text(label) },
-                colors = FilterChipDefaults.filterChipColors(
-                    selectedContainerColor = WsGreenLight,
-                    selectedLabelColor = WsGreenDark
-                ),
-                modifier = Modifier.testTag("quiz_difficulty_${difficulty.name.lowercase()}")
+            val isSelected = selected == difficulty
+            val background = when (difficulty) {
+                QuizDifficulty.EASY -> Color(0xFF2E7D32)
+                QuizDifficulty.MEDIUM -> Color(0xFF1565C0)
+                QuizDifficulty.HARD -> Color(0xFFB71C1C)
+            }
+            val targetScale = if (isSelected) 1.02f else 1f
+            val cardScale by androidx.compose.animation.core.animateFloatAsState(
+                targetValue = targetScale,
+                animationSpec = tween(durationMillis = 220),
+                label = "difficulty_card_scale_${difficulty.name}"
             )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(104.dp)
+                    .scale(cardScale)
+                    .clickable { onSelect(difficulty) }
+                    .testTag("quiz_difficulty_${difficulty.name.lowercase()}"),
+                colors = CardDefaults.cardColors(
+                    containerColor = if (isSelected) background else background.copy(alpha = 0.45f)
+                ),
+                shape = RoundedCornerShape(14.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = if (isSelected) 8.dp else 2.dp)
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(10.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = label,
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${difficulty.questionCount}",
+                        color = Color.White,
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun QuizOverlay(
+    state: QuizUiState,
+    onAnswer: (String) -> Unit,
+    onNext: () -> Unit,
+    onClose: () -> Unit,
+    onRestart: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Black.copy(alpha = 0.45f))
+            .testTag("quiz_overlay")
+    ) {
+        Card(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            shape = RoundedCornerShape(18.dp)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(14.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    IconButton(
+                        onClick = onClose,
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Icon(Icons.Filled.Close, contentDescription = null)
+                    }
+                    Column {
+                        Text(
+                            text = stringResource(R.string.quiz_title),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = WsGreenDark
+                        )
+                        Text(
+                            text = stringResource(
+                                R.string.quiz_progress,
+                                state.currentQuestionIndex + 1,
+                                state.totalQuestions
+                            ),
+                            style = MaterialTheme.typography.labelLarge,
+                            color = WsGreenDark,
+                            modifier = Modifier.testTag("quiz_progress")
+                        )
+                    }
+                }
+
+                if (state.completed) {
+                    Text(
+                        text = stringResource(R.string.quiz_result_title),
+                        style = MaterialTheme.typography.titleMedium,
+                        color = WsGreenDark,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(R.string.quiz_result_score, state.score, state.totalQuestions),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Button(
+                        onClick = onRestart,
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = WsGreenDark,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(stringResource(R.string.quiz_play_again))
+                    }
+                    return@Column
+                }
+
+                val target = state.target ?: return@Column
+                Text(
+                    stringResource(R.string.quiz_question_capital, target.name),
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.testTag("quiz_question")
+                )
+                AsyncImage(
+                    model = target.flagUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(170.dp)
+                        .testTag("quiz_flag")
+                )
+                state.options.forEachIndexed { index, option ->
+                    val isCorrect = option.equals(state.correctCapital, ignoreCase = true)
+                    val isSelected = state.selectedChoice == option
+                    val targetColor = when {
+                        !state.answered -> Color.White
+                        isCorrect -> Color(0xFFD8F3DC)
+                        isSelected -> Color(0xFFFFE0E0)
+                        else -> Color(0xFFF4F7F4)
+                    }
+                    val containerColor by animateColorAsState(
+                        targetValue = targetColor,
+                        animationSpec = tween(durationMillis = 260),
+                        label = "quiz_overlay_option_color_$index"
+                    )
+                    Button(
+                        onClick = { onAnswer(option) },
+                        enabled = !state.answered,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("quiz_option_$index"),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = containerColor,
+                            contentColor = WsGreenDark,
+                            disabledContainerColor = containerColor,
+                            disabledContentColor = WsGreenDark
+                        )
+                    ) {
+                        Text(option)
+                    }
+                }
+                if (state.answered) {
+                    val msg = if (state.lastCorrect == true) {
+                        stringResource(R.string.quiz_correct)
+                    } else {
+                        stringResource(R.string.quiz_wrong)
+                    }
+                    Text(
+                        msg,
+                        modifier = Modifier.testTag("quiz_feedback"),
+                        color = if (state.lastCorrect == true) WsGreen else Color(0xFFC62828),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Button(
+                        onClick = onNext,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("quiz_next"),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = WsGreenDark,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(stringResource(R.string.quiz_next))
+                    }
+                }
+            }
         }
     }
 }

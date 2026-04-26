@@ -119,7 +119,7 @@ class QuizViewModel @Inject constructor(
 
     private fun buildRound(state: QuizUiState): QuizUiState? {
         val pool = state.pool
-        if (pool.size < 4) return
+        if (pool.size < 4) return null
         val target = pool.random(random)
         val correct = target.capital!!.trim()
         val wrongOptions = pool
@@ -129,7 +129,7 @@ class QuizViewModel @Inject constructor(
             .filter { it != correct }
             .shuffled(random)
             .take(3)
-        if (wrongOptions.size < 3) return
+        if (wrongOptions.size < 3) return null
         val options = (wrongOptions + correct).shuffled(random)
         return state.copy(
             target = target,
