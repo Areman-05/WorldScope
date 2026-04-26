@@ -26,6 +26,8 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -48,6 +50,7 @@ import coil.compose.AsyncImage
 import com.example.worldscope.R
 import com.example.worldscope.ui.theme.WsGreen
 import com.example.worldscope.ui.theme.WsGreenDark
+import com.example.worldscope.ui.theme.WsGreenLight
 import com.example.worldscope.ui.theme.WsSurfaceSoft
 
 @Composable
@@ -210,6 +213,24 @@ fun QuizScreen(
                                 .padding(14.dp),
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
+                            Text(
+                                text = stringResource(R.string.quiz_choose_difficulty),
+                                style = MaterialTheme.typography.titleMedium,
+                                color = WsGreenDark,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            DifficultyChips(
+                                selected = state.selectedDifficulty,
+                                onSelect = viewModel::selectDifficulty
+                            )
+                            Text(
+                                text = stringResource(
+                                    R.string.quiz_questions_count,
+                                    state.selectedDifficulty.questionCount
+                                ),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFF4F6F4F)
+                            )
                             if (!state.gameStarted || state.target == null) {
                                 Button(
                                     onClick = { viewModel.startGame() },
@@ -221,10 +242,20 @@ fun QuizScreen(
                                         contentColor = Color.White
                                     )
                                 ) {
-                                    Text(stringResource(R.string.quiz_start))
+                                    Text(stringResource(R.string.quiz_start_game))
                                 }
                             } else {
                                 val target = state.target!!
+                                Text(
+                                    text = stringResource(
+                                        R.string.quiz_progress,
+                                        state.currentQuestionIndex + 1,
+                                        state.totalQuestions
+                                    ),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    color = WsGreenDark,
+                                    modifier = Modifier.testTag("quiz_progress")
+                                )
                                 Text(
                                     stringResource(R.string.quiz_question_capital, target.name),
                                     style = MaterialTheme.typography.titleMedium,
@@ -275,6 +306,35 @@ fun QuizScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun DifficultyChips(
+    selected: QuizDifficulty,
+    onSelect: (QuizDifficulty) -> Unit
+) {
+    androidx.compose.foundation.layout.Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        QuizDifficulty.entries.forEach { difficulty ->
+            val label = when (difficulty) {
+                QuizDifficulty.EASY -> stringResource(R.string.quiz_easy)
+                QuizDifficulty.MEDIUM -> stringResource(R.string.quiz_medium)
+                QuizDifficulty.HARD -> stringResource(R.string.quiz_hard)
+            }
+            FilterChip(
+                selected = selected == difficulty,
+                onClick = { onSelect(difficulty) },
+                label = { Text(label) },
+                colors = FilterChipDefaults.filterChipColors(
+                    selectedContainerColor = WsGreenLight,
+                    selectedLabelColor = WsGreenDark
+                ),
+                modifier = Modifier.testTag("quiz_difficulty_${difficulty.name.lowercase()}")
+            )
         }
     }
 }
