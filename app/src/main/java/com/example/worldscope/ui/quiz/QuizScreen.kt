@@ -97,14 +97,14 @@ fun QuizScreen(
                         modifier = Modifier.testTag("quiz_score")
                     )
                     OutlinedButton(
-                        onClick = { viewModel.resetScore() },
+                        onClick = { viewModel.resetGame() },
                         modifier = Modifier.testTag("quiz_reset_score")
                     ) {
                         Text(stringResource(R.string.quiz_reset))
                     }
                     if (!state.gameStarted || state.target == null) {
                         Button(
-                            onClick = { viewModel.startRound() },
+                            onClick = { viewModel.startGame() },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .testTag("quiz_start")
@@ -144,7 +144,7 @@ fun QuizScreen(
                             }
                             Text(msg, modifier = Modifier.testTag("quiz_feedback"))
                             Button(
-                                onClick = { viewModel.startRound() },
+                                onClick = { viewModel.nextQuestion() },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .testTag("quiz_next")

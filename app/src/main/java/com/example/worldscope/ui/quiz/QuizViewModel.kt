@@ -13,6 +13,12 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.random.Random
 
+enum class QuizDifficulty(val questionCount: Int) {
+    EASY(10),
+    MEDIUM(15),
+    HARD(20)
+}
+
 @HiltViewModel
 class QuizViewModel @Inject constructor(
     private val countriesRepository: CountriesRepository
@@ -56,8 +62,63 @@ class QuizViewModel @Inject constructor(
         }
     }
 
-    fun startRound() {
-        val pool = _uiState.value.pool
+    fun selectDifficulty(difficulty: QuizDifficulty) {
+        _uiState.update { state ->
+            if (state.gameStarted) state else state.copy(selectedDifficulty = difficulty)
+        }
+    }
+
+    fun startGame() {
+        val state = _uiState.value
+        val restarted = state.copy(
+            score = 0,
+            roundsPlayed = 0,
+            target = null,
+            options = emptyList(),
+            correctCapital = null,
+            answered = false,
+            lastCorrect = null,
+            gameStarted = true,
+            completed = false,
+            currentQuestionIndex = 0,
+            totalQuestions = state.selectedDifficulty.questionCount
+        )
+        _uiState.value = buildRound(restarted) ?: restarted.copy(gameStarted = false)
+    }
+
+    fun nextQuestion() {
+        val state = _uiState.value
+        if (!state.gameStarted) return
+        if (!state.answered) return
+
+        val nextIndex = state.currentQuestionIndex + 1
+        if (nextIndex >= state.totalQuestions) {
+            _uiState.update {
+                it.copy(
+                    gameStarted = false,
+                    completed = true,
+                    target = null,
+                    options = emptyList(),
+                    correctCapital = null,
+                    answered = false
+                )
+            }
+            return
+        }
+
+        val nextState = state.copy(
+            currentQuestionIndex = nextIndex,
+            target = null,
+            options = emptyList(),
+            correctCapital = null,
+            answered = false,
+            lastCorrect = null
+        )
+        _uiState.value = buildRound(nextState) ?: nextState.copy(gameStarted = false)
+    }
+
+    private fun buildRound(state: QuizUiState): QuizUiState? {
+        val pool = state.pool
         if (pool.size < 4) return
         val target = pool.random(random)
         val correct = target.capital!!.trim()
@@ -70,21 +131,18 @@ class QuizViewModel @Inject constructor(
             .take(3)
         if (wrongOptions.size < 3) return
         val options = (wrongOptions + correct).shuffled(random)
-        _uiState.update {
-            it.copy(
-                target = target,
-                options = options,
-                correctCapital = correct,
-                answered = false,
-                lastCorrect = null,
-                gameStarted = true
-            )
-        }
+        return state.copy(
+            target = target,
+            options = options,
+            correctCapital = correct,
+            answered = false,
+            lastCorrect = null
+        )
     }
 
     fun answer(choice: String) {
         val s = _uiState.value
-        if (s.answered || s.correctCapital == null) return
+        if (s.answered || s.correctCapital == null || !s.gameStarted) return
         val ok = choice.equals(s.correctCapital, ignoreCase = true)
         _uiState.update {
             it.copy(
@@ -96,9 +154,21 @@ class QuizViewModel @Inject constructor(
         }
     }
 
-    fun resetScore() {
+    fun resetGame() {
         _uiState.update {
-            it.copy(score = 0, roundsPlayed = 0, target = null, options = emptyList(), answered = false)
+            it.copy(
+                score = 0,
+                roundsPlayed = 0,
+                target = null,
+                options = emptyList(),
+                correctCapital = null,
+                answered = false,
+                lastCorrect = null,
+                gameStarted = false,
+                completed = false,
+                currentQuestionIndex = 0,
+                totalQuestions = it.selectedDifficulty.questionCount
+            )
         }
     }
 }
@@ -114,5 +184,9 @@ data class QuizUiState(
     val lastCorrect: Boolean? = null,
     val score: Int = 0,
     val roundsPlayed: Int = 0,
-    val gameStarted: Boolean = false
+    val gameStarted: Boolean = false,
+    val selectedDifficulty: QuizDifficulty = QuizDifficulty.EASY,
+    val totalQuestions: Int = QuizDifficulty.EASY.questionCount,
+    val currentQuestionIndex: Int = 0,
+    val completed: Boolean = false
 )
