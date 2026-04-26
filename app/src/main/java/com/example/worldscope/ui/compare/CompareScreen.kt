@@ -26,6 +26,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -162,39 +163,62 @@ fun CompareScreen(
                         .testTag("compare_content"),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    CountryPicker(
-                        label = stringResource(R.string.compare_country_a),
-                        countries = state.allCountries,
-                        selectedCode = state.codeA,
-                        onSelect = viewModel::updateCodeA,
-                        testTagField = "compare_pick_a",
-                        testTagMenu = "compare_menu_a"
-                    )
-                    CountryPicker(
-                        label = stringResource(R.string.compare_country_b),
-                        countries = state.allCountries,
-                        selectedCode = state.codeB,
-                        onSelect = viewModel::updateCodeB,
-                        testTagField = "compare_pick_b",
-                        testTagMenu = "compare_menu_b"
-                    )
-                    Button(
-                        onClick = { viewModel.runCompare() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("compare_run"),
-                        enabled = !state.isLoadingCompare
+                    Card(
+                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
                     ) {
-                        Text(stringResource(R.string.compare_run))
-                    }
-                    OutlinedButton(
-                        onClick = { viewModel.clearComparison() },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .testTag("compare_clear"),
-                        enabled = !state.isLoadingCompare
-                    ) {
-                        Text(stringResource(R.string.compare_clear))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(14.dp),
+                            verticalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
+                            CountryPicker(
+                                label = stringResource(R.string.compare_country_a),
+                                countries = state.allCountries,
+                                selectedCode = state.codeA,
+                                onSelect = viewModel::updateCodeA,
+                                testTagField = "compare_pick_a",
+                                testTagMenu = "compare_menu_a"
+                            )
+                            CountryPicker(
+                                label = stringResource(R.string.compare_country_b),
+                                countries = state.allCountries,
+                                selectedCode = state.codeB,
+                                onSelect = viewModel::updateCodeB,
+                                testTagField = "compare_pick_b",
+                                testTagMenu = "compare_menu_b"
+                            )
+                            Button(
+                                onClick = { viewModel.runCompare() },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(50.dp)
+                                    .testTag("compare_run"),
+                                enabled = !state.isLoadingCompare,
+                                colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                                    containerColor = WsGreen,
+                                    contentColor = Color.White
+                                ),
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                            ) {
+                                Text(
+                                    stringResource(R.string.compare_run),
+                                    style = MaterialTheme.typography.titleMedium
+                                )
+                            }
+                            OutlinedButton(
+                                onClick = { viewModel.clearComparison() },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(48.dp)
+                                    .testTag("compare_clear"),
+                                enabled = !state.isLoadingCompare,
+                                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                            ) {
+                                Text(stringResource(R.string.compare_clear))
+                            }
+                        }
                     }
                     when (state.compareUserError) {
                         CompareUserError.NeedTwo ->
@@ -271,6 +295,11 @@ private fun CountryPicker(
             readOnly = true,
             label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+            shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = WsGreenDark,
+                focusedLabelColor = WsGreenDark
+            ),
             modifier = Modifier
                 .fillMaxWidth()
                 .menuAnchor()
