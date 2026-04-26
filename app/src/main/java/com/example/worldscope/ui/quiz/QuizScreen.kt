@@ -2,8 +2,10 @@
 package com.example.worldscope.ui.quiz
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -270,12 +272,31 @@ fun QuizScreen(
                                         .testTag("quiz_flag")
                                 )
                                 state.options.forEachIndexed { index, option ->
-                                    OutlinedButton(
+                                    val isCorrect = option.equals(state.correctCapital, ignoreCase = true)
+                                    val isSelected = state.selectedChoice == option
+                                    val targetColor = when {
+                                        !state.answered -> Color.White
+                                        isCorrect -> Color(0xFFD8F3DC)
+                                        isSelected -> Color(0xFFFFE0E0)
+                                        else -> Color(0xFFF4F7F4)
+                                    }
+                                    val containerColor by animateColorAsState(
+                                        targetValue = targetColor,
+                                        animationSpec = tween(durationMillis = 260),
+                                        label = "quiz_option_color_$index"
+                                    )
+                                    Button(
                                         onClick = { viewModel.answer(option) },
                                         enabled = !state.answered,
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .testTag("quiz_option_$index")
+                                            .testTag("quiz_option_$index"),
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = containerColor,
+                                            contentColor = WsGreenDark,
+                                            disabledContainerColor = containerColor,
+                                            disabledContentColor = WsGreenDark
+                                        )
                                     ) {
                                         Text(option)
                                     }
@@ -286,7 +307,12 @@ fun QuizScreen(
                                     } else {
                                         stringResource(R.string.quiz_wrong)
                                     }
-                                    Text(msg, modifier = Modifier.testTag("quiz_feedback"))
+                                    Text(
+                                        msg,
+                                        modifier = Modifier.testTag("quiz_feedback"),
+                                        color = if (state.lastCorrect == true) WsGreen else Color(0xFFC62828),
+                                        fontWeight = FontWeight.Bold
+                                    )
                                     Button(
                                         onClick = { viewModel.nextQuestion() },
                                         modifier = Modifier

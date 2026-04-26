@@ -136,7 +136,8 @@ class QuizViewModel @Inject constructor(
             options = options,
             correctCapital = correct,
             answered = false,
-            lastCorrect = null
+            lastCorrect = null,
+            selectedChoice = null
         )
     }
 
@@ -148,6 +149,7 @@ class QuizViewModel @Inject constructor(
             it.copy(
                 answered = true,
                 lastCorrect = ok,
+                selectedChoice = choice,
                 score = if (ok) it.score + 1 else it.score,
                 roundsPlayed = it.roundsPlayed + 1
             )
@@ -164,6 +166,7 @@ class QuizViewModel @Inject constructor(
                 correctCapital = null,
                 answered = false,
                 lastCorrect = null,
+                selectedChoice = null,
                 gameStarted = false,
                 completed = false,
                 currentQuestionIndex = 0,
@@ -182,6 +185,7 @@ data class QuizUiState(
     val correctCapital: String? = null,
     val answered: Boolean = false,
     val lastCorrect: Boolean? = null,
+    val selectedChoice: String? = null,
     val score: Int = 0,
     val roundsPlayed: Int = 0,
     val gameStarted: Boolean = false,
