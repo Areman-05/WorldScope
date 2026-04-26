@@ -335,57 +335,89 @@ private fun CompareColumn(
     weatherLeft: WeatherInfo?,
     weatherRight: WeatherInfo?
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.testTag("compare_results")
+    Card(
+        modifier = Modifier.testTag("compare_results"),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        shape = androidx.compose.foundation.shape.RoundedCornerShape(16.dp)
     ) {
-        Text(stringResource(R.string.compare_results), style = MaterialTheme.typography.titleMedium)
-        RowCompareMetric(
-            label = stringResource(R.string.population),
-            leftValue = left.population.toDouble(),
-            rightValue = right.population.toDouble(),
-            leftText = "%,d".format(Locale.US, left.population),
-            rightText = "%,d".format(Locale.US, right.population),
-            testTag = "compare_metric_population"
-        )
-        RowCompareRow(
-            label = stringResource(R.string.area),
-            left = left.areaKm2?.let { String.format(Locale.US, "%,.0f km2", it) } ?: "-",
-            right = right.areaKm2?.let { String.format(Locale.US, "%,.0f km2", it) } ?: "-"
-        )
-        RowCompareRow(
-            label = stringResource(R.string.capital),
-            left = left.capital ?: "-",
-            right = right.capital ?: "-"
-        )
-        RowCompareRow(
-            label = stringResource(R.string.region),
-            left = left.region ?: "-",
-            right = right.region ?: "-"
-        )
-        RowCompareMetric(
-            label = stringResource(R.string.gdp_usd),
-            leftValue = gdpLeft,
-            rightValue = gdpRight,
-            leftText = gdpLeft?.let { String.format(Locale.US, "%,.0f", it) } ?: "-",
-            rightText = gdpRight?.let { String.format(Locale.US, "%,.0f", it) } ?: "-",
-            testTag = "compare_metric_gdp"
-        )
-        RowCompareRow(
-            label = stringResource(R.string.inflation),
-            left = inflLeft?.let { String.format(Locale.US, "%.2f %%", it) } ?: "-",
-            right = inflRight?.let { String.format(Locale.US, "%.2f %%", it) } ?: "-"
-        )
-        RowCompareRow(
-            label = stringResource(R.string.currencies),
-            left = left.currencyCodes.firstOrNull() ?: "-",
-            right = right.currencyCodes.firstOrNull() ?: "-"
-        )
-        RowCompareRow(
-            label = stringResource(R.string.weather),
-            left = weatherLeft?.let { formatWeather(it) } ?: "-",
-            right = weatherRight?.let { formatWeather(it) } ?: "-"
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                stringResource(R.string.compare_results),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.ExtraBold,
+                color = WsGreenDark
+            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = left.name,
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = WsGreenDark
+                )
+                Text(
+                    text = right.name,
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = WsGreenDark
+                )
+            }
+            RowCompareMetric(
+                label = stringResource(R.string.population),
+                leftValue = left.population.toDouble(),
+                rightValue = right.population.toDouble(),
+                leftText = "%,d".format(Locale.US, left.population),
+                rightText = "%,d".format(Locale.US, right.population),
+                testTag = "compare_metric_population"
+            )
+            RowCompareRow(
+                label = stringResource(R.string.area),
+                left = left.areaKm2?.let { String.format(Locale.US, "%,.0f km2", it) } ?: "-",
+                right = right.areaKm2?.let { String.format(Locale.US, "%,.0f km2", it) } ?: "-"
+            )
+            RowCompareRow(
+                label = stringResource(R.string.capital),
+                left = left.capital ?: "-",
+                right = right.capital ?: "-"
+            )
+            RowCompareRow(
+                label = stringResource(R.string.region),
+                left = left.region ?: "-",
+                right = right.region ?: "-"
+            )
+            RowCompareMetric(
+                label = stringResource(R.string.gdp_usd),
+                leftValue = gdpLeft,
+                rightValue = gdpRight,
+                leftText = gdpLeft?.let { String.format(Locale.US, "%,.0f", it) } ?: "-",
+                rightText = gdpRight?.let { String.format(Locale.US, "%,.0f", it) } ?: "-",
+                testTag = "compare_metric_gdp"
+            )
+            RowCompareRow(
+                label = stringResource(R.string.inflation),
+                left = inflLeft?.let { String.format(Locale.US, "%.2f %%", it) } ?: "-",
+                right = inflRight?.let { String.format(Locale.US, "%.2f %%", it) } ?: "-"
+            )
+            RowCompareRow(
+                label = stringResource(R.string.currencies),
+                left = left.currencyCodes.firstOrNull() ?: "-",
+                right = right.currencyCodes.firstOrNull() ?: "-"
+            )
+            RowCompareRow(
+                label = stringResource(R.string.weather),
+                left = weatherLeft?.let { formatWeather(it) } ?: "-",
+                right = weatherRight?.let { formatWeather(it) } ?: "-"
+            )
+        }
     }
 }
 
@@ -395,14 +427,22 @@ private fun RowCompareRow(
     left: String,
     right: String
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
-        Text(label, style = MaterialTheme.typography.labelMedium)
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(
+                color = Color(0xFFF7FBF7),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+            )
+            .padding(10.dp)
+    ) {
+        Text(label, style = MaterialTheme.typography.labelLarge, color = WsGreenDark)
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Text(left, modifier = Modifier.weight(1f))
-            Text(right, modifier = Modifier.weight(1f))
+            Text(left, modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
+            Text(right, modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -424,17 +464,23 @@ private fun RowCompareMetric(
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .background(
+                color = Color(0xFFF7FBF7),
+                shape = androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+            )
+            .padding(10.dp)
             .testTag(testTag)
     ) {
-        Text(label, style = MaterialTheme.typography.labelMedium)
+        Text(label, style = MaterialTheme.typography.labelLarge, color = WsGreenDark)
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Column(modifier = Modifier.weight(1f)) {
-                Text(leftText)
+                Text(leftText, fontWeight = FontWeight.SemiBold)
                 LinearProgressIndicator(
                     progress = { leftProgress },
+                    color = WsGreen,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)
@@ -442,9 +488,10 @@ private fun RowCompareMetric(
                 )
             }
             Column(modifier = Modifier.weight(1f)) {
-                Text(rightText)
+                Text(rightText, fontWeight = FontWeight.SemiBold)
                 LinearProgressIndicator(
                     progress = { rightProgress },
+                    color = WsGreenDark,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)
